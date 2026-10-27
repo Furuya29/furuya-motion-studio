@@ -138,6 +138,11 @@ function atTime(t,track){
   return {p:pa,kind:'medido'};
  }
  if(pb&&Math.abs(b.t-t)<=maxGap)return {p:pb,kind:'medido'};
+ // Hold a preceding pose only for a very short missing sample, without bridging long occlusions.
+ for(let i=lo-1;i>=Math.max(0,lo-2);i--){
+  const prev=eligible(frames[i],track)[0];
+  if(prev&&t-frames[i].t<=.30)return {p:prev,kind:'retenção breve'};
+ }
  return null;
 }
 function interpolate(a,b,f){
