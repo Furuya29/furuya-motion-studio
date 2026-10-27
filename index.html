@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#0b1020" />
 <meta name="description" content="Furuya Motion Studio: captura de movimentos local com MediaPipe, até 6 poses e exportação de coreografia." />
-<title>Furuya Motion Studio • Motion Capture v0.3</title>
+<title>Furuya Motion Studio • Motion Capture v0.4</title>
 <style>
 :root{color-scheme:dark;--bg:#090d18;--card:#121b2d;--line:#29344d;--text:#f4f7ff;--muted:#9aa9c5;--a:#a68aff;--b:#5fe3c4;--warn:#ffc979}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% -5%,#30254c 0%,transparent 38%),linear-gradient(160deg,#0d1323,#090c16 55%);color:var(--text);font:15px/1.5 system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;min-height:100vh}main{max-width:930px;margin:0 auto;padding:24px 16px 80px}.header{display:flex;gap:12px;align-items:center;margin-bottom:18px}.mark{width:47px;height:47px;border-radius:14px;background:linear-gradient(135deg,#8d66f8,#49c9c3);display:grid;place-items:center;color:#11182a;font-size:27px;font-weight:900}.header h1{font-size:19px;line-height:1.2;margin:0;letter-spacing:-.4px}.header small{color:var(--muted);font-size:11px;letter-spacing:1px}.tag{margin-left:auto;border:1px solid #3b4e6f;border-radius:99px;color:#c8baff;padding:4px 8px;font-size:11px;white-space:nowrap}.intro{color:var(--muted);margin:0 0 22px}.section{background:#121a2adb;border:1px solid var(--line);border-radius:18px;padding:17px;margin:0 0 16px;box-shadow:0 8px 28px #0003}.section h2{font-size:15px;margin:0 0 12px}.section h2 span{color:var(--b);margin-right:7px}input,select,button{font:inherit}input[type=file]{display:none}.upload{display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px dashed #6656a2;border-radius:14px;background:#25203c75;padding:19px;cursor:pointer;text-align:center;font-weight:650}.upload:hover{background:#302746}.fileinfo{margin-top:8px;font-size:12px;color:var(--muted);overflow-wrap:anywhere}.controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.field label{display:block;color:var(--muted);font-size:12px;margin-bottom:4px}.field select{width:100%;background:#0d1425;color:var(--text);padding:10px 7px;border:1px solid #3a4761;border-radius:9px}.tip{color:var(--muted);font-size:12px;margin-top:10px}.stage{position:relative;width:100%;max-width:410px;margin:auto;border-radius:12px;background:#070b12;overflow:hidden;border:1px solid #29344d;min-height:240px;display:grid;place-items:center}.stage video{display:block;width:100%;height:100%;max-height:none;object-fit:contain}.stage canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.placeholder{position:absolute;inset:0;display:grid;place-content:center;text-align:center;gap:7px;color:#9aa9c5;padding:20px}.placeholder strong{font-size:17px;color:#ccd7ed}.hidden{display:none!important}.actionbar{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}.btn{padding:12px 10px;border:none;border-radius:11px;background:#27324b;color:#f5f7ff;font-weight:670;cursor:pointer;min-height:46px}.btn.primary{background:linear-gradient(110deg,#7655e6,#5f5bd6);color:white}.btn.mint{background:#114b47;color:#9affdf}.btn:disabled{opacity:.36;cursor:not-allowed}.btn:focus-visible,.upload:focus-visible{outline:2px solid #d5c6ff;outline-offset:2px}.row{display:flex;align-items:center;gap:10px;justify-content:space-between}.row .btn{flex:1}.timeline{width:100%;accent-color:#a68aff;margin-top:12px}.times{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}.status{border-radius:10px;padding:10px 12px;background:#1c2740;color:#cdd9f0;font-size:12px;margin-top:12px;min-height:37px}.status.error{background:#4a2630;color:#ffd8dd}.status.good{background:#15372f;color:#bcffe5}.progressbar{height:6px;overflow:hidden;background:#263045;border-radius:9px;margin-top:12px}.progressbar>div{height:100%;width:0%;background:linear-gradient(90deg,#8169f4,#52d9bd);transition:width .15s}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.stat{text-align:center;padding:10px 4px;background:#0f1729;border:1px solid #24304a;border-radius:10px}.stat b{font-size:18px;display:block;font-variant-numeric:tabular-nums}.stat span{font-size:10px;color:var(--muted)}.export{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.footer{text-align:center;color:#8799b9;font-size:11px;line-height:1.7;margin-top:22px}.pill{color:#83ead1;background:#0e302d;padding:3px 7px;border-radius:90px;font-size:11px}.tiny{font-size:11px;color:#91a5c7}.warning{background:#41341f;color:#ffe0a4;border-left:3px solid #f5be63;padding:11px;margin-top:13px;font-size:12px;border-radius:6px}code{background:#263047;border-radius:4px;padding:1px 4px;color:#c9b9ff}@media(min-width:720px){.layout{display:grid;grid-template-columns:1.05fr .95fr;gap:16px}.layout .section{margin:0}.layout{margin-bottom:16px}.stage{max-height:530px}.controls{grid-template-columns:repeat(3,1fr)}}@media(max-width:430px){.controls{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.field select{font-size:12px;padding:11px 3px}.export .btn{font-size:12px;padding:8px 2px}.tag{font-size:9px}}
 </style>
 </head>
 <body>
 <main>
-<header class="header"><div class="mark">F</div><div><h1>Furuya Motion Studio</h1><small>AI MOTION CAPTURE ENGINE</small></div><div class="tag">ALPHA 0.3</div></header>
+<header class="header"><div class="mark">F</div><div><h1>Furuya Motion Studio</h1><small>AI MOTION CAPTURE ENGINE</small></div><div class="tag">ALPHA 0.4</div></header>
 <p class="intro">Extraia movimentos de vídeos diretamente no Android. Sem assinatura, sem upload do seu vídeo e sem GPU remota.</p>
 <div class="layout">
 <div class="section">
@@ -37,7 +37,7 @@
 <div class="times"><span id="current">00:00</span><span id="duration">00:00</span></div>
 <div class="actionbar"><button id="play" class="btn" disabled>▶ Reproduzir</button><button id="snap" class="btn" disabled>◉ Detectar quadro</button></div>
 <div class="actionbar"><button id="pick" class="btn" disabled>◎ Escolher dançarino</button><button id="clearTarget" class="btn" disabled>× Limpar escolha</button></div>
-<div id="targetStatus" class="tiny" style="margin:9px 0">Opcional: pause no início, use Detectar quadro, toque em Escolher dançarino e depois no tronco da pessoa. Não há prévia em tempo real.</div>
+<div id="targetStatus" class="tiny" style="margin:9px 0">Opcional: pause perto do início, detecte um quadro, escolha o dançarino e toque no tronco. Na captura, a IA focará uma região ao redor dele. Não há detecção em tempo real.</div>
 <div class="actionbar"><button id="analyze" class="btn mint" disabled>⌁ Capturar coreografia</button><button id="stop" class="btn" disabled>■ Parar</button></div>
 <div class="progressbar"><div id="progress"></div></div>
 <div id="quality" class="tiny" style="margin-top:9px">Qualidade: ainda não analisada. *Rastros não são identidades confirmadas.</div>
@@ -48,7 +48,7 @@
 <p class="tip" style="margin:10px 0">O JSON registra as 33 articulações, coordenadas 3D estimadas, trilhas aproximadas e o dançarino escolhido (se houver). O CSV é compatível com planilhas e scripts.</p>
 <div class="export"><button class="btn" id="json" disabled>↓ JSON</button><button class="btn" id="csv" disabled>↓ CSV</button><button class="btn" id="png" disabled>↓ Quadro PNG</button></div>
 </div>
-<div class="footer">Furuya Motion Studio • Protótipo experimental v0.3<br/>MediaPipe Tasks Vision • Código executado localmente • Sem envio do MP4 para servidor<br/><span class="tiny">Rastros são estimativas por proximidade; as poses parciais não devem ser usadas como animação final. Ainda não é transferência de personagem nem animação generativa.</span></div>
+<div class="footer">Furuya Motion Studio • Protótipo experimental v0.4<br/>MediaPipe Tasks Vision • Código executado localmente • Sem envio do MP4 para servidor<br/><span class="tiny">Rastros são estimativas por proximidade; as poses parciais não devem ser usadas como animação final. Ainda não é transferência de personagem nem animação generativa.</span></div>
 </main>
 <script type="module">
 const $=id=>document.getElementById(id);
@@ -60,7 +60,7 @@ const MODEL_ROOT='https://storage.googleapis.com/mediapipe-models/pose_landmarke
 const COLORS=['#65e5bf','#ad89ff','#ffbf67','#66c8ff','#ff7f9f','#ffe47e'];
 const CONNECT=[[11,12],[11,13],[13,15],[12,14],[14,16],[11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28],[27,29],[29,31],[28,30],[30,32],[15,17],[15,19],[16,18],[16,20]];
 const JOINTS=['nose','eye_left_inner','eye_left','eye_left_outer','eye_right_inner','eye_right','eye_right_outer','ear_left','ear_right','mouth_left','mouth_right','shoulder_left','shoulder_right','elbow_left','elbow_right','wrist_left','wrist_right','pinky_left','pinky_right','index_left','index_right','thumb_left','thumb_right','hip_left','hip_right','knee_left','knee_right','ankle_left','ankle_right','heel_left','heel_right','foot_left','foot_right'];
-let engine=null,mp=null,sourceUrl=null,clipName='video',samples=[],tracks=[],nextId=1,running=false,cancel=false,busy=false,modeLoaded=null,qualityStats={good:0,partial:0,rejected:0},lastPreview=null,selectingTarget=false,chosenTarget=null,targetStats={found:0,missing:0},duplicates=0,lastFingerprint='';
+let engine=null,mp=null,sourceUrl=null,clipName='video',samples=[],tracks=[],nextId=1,running=false,cancel=false,busy=false,modeLoaded=null,qualityStats={good:0,partial:0,rejected:0},lastPreview=null,selectingTarget=false,chosenTarget=null,targetStats={found:0,missing:0},duplicates=0,lastFingerprint='',focusCanvas=document.createElement('canvas'),focusCtx=focusCanvas.getContext('2d',{willReadFrequently:false});
 const now=()=>performance.now();
 function status(s,type=''){els.status.textContent=s;els.status.className='status '+type;}
 function sec(t){if(!Number.isFinite(t))return '00:00';const a=Math.max(0,Math.floor(t));return `${String(Math.floor(a/60)).padStart(2,'0')}:${String(a%60).padStart(2,'0')}`}
@@ -74,7 +74,7 @@ video.addEventListener('loadeddata',loaded);video.addEventListener('timeupdate',
 video.addEventListener('error',()=>status('Não foi possível abrir esse formato no Chrome. Tente MP4 H.264.','error'));
 els.seek.addEventListener('input',()=>{if(Number.isFinite(video.duration)&&video.duration>0)video.currentTime=video.duration*Number(els.seek.value)/1000});
 els.play.addEventListener('click',async()=>{if(video.paused){try{await video.play();els.play.textContent='Ⅱ Pausar'}catch(e){status('Não foi possível iniciar a reprodução: '+e.message,'error')}}else{video.pause();els.play.textContent='▶ Reproduzir'}});
-for(const element of [els.model,els.persons])element.addEventListener('change',()=>{if(els.model.dataset.loaded&&els.model.value!==els.model.dataset.loaded){engine?.close?.();engine=null;modeLoaded=null;resetCapture();status('Modelo alterado. Carregue a IA novamente.')}else if(engine&&element===els.persons){engine.setOptions({numPoses:Number(els.persons.value)}).then(()=>{resetCapture();status('Quantidade de poses atualizada.','good')}).catch(e=>status(e.message,'error'))}});
+for(const element of [els.model,els.persons])element.addEventListener('change',()=>{if(els.model.dataset.loaded&&els.model.value!==els.model.dataset.loaded){engine?.close?.();engine=null;modeLoaded=null;resetCapture();status('Modelo alterado. Carregue a IA novamente.')}else if(engine&&element===els.persons){engine.setOptions({numPoses:Number(els.persons.value)}).then(()=>{resetCapture();lastPreview=null;status('Quantidade de poses atualizada. Detecte um novo quadro antes de escolher a pessoa.','good')}).catch(e=>status(e.message,'error'))}});
 async function initAI(){if(running)return;els.init.disabled=true;status('Baixando MediaPipe e inicializando. É necessário internet no primeiro uso…');try{if(!mp)mp=await import(`${ROOT}/vision_bundle.mjs`);if(engine){try{engine.close()}catch{}}const vision=await mp.FilesetResolver.forVisionTasks(`${ROOT}/wasm`);const choice=els.model.value;const name=choice==='full'?'pose_landmarker_full':'pose_landmarker_lite';const config={baseOptions:{modelAssetPath:`${MODEL_ROOT}/${name}/float16/1/${name}.task`,delegate:'GPU'},runningMode:'VIDEO',numPoses:Number(els.persons.value),minPoseDetectionConfidence:.45,minPosePresenceConfidence:.45,minTrackingConfidence:.45};let backend='GPU';try{engine=await mp.PoseLandmarker.createFromOptions(vision,config)}catch(err){backend='CPU';config.baseOptions.delegate='CPU';engine=await mp.PoseLandmarker.createFromOptions(vision,config)}modeLoaded=choice;els.model.dataset.loaded=choice;chosenTarget=null;lastPreview=null;selectingTarget=false;resetCapture();status(`IA carregada no aparelho (${choice.toUpperCase()}, ${backend}). Vídeos permanecem locais.`,'good')}catch(err){engine=null;modeLoaded=null;status('Falha ao carregar IA: '+String(err?.message||err)+'. Verifique internet e abra via HTTPS caso o arquivo local seja bloqueado.','error')}finally{els.init.disabled=false;updateActions()}}
 els.init.addEventListener('click',initAI);
 function centerOf(lm){const ids=[11,12,23,24], valid=ids.map(i=>lm[i]).filter(p=>p&&(p.visibility??1)>.25);const a=valid.length?valid:lm.filter(p=>(p.visibility??1)>.4);return {x:a.reduce((s,p)=>s+p.x,0)/Math.max(1,a.length),y:a.reduce((s,p)=>s+p.y,0)/Math.max(1,a.length)}}
@@ -128,35 +128,61 @@ function assign(landmarks,world,time) {
   markSelectedTarget(curr,time);
   return {targetFound:curr.some(c=>c.selected),people:curr.map(c=>({id:c.id,center:c.center,selected:!!c.selected,quality:c.quality,landmarks:c.lm.map(p=>[+p.x.toFixed(5),+p.y.toFixed(5),+p.z.toFixed(5),+(p.visibility??0).toFixed(3)]),world:c.w.map(p=>[+p.x.toFixed(5),+p.y.toFixed(5),+p.z.toFixed(5)])})),rejected:candidatesRaw.length-curr.length,detected:candidatesRaw.length};
 }
+function anchorOf(lm){
+ const a=lm?.[11],b=lm?.[12];
+ if(visiblePoint(a,.50)&&visiblePoint(b,.50))return {x:(a.x+b.x)/2,y:(a.y+b.y)/2,shoulders:Math.hypot(a.x-b.x,a.y-b.y)};
+ return null;
+}
+function focusRect(){
+ if(!chosenTarget||!video.videoWidth||!video.videoHeight)return null;
+ const w=.63,h=.68;
+ const anchor=chosenTarget.anchor;
+ const x=Math.max(0,Math.min(1-w,anchor.x-w/2));
+ const y=Math.max(0,Math.min(1-h,anchor.y-.22));
+ return {x,y,w,h};
+}
+function focusedLandmarks(time){
+ const rect=focusRect();
+ if(!rect)return null;
+ const sw=video.videoWidth,sh=video.videoHeight;
+ const dw=384,dh=Math.max(384,Math.round(dw*(rect.h*sh)/(rect.w*sw)));
+ if(focusCanvas.width!==dw)focusCanvas.width=dw;
+ if(focusCanvas.height!==dh)focusCanvas.height=dh;
+ focusCtx.clearRect(0,0,dw,dh);
+ focusCtx.drawImage(video,rect.x*sw,rect.y*sh,rect.w*sw,rect.h*sh,0,0,dw,dh);
+ inferenceTimestampMs=Math.max(inferenceTimestampMs+1,Math.round(performance.now()));
+ const r=engine.detectForVideo(focusCanvas,inferenceTimestampMs);
+ return {rect,landmarks:(r.landmarks||[]).map(lm=>lm.map(p=>({...p,x:rect.x+p.x*rect.w,y:rect.y+p.y*rect.h,z:p.z*rect.w}))),world:r.worldLandmarks||[]};
+}
 function markSelectedTarget(candidates,time){
- if(!chosenTarget)return;
- if(time<chosenTarget.startTime-.04)return; // Cannot establish identity before the manually chosen reference frame.
+ if(!chosenTarget||time<chosenTarget.startTime-.04)return;
  const age=Math.max(0,time-chosenTarget.t);
- if(age>1.5)return; // Never silently reassign the target after a long occlusion.
- const predicted={x:chosenTarget.center.x+chosenTarget.vx*Math.min(age,.75),y:chosenTarget.center.y+chosenTarget.vy*Math.min(age,.75)};
- let nearest=null,best=Infinity;
+ if(age>1.75)return; // Never silently reattach after losing a person.
+ const predicted={x:chosenTarget.anchor.x+chosenTarget.vx*Math.min(age,.6),y:chosenTarget.anchor.y+chosenTarget.vy*Math.min(age,.6)};
+ let winner=null,best=Infinity;
+ const distanceLimit=Math.min(.18,.10+.10*Math.min(age,1));
  for(const c of candidates){
-  const distance=Math.hypot(c.center.x-predicted.x,c.center.y-predicted.y);
-  // Require temporal proximity to prevent accidentally following another member of the crowd.
-  const span=Math.max(.065,Math.min(.15,.065+Math.min(1.5,age)*.045));
-  if(distance>span)continue;
-  const shoulders=c.lm[11]&&c.lm[12]?Math.abs(c.lm[11].x-c.lm[12].x):0;
-  const ratio=chosenTarget.shoulders>0.02&&shoulders>0.02?Math.abs(Math.log(shoulders/chosenTarget.shoulders)):0;
-  if(ratio>.72)continue;
-  const score=distance+Math.min(.08,ratio*.04);
-  if(score<best){best=score;nearest=c}
+  const anchor=anchorOf(c.lm);
+  if(!anchor)continue;
+  const distance=Math.hypot(anchor.x-predicted.x,anchor.y-predicted.y);
+  if(distance>distanceLimit)continue;
+  const ratio=(chosenTarget.shoulders>.02&&anchor.shoulders>.02)?Math.abs(Math.log(anchor.shoulders/chosenTarget.shoulders)):0;
+  if(ratio>.85)continue;
+  const score=distance+Math.min(.1,ratio*.05);
+  if(score<best){best=score;winner={c,anchor}}
  }
- if(!nearest)return;
- nearest.selected=true;
+ if(!winner)return;
+ const {c,anchor}=winner;
+ c.selected=true;
  const dt=Math.max(.01,time-chosenTarget.t);
  if(time>chosenTarget.t){
-  const vx=(nearest.center.x-chosenTarget.center.x)/dt,vy=(nearest.center.y-chosenTarget.center.y)/dt;
-  chosenTarget.vx=Math.max(-.3,Math.min(.3,.65*chosenTarget.vx+.35*vx));
-  chosenTarget.vy=Math.max(-.3,Math.min(.3,.65*chosenTarget.vy+.35*vy));
+  const vx=(anchor.x-chosenTarget.anchor.x)/dt,vy=(anchor.y-chosenTarget.anchor.y)/dt;
+  chosenTarget.vx=Math.max(-.4,Math.min(.4,.55*chosenTarget.vx+.45*vx));
+  chosenTarget.vy=Math.max(-.4,Math.min(.4,.55*chosenTarget.vy+.45*vy));
  }
- const shoulders=nearest.lm[11]&&nearest.lm[12]?Math.abs(nearest.lm[11].x-nearest.lm[12].x):chosenTarget.shoulders;
- chosenTarget.shoulders=.8*chosenTarget.shoulders+.2*shoulders;
- chosenTarget.center={...nearest.center};chosenTarget.t=time;
+ chosenTarget.shoulders=.8*chosenTarget.shoulders+.2*anchor.shoulders;
+ chosenTarget.anchor={x:anchor.x,y:anchor.y};
+ chosenTarget.t=time;
 }
 function fingerprint(record){
  if(!record.people?.length)return '';
@@ -173,13 +199,14 @@ function choosePerson(event){
    if(s<score){chosen=p;score=s}
  }
  if(!chosen||score>.34){status('Toque próximo ao tronco de uma pose detectada.','error');return}
- const width=Math.abs(chosen.landmarks[11][0]-chosen.landmarks[12][0]);
- chosenTarget={startTime:lastPreview.t,initialCenter:{...chosen.center},center:{...chosen.center},t:lastPreview.t,shoulders:width,vx:0,vy:0};
+ const a=anchorOf(chosen.landmarks.map(p=>({x:p[0],y:p[1],visibility:p[3]})));
+ if(!a){selectingTarget=false;status('Os dois ombros não estão visíveis nesse quadro. Selecione um quadro mais nítido antes de escolher.','error');return}
+ chosenTarget={startTime:lastPreview.t,initialCenter:{...chosen.center},initialAnchor:{x:a.x,y:a.y},anchor:{x:a.x,y:a.y},t:lastPreview.t,shoulders:a.shoulders,vx:0,vy:0};
  selectingTarget=false;
  resetCapture();
  lastPreview.people.forEach(p=>p.selected=p===chosen);
  draw(lastPreview);
- els.targetStatus.textContent=`Referência escolhida em ${lastPreview.t.toFixed(2)}s. Após uma oclusão longa, o rastreador deixará o alvo ausente em vez de assumir uma identidade sem confirmação. Selecione de preferência perto do início.`;
+ els.targetStatus.textContent=`Referência escolhida em ${lastPreview.t.toFixed(2)}s. A v0.4 analisará uma região recortada do vídeo com rastreamento por ombros; lacunas ainda são esperadas. Selecione de preferência perto do início.`;
  status('Pessoa escolhida. Agora toque em Capturar coreografia.','good');
  updateActions();
 }
@@ -222,19 +249,20 @@ function draw(frame) {
     ctx.fillStyle="#060c19da";ctx.fillRect(x,y-17*scale,tw+10*scale,20*scale);
     ctx.fillStyle=col;ctx.fillText(label,x+5*scale,y-3*scale);
   }
+  if(frame.focusRegion){const r=frame.focusRegion;ctx.globalAlpha=.65;ctx.strokeStyle='#ffe47e';ctx.lineWidth=Math.max(2,w/800);ctx.setLineDash([12,9]);ctx.strokeRect(r.x*w,r.y*h,r.w*w,r.h*h);ctx.setLineDash([])}
   ctx.restore();
 }
 function drawNearest(t){if(!samples.length){ctx.clearRect(0,0,overlay.width,overlay.height);return}let closest=null,d=Infinity;for(const f of samples){const e=Math.abs(f.t-t);if(e<d){d=e;closest=f}}draw(d<=Math.max(.26,1/Number(els.fps.value))?closest:null)}
 let inferenceTimestampMs=0;
-function infer(time){inferenceTimestampMs=Math.max(inferenceTimestampMs+1,Math.round(performance.now()));const raw=engine.detectForVideo(video,inferenceTimestampMs);return {t:+time.toFixed(3),...assign(raw.landmarks||[],raw.worldLandmarks||[],time)}}
+function infer(time){if(chosenTarget&&time>=chosenTarget.startTime-.04){const r=focusedLandmarks(time);if(r){const result=assign(r.landmarks,r.world,time);return {t:+time.toFixed(3),...result,people:result.people.filter(p=>p.selected),focusRegion:r.rect,detected:result.detected,rejected:result.rejected}}}inferenceTimestampMs=Math.max(inferenceTimestampMs+1,Math.round(performance.now()));const raw=engine.detectForVideo(video,inferenceTimestampMs);return {t:+time.toFixed(3),...assign(raw.landmarks||[],raw.worldLandmarks||[],time)}}
 els.snap.addEventListener('click',()=>{if(!engine||!video.readyState)return;try{tracks=[];nextId=1;const f=infer(video.currentTime);lastPreview=f;draw(f);updateActions();status(`${f.people.length} pose(s) detectada(s) nesse quadro. Isso não salva a captura completa.`,f.people.length?'good':'')}catch(e){status(`Falha de detecção: ${e.message}`,'error')}});
 function seekFrame(t){return new Promise((resolve,reject)=>{if(Math.abs(video.currentTime-t)<.002&&video.readyState>=2){resolve();return}let timer=setTimeout(()=>{cleanup();reject(new Error('O vídeo não respondeu à busca de quadro'))},12000);function done(){cleanup();resolve()}function failed(){cleanup();reject(new Error('Não foi possível decodificar o quadro'))}function cleanup(){clearTimeout(timer);video.removeEventListener('seeked',done);video.removeEventListener('error',failed)}video.addEventListener('seeked',done,{once:true});video.addEventListener('error',failed,{once:true});try{video.currentTime=t}catch(e){cleanup();reject(e)}})}
 const yieldUI=()=>new Promise(r=>setTimeout(r,0));
-async function analyze(){if(running||!engine||!Number.isFinite(video.duration)||video.duration<=0)return;running=true;cancel=false;video.pause();els.play.textContent='▶ Reproduzir';resetCapture();const total=video.duration,fps=Number(els.fps.value),count=Math.max(1,Math.ceil(total*fps));updateActions();status(`Capturando ${count} amostras no dispositivo. Pode levar alguns minutos…`);let interrupted=false;try{for(let i=0;i<count;i++){if(cancel){interrupted=true;break}const t=Math.min(Math.max(0,total-.045),i/fps);await seekFrame(t);if(cancel){interrupted=true;break}const record=infer(t);if(chosenTarget&&t>=chosenTarget.startTime){if(record.targetFound)targetStats.found++;else targetStats.missing++;}const fp=fingerprint(record);record.repeated=!!fp&&fp===lastFingerprint;if(record.repeated)duplicates++;lastFingerprint=fp;samples.push(record);qualityStats.good+=record.people.filter(p=>p.quality.grade==='boa').length;qualityStats.partial+=record.people.filter(p=>p.quality.grade==='parcial').length;qualityStats.rejected+=record.rejected;els.quality.textContent=`Alta visibilidade: ${qualityStats.good} · Parcial: ${qualityStats.partial} · Descartada: ${qualityStats.rejected} · Repetições: ${duplicates}${chosenTarget?' · Alvo: '+targetStats.found+' encontrado / '+targetStats.missing+' ausente':''}. Visibilidade não garante acerto anatômico.`;draw(record);els.frames.textContent=String(samples.length);els.actors.textContent=String(nextId-1);els.elapsed.textContent=`${Math.min(total,t+1/fps).toFixed(1)} s`;els.progress.style.width=`${Math.round((i+1)/count*100)}%`;els.current.textContent=sec(t);if(i%3===0){status(`Analisando quadro ${i+1}/${count} · ${record.people.length} pose(s) neste quadro`);await yieldUI()}}status(interrupted?`Captura interrompida. ${samples.length} quadros salvos para exportação.`:`Concluído: ${samples.length} quadros e ${nextId-1} rastros estimados; confira as poses parciais antes de reutilizar.`,'good')}catch(e){status(`Falha na análise: ${String(e.message||e)}. ${samples.length} quadro(s) capturados podem ser exportados.`,'error')}finally{running=false;cancel=false;updateActions()}}
+async function analyze(){if(running||!engine||!Number.isFinite(video.duration)||video.duration<=0)return;running=true;cancel=false;video.pause();els.play.textContent='▶ Reproduzir';resetCapture();const total=video.duration,fps=Number(els.fps.value),count=Math.max(1,Math.ceil(total*fps));if(chosenTarget){chosenTarget.anchor={...chosenTarget.initialAnchor};chosenTarget.t=chosenTarget.startTime;chosenTarget.vx=0;chosenTarget.vy=0}updateActions();status(`Capturando ${count} amostras no dispositivo. Pode levar alguns minutos…`);let interrupted=false;try{for(let i=0;i<count;i++){if(cancel){interrupted=true;break}const t=Math.min(Math.max(0,total-.045),i/fps);await seekFrame(t);if(cancel){interrupted=true;break}const record=infer(t);if(chosenTarget&&t>=chosenTarget.startTime){if(record.targetFound)targetStats.found++;else targetStats.missing++;}const fp=fingerprint(record);record.repeated=!!fp&&fp===lastFingerprint;if(record.repeated)duplicates++;lastFingerprint=fp;samples.push(record);qualityStats.good+=record.people.filter(p=>p.quality.grade==='boa').length;qualityStats.partial+=record.people.filter(p=>p.quality.grade==='parcial').length;qualityStats.rejected+=record.rejected;els.quality.textContent=`Alta visibilidade: ${qualityStats.good} · Parcial: ${qualityStats.partial} · Descartada: ${qualityStats.rejected} · Repetições: ${duplicates}${chosenTarget?' · Alvo: '+targetStats.found+' encontrado / '+targetStats.missing+' ausente':''}. Visibilidade não garante acerto anatômico.`;draw(record);els.frames.textContent=String(samples.length);els.actors.textContent=String(nextId-1);els.elapsed.textContent=`${Math.min(total,t+1/fps).toFixed(1)} s`;els.progress.style.width=`${Math.round((i+1)/count*100)}%`;els.current.textContent=sec(t);if(i%3===0){status(`Analisando quadro ${i+1}/${count} · ${record.people.length} pose(s) neste quadro`);await yieldUI()}}status(interrupted?`Captura interrompida. ${samples.length} quadros salvos para exportação.`:`Concluído: ${samples.length} quadros e ${nextId-1} rastros estimados; confira as poses parciais antes de reutilizar.`,'good')}catch(e){status(`Falha na análise: ${String(e.message||e)}. ${samples.length} quadro(s) capturados podem ser exportados.`,'error')}finally{running=false;cancel=false;updateActions()}}
 els.analyze.addEventListener('click',analyze);els.stop.addEventListener('click',()=>{cancel=true;els.stop.disabled=true;status('Interrompendo após o quadro atual…')});
 function dl(blob,name){const href=URL.createObjectURL(blob),a=document.createElement('a');a.href=href;a.download=name;a.style.display='none';document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(href);a.remove()},2000)}
 function safeName(){return clipName.replace(/\.[^/.]+$/,'').replace(/[^\w-]+/g,'_').slice(0,60)||'dance'}
-function jsonDoc(){return {app:'Furuya Motion Studio',version:'0.3',generated:new Date().toISOString(),sourceVideo:clipName,dimensions:[video.videoWidth,video.videoHeight],sourceDuration:video.duration,sampleRate:Number(els.fps.value),numPosesMax:Number(els.persons.value),model:modeLoaded,note:'Visibility quality is heuristic and does not prove anatomical correctness; partial poses and person IDs are not trustworthy motion capture. Tracks may switch under occlusion. World coordinates are estimates, not calibrated mocap.',qualityStats,targetStats,repeatedFrames:duplicates,targetSelection:chosenTarget?{startTime:chosenTarget.startTime,initialCenter:chosenTarget.initialCenter,description:'Reference selected manually; subsequent poses are spatial predictions only, not verified personal identity. Target is dropped after long occlusions.'}:null,landmarkNames:JOINTS,frames:samples}}
+function jsonDoc(){return {app:'Furuya Motion Studio',version:'0.4',generated:new Date().toISOString(),sourceVideo:clipName,dimensions:[video.videoWidth,video.videoHeight],sourceDuration:video.duration,sampleRate:Number(els.fps.value),numPosesMax:Number(els.persons.value),model:modeLoaded,note:'Visibility quality is heuristic and does not prove anatomical correctness. ROI focus and shoulder matching do not prove identity; target may be missing or swapped in crowds. Cropped world coordinates are not calibrated 3D motion.',qualityStats,targetStats,repeatedFrames:duplicates,targetSelection:chosenTarget?{startTime:chosenTarget.startTime,initialCenter:chosenTarget.initialCenter,initialAnchor:chosenTarget.initialAnchor,mode:'shoulder-guided ROI crop',description:'Focused cropped inference; correspondence remains provisional. Gaps can reflect occlusion or model failure. No biometric identity validation.'}:null,landmarkNames:JOINTS,frames:samples}}
 els.json.addEventListener('click',()=>dl(new Blob([JSON.stringify(jsonDoc())],{type:'application/json'}),`${safeName()}_motion.json`));
 els.csv.addEventListener('click',()=>{const rows=['time_s,track_id,possible_target,joint_index,joint_name,x_norm,y_norm,z,visibility,world_x,world_y,world_z'];for(const f of samples)for(const p of f.people)for(let i=0;i<p.landmarks.length;i++){const l=p.landmarks[i],w=p.world?.[i]||['','',''];rows.push([f.t,p.id,!!p.selected,i,JOINTS[i],...l,...w].join(','))}dl(new Blob([rows.join('\n')],{type:'text/csv;charset=utf-8'}),`${safeName()}_motion.csv`)});
 els.png.addEventListener('click',()=>{const c=document.createElement('canvas');c.width=overlay.width;c.height=overlay.height;const x=c.getContext('2d');x.drawImage(video,0,0,c.width,c.height);x.drawImage(overlay,0,0);c.toBlob(b=>{if(b)dl(b,`${safeName()}_pose_${Math.round(video.currentTime*1000)}.png`)},'image/png')});
