@@ -157,14 +157,16 @@ function focusedLandmarks(time){
 function markSelectedTarget(candidates,time){
  if(!chosenTarget||time<chosenTarget.startTime-.04)return;
  const age=Math.max(0,time-chosenTarget.t);
- if(age>1.75)return; // Never silently reattach after losing a person.
+ if(age>0.9)return; // Avoid relinking a different dancer after a sustained occlusion.
  const predicted={x:chosenTarget.anchor.x+chosenTarget.vx*Math.min(age,.6),y:chosenTarget.anchor.y+chosenTarget.vy*Math.min(age,.6)};
  let winner=null,best=Infinity;
- const distanceLimit=Math.min(.18,.10+.10*Math.min(age,1));
+ const distanceLimit=Math.min(.19,.11+.34*Math.min(age,.9));
  for(const c of candidates){
   const anchor=anchorOf(c.lm);
   if(!anchor)continue;
-  const distance=Math.hypot(anchor.x-predicted.x,anchor.y-predicted.y);
+  const projectedDistance=Math.hypot(anchor.x-predicted.x,anchor.y-predicted.y);
+  const stationaryDistance=Math.hypot(anchor.x-chosenTarget.anchor.x,anchor.y-chosenTarget.anchor.y);
+  const distance=Math.min(projectedDistance,stationaryDistance+.012);
   if(distance>distanceLimit)continue;
   const ratio=(chosenTarget.shoulders>.02&&anchor.shoulders>.02)?Math.abs(Math.log(anchor.shoulders/chosenTarget.shoulders)):0;
   if(ratio>.85)continue;
