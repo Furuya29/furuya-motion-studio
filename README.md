@@ -1,4 +1,4 @@
-# Furuya Motion Studio — v0.2 (protótipo experimental)
+# Furuya Motion Studio — v0.3 (protótipo experimental)
 
 ## O que já está implementado
 
@@ -9,6 +9,11 @@
 - Rastreamento **experimental** por proximidade e predição curta; os rótulos agora mostram **trilhas**, não identidades pessoais confiáveis.
 - Filtro heurístico para separar poses **úteis**, **parciais** e **descartadas**; juntas fora da imagem ou com baixa visibilidade não são desenhadas.
 - Suavização temporal leve de pontos quando o rastreador consegue associar poses próximas; isso não resolve cruzamentos ou oclusões complexas.
+- **Seleção manual opcional de um dançarino:** após Detectar quadro, toque em Escolher dançarino e marque o tronco da pessoa na imagem. Isso gera uma referência inicial e sinaliza apenas correspondências prováveis, sem garantir identidade.
+- **Acompanhamento conservador do alvo:** valida proximidade e largura dos ombros; após uma oclusão longa, interrompe a associação do alvo em vez de atribuir automaticamente outra pessoa.
+- **Diagnóstico de repetição de poses:** contabiliza resultados exatamente repetidos em amostras consecutivas, sem presumir que a causa seja o decodificador.
+- **Alinhamento de sobreposição:** vídeo e canvas usam a mesma área visível, eliminando desalinhamento causado por altura máxima divergente.
+- A prévia em tempo real **não** foi adicionada. A detecção de um quadro acontece somente ao pressionar Detectar quadro; a varredura completa acontece somente ao pressionar Capturar coreografia.
 - Exportação local em JSON (33 articulações, coordenadas normalizadas + coordenadas 3D aproximadas), CSV e quadro PNG.
 - Sem upload de vídeo para nossos servidores. O motor JavaScript e o modelo são baixados de servidores públicos na primeira execução.
 
@@ -20,11 +25,13 @@
 3. Vá a **Settings → Pages → Build and deployment** e selecione **Deploy from a branch**, branch `main`, pasta `/(root)`.
 4. Abra o endereço HTTPS fornecido por GitHub Pages no Chrome do Redmi K70 Ultra.
 5. Toque em **Selecionar vídeo do aparelho**, selecione um MP4 e em **Carregar IA no aparelho**.
-6. Use **Detectar quadro** antes de iniciar **Capturar coreografia**; acompanhe as contagens **úteis/parciais/descartadas** e exporte JSON para auditar as trilhas.
-7. A captura é exploratória: se as poses estiverem fora do corpo ou forem majoritariamente parciais, não reutilize os dados na animação final.
+6. Para rastrear um dançarino específico, pause em um instante próximo do início com corpo claramente visível, pressione **Detectar quadro**, depois **Escolher dançarino** e toque no tronco da pessoa desenhada. Esse passo é opcional.
+7. Pressione **Capturar coreografia** para analisar os instantes amostrados. Acompanhe as contagens de alta visibilidade/parciais/descartadas e as possíveis repetições.
+8. Exporte JSON para auditar o atributo `selected` em cada pose, `targetStats` e `repeatedFrames` (o CSV também possui a coluna `possible_target`).
+9. A captura é exploratória: se as poses estiverem fora do corpo ou forem majoritariamente parciais, não reutilize os dados na animação final.
 
-### Teste de qualidade no Redmi (v0.2)
-- Atualize a página (se necessário, recarregue sem cache) e confirme o selo **ALPHA 0.2**.
+### Teste de qualidade no Redmi (v0.3)
+- Atualize a página (se necessário, recarregue sem cache) e confirme o selo **ALPHA 0.3**.
 - Use inicialmente **Lite / 3 pessoas / 4 amostras/s**; para melhorar a frequência temporal, experimente 8 amostras/s após o teste inicial.
 - Carregue o modelo, selecione o mesmo vídeo, detecte um quadro e capture a coreografia.
 - Confira os números de poses úteis, parciais e descartadas. Numa multidão, ter muitas trilhas criadas não prova que a IA acompanhou muitas pessoas reais; geralmente reflete entradas/saídas e trocas.
@@ -33,12 +40,17 @@
 
 O GitHub Pages hospeda apenas o site estático. O vídeo escolhido e as inferências de pose são processados no navegador do celular. As bibliotecas e modelos externos ainda precisam ser baixados; não é totalmente offline.
 
+### Observações sobre o alvo
+- O campo `targetSelection` documenta apenas a referência indicada com o toque. `selected: true` significa **provável continuidade**, não uma identidade biométrica comprovada.
+- A partir de oclusões longas, o sistema pode deixar de marcar o alvo pelo restante do vídeo. É preferível essa lacuna a seguir outra pessoa silenciosamente.
+- Na gravação lotada de referência, pernas e pés frequentemente ficam fora do enquadramento; não há informação suficiente para uma coreografia corporal completa.
+
 ### Alternativa experimental: abrir `index.html` diretamente
 Pode funcionar em alguns navegadores Android, mas origens `file://` podem bloquear o carregamento de WebAssembly/modelos. Se falhar, use o método HTTPS acima. Não desative configurações de segurança do Chrome.
 
 ## Uso responsável e limitações
 
-- A **v0.1 foi executada** no Redmi K70 Ultra com delegate GPU, mas apresentou pontos deslocados, pessoas parciais e diversas trocas de trilha numa multidão. A **v0.2 ainda depende de validação visual no aparelho**.
+- As versões **v0.1** e **v0.2** foram executadas no Redmi K70 Ultra. A v0.2 cobriu o vídeo inteiro, mas continuou apresentando poses parciais, rastros interrompidos e pontos fora da imagem. A **v0.3 ainda depende de validação visual e de consistência do rastreamento no aparelho**.
 - O MediaPipe identifica pontos do corpo (pose landmarks) e não garante IDs persistentes em multidões.
 - Ainda **não** gera vídeos com personagens de anime, não faz substituição de seis atores, não gera rig 2D e não integra Wan2.2-Animate. Essas são fases seguintes.
 - Os dados 3D (`world`) são aproximações inferidas de câmera monocular, e não captura 3D calibrada profissionalmente.
@@ -53,8 +65,8 @@ Pode funcionar em alguns navegadores Android, mas origens `file://` podem bloque
 
 ## Próximas fases
 
-1. Validar os filtros de qualidade e a exportação JSON no Redmi.
-2. Substituir o rastreador simples por tracking multi-pessoa com manutenção de identidade e correção manual.
+1. Validar a v0.3 no Redmi: alinhamento, escolha de alvo, contagem de repetição e cobertura de quadros.
+2. Aprimorar o rastreamento multi-pessoa com reidentificação, anotações manuais em instantes posteriores e avaliação de consistência.
 3. Criar rig 2D / importação de camadas e associar cada boneco ao movimento.
 4. Ferramentas para rostos, mãos, montagem e exportação de vídeo.
 5. Integração opcional de Wan2.2-Animate via GPU compatível, sem depender dele para o funcionamento básico.
