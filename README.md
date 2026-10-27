@@ -26,9 +26,21 @@ A página `compositor.html` e o motor `compositor.js` foram adicionados ao proje
 
 **Limites honestos:** isso é composição 2D sobre vídeo, NÃO face swap por inteligência artificial, recasting generativo, remoção do corpo original, reconstrução de membros ocultos, rig 2D segmentado ou preservação por IA de cabelo/roupa quadro a quadro. A arte carregada não é gerada novamente; por isso mantém os pixels da imagem, mas é apenas deslocada, escalada e girada como sprite rígido. Oclusões, mudanças drásticas de ângulo, rotatividade e trocas de trilha ainda exigem tratamento especializado.
 
-### Próximo motor: FaceSwap/Video-to-video (ainda não instalado)
+### Adaptador desktop FaceFusion (preparado, mas motor não instalado)
 
-Será módulo opcional **desktop** com motor open-source e validação de uso no PC antes de qualquer promessa de tempo real ou qualidade. O PC Remote Agent está em manutenção; não houve execução remota nem instalação no PC nesta entrega. Não usar serviços externos pagos como dependência obrigatória. A face swap de pessoas reais e o recasting de corpos inteiros terão módulos e avisos separados.
+O arquivo `desktop/facefusion_adapter.py` contém um **adaptador funcional de CLI** para FaceFusion: verifica caminhos, prepara `headless-run` com fonte, vídeo-alvo e saída, seleciona modo de referência, valida sobreposição de saída e oferece CPU/DirectML/CUDA/ROCm. **Por padrão, não executa nada** (dry-run); somente `--execute` inicia um FaceFusion já instalado. Nenhum serviço externo é obrigatório.
+
+Documentação oficial consultada em 2026-10-27: [FaceFusion CLI](https://docs.facefusion.io/usage/cli-commands/general), [Paths](https://docs.facefusion.io/usage/cli-arguments/paths), [Selector](https://docs.facefusion.io/usage/cli-arguments/face-selector), [Processors](https://docs.facefusion.io/usage/cli-arguments/processors), [Execution Providers](https://docs.facefusion.io/usage/cli-arguments/execution).
+
+Exemplo de inspeção **no PC onde o FaceFusion já estiver instalado** (não há instalação automática neste repositório):
+
+```powershell
+python desktop/facefusion_adapter.py --facefusion-dir "C:\\FaceFusion" --source "C:\\imagens\\rosto.png" --video "C:\\videos\\danca.mp4" --output "C:\\videos\\danca_fusion.mp4" --provider cpu --reference-frame 48
+```
+
+Se a prévia do comando estiver correta e **somente após verificar a instalação**, acrescente `--execute`. O modo de referência **não garante** associação correta de múltiplos rostos em multidões; esta primeira versão só prepara **uma substituição facial por trabalho**, sem recasting de corpo inteiro. Requisitos de hardware e aceleração AMD ainda não foram verificados.
+
+O PC Remote Agent está em manutenção; **não houve execução remota nem instalação no PC nesta entrega**. Não publicar o material editado como gravação autêntica; sinalize conteúdo sintético quando apropriado.
 
 ---
 
