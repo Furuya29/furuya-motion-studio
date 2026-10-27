@@ -197,10 +197,12 @@ function choosePerson(event){
  if(x<0||y<0||x>1||y>1)return;
  let chosen=null,score=Infinity;
  for(const p of lastPreview.people){
-   const s=Math.hypot(p.center.x-x,p.center.y-y);
-   if(s<score){chosen=p;score=s}
+   const shoulder=anchorOf(p.landmarks.map(q=>({x:q[0],y:q[1],visibility:q[3]})));
+   if(!shoulder)continue;
+   const distance=Math.hypot(shoulder.x-x,(shoulder.y+.075-y)*.75);
+   if(distance<score){chosen=p;score=distance}
  }
- if(!chosen||score>.34){status('Toque próximo ao tronco de uma pose detectada.','error');return}
+ if(!chosen||score>.23){status('Toque na parte superior do tronco com os ombros bem visíveis.','error');return}
  const a=anchorOf(chosen.landmarks.map(p=>({x:p[0],y:p[1],visibility:p[3]})));
  if(!a){selectingTarget=false;status('Os dois ombros não estão visíveis nesse quadro. Selecione um quadro mais nítido antes de escolher.','error');return}
  chosenTarget={startTime:lastPreview.t,initialCenter:{...chosen.center},initialAnchor:{x:a.x,y:a.y},anchor:{x:a.x,y:a.y},t:lastPreview.t,shoulders:a.shoulders,vx:0,vy:0};
