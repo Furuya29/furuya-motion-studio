@@ -35,7 +35,7 @@ Documentação oficial consultada em 2026-10-27: [FaceFusion CLI](https://docs.f
 Exemplo de inspeção **no PC onde o FaceFusion já estiver instalado** (não há instalação automática neste repositório):
 
 ```powershell
-python desktop/facefusion_adapter.py --facefusion-dir "C:\\FaceFusion" --source "C:\\imagens\\rosto.png" --video "C:\\videos\\danca.mp4" --output "C:\\videos\\danca_fusion.mp4" --provider cpu --reference-frame 48
+python desktop/facefusion_adapter.py --facefusion-dir "C:\FaceFusion" --source "C:\imagens\rosto.png" --video "C:\videos\danca.mp4" --output "C:\videos\danca_fusion.mp4" --provider cpu --reference-frame 48
 ```
 
 Se a prévia do comando estiver correta e **somente após verificar a instalação**, acrescente `--execute`. O modo de referência **não garante** associação correta de múltiplos rostos em multidões; esta primeira versão só prepara **uma substituição facial por trabalho**, sem recasting de corpo inteiro. Requisitos de hardware e aceleração AMD ainda não foram verificados.
