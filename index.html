@@ -130,8 +130,9 @@ function assign(landmarks,world,time) {
 }
 function markSelectedTarget(candidates,time){
  if(!chosenTarget)return;
- if(time<chosenTarget.startTime-.65)return;
+ if(time<chosenTarget.startTime-.04)return; // Cannot establish identity before the manually chosen reference frame.
  const age=Math.max(0,time-chosenTarget.t);
+ if(age>1.5)return; // Never silently reassign the target after a long occlusion.
  const predicted={x:chosenTarget.center.x+chosenTarget.vx*Math.min(age,.75),y:chosenTarget.center.y+chosenTarget.vy*Math.min(age,.75)};
  let nearest=null,best=Infinity;
  for(const c of candidates){
@@ -141,6 +142,7 @@ function markSelectedTarget(candidates,time){
   if(distance>span)continue;
   const shoulders=c.lm[11]&&c.lm[12]?Math.abs(c.lm[11].x-c.lm[12].x):0;
   const ratio=chosenTarget.shoulders>0.02&&shoulders>0.02?Math.abs(Math.log(shoulders/chosenTarget.shoulders)):0;
+  if(ratio>.72)continue;
   const score=distance+Math.min(.08,ratio*.04);
   if(score<best){best=score;nearest=c}
  }
@@ -158,7 +160,7 @@ function markSelectedTarget(candidates,time){
 }
 function fingerprint(record){
  if(!record.people?.length)return '';
- return record.people.map(p=>[p.id,...[11,12,13,14,15,16,23,24].flatMap(i=>p.landmarks[i]?.slice(0,2)??[])].join('|')).join(';');
+ return record.people.map(p=>[p.center.x.toFixed(3),p.center.y.toFixed(3),...[11,12,13,14,15,16,23,24].flatMap(i=>p.landmarks[i]?.slice(0,2)??[])].join('|')).sort().join(';');
 }
 function choosePerson(event){
  if(!selectingTarget||!lastPreview?.people?.length)return;
@@ -177,7 +179,7 @@ function choosePerson(event){
  resetCapture();
  lastPreview.people.forEach(p=>p.selected=p===chosen);
  draw(lastPreview);
- els.targetStatus.textContent=`Dançarino escolhido em ${lastPreview.t.toFixed(2)}s. A captura buscará essa pessoa até que fique oculta; pode haver perdas de rastreamento. Selecione de preferência perto do início.`;
+ els.targetStatus.textContent=`Referência escolhida em ${lastPreview.t.toFixed(2)}s. Após uma oclusão longa, o rastreador deixará o alvo ausente em vez de assumir uma identidade sem confirmação. Selecione de preferência perto do início.`;
  status('Pessoa escolhida. Agora toque em Capturar coreografia.','good');
  updateActions();
 }
@@ -215,7 +217,7 @@ function draw(frame) {
       if(ok(p)){ctx.beginPath();ctx.arc(p[0]*w,p[1]*h,3*scale,0,Math.PI*2);ctx.fill()}
     }
     const c=person.center,x=Math.max(5,Math.min(w-145*scale,c.x*w-25*scale)),y=Math.max(22*scale,Math.min(h-8*scale,c.y*h-h*.16));
-    const label=`${person.selected?'★ Dançarino escolhido':'Trilha '+person.id} · ${person.quality?.grade==='boa'?'visível':'parcial'}`;
+    const label=`${person.selected?'★ Alvo provável':'Trilha '+person.id} · ${person.quality?.grade==='boa'?'visível':'parcial'}`;
     ctx.font=`${12*scale}px system-ui`;const tw=ctx.measureText(label).width;
     ctx.fillStyle="#060c19da";ctx.fillRect(x,y-17*scale,tw+10*scale,20*scale);
     ctx.fillStyle=col;ctx.fillText(label,x+5*scale,y-3*scale);
@@ -232,9 +234,9 @@ async function analyze(){if(running||!engine||!Number.isFinite(video.duration)||
 els.analyze.addEventListener('click',analyze);els.stop.addEventListener('click',()=>{cancel=true;els.stop.disabled=true;status('Interrompendo após o quadro atual…')});
 function dl(blob,name){const href=URL.createObjectURL(blob),a=document.createElement('a');a.href=href;a.download=name;a.style.display='none';document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(href);a.remove()},2000)}
 function safeName(){return clipName.replace(/\.[^/.]+$/,'').replace(/[^\w-]+/g,'_').slice(0,60)||'dance'}
-function jsonDoc(){return {app:'Furuya Motion Studio',version:'0.3',generated:new Date().toISOString(),sourceVideo:clipName,dimensions:[video.videoWidth,video.videoHeight],sourceDuration:video.duration,sampleRate:Number(els.fps.value),numPosesMax:Number(els.persons.value),model:modeLoaded,note:'Visibility quality is heuristic and does not prove anatomical correctness; partial poses and person IDs are not trustworthy motion capture. Tracks may switch under occlusion. World coordinates are estimates, not calibrated mocap.',qualityStats,targetStats,repeatedFrames:duplicates,targetSelection:chosenTarget?{startTime:chosenTarget.startTime,initialCenter:chosenTarget.initialCenter,description:'Manual target, approximate continuity; this is not biometric identification.'}:null,landmarkNames:JOINTS,frames:samples}}
+function jsonDoc(){return {app:'Furuya Motion Studio',version:'0.3',generated:new Date().toISOString(),sourceVideo:clipName,dimensions:[video.videoWidth,video.videoHeight],sourceDuration:video.duration,sampleRate:Number(els.fps.value),numPosesMax:Number(els.persons.value),model:modeLoaded,note:'Visibility quality is heuristic and does not prove anatomical correctness; partial poses and person IDs are not trustworthy motion capture. Tracks may switch under occlusion. World coordinates are estimates, not calibrated mocap.',qualityStats,targetStats,repeatedFrames:duplicates,targetSelection:chosenTarget?{startTime:chosenTarget.startTime,initialCenter:chosenTarget.initialCenter,description:'Reference selected manually; subsequent poses are spatial predictions only, not verified personal identity. Target is dropped after long occlusions.'}:null,landmarkNames:JOINTS,frames:samples}}
 els.json.addEventListener('click',()=>dl(new Blob([JSON.stringify(jsonDoc())],{type:'application/json'}),`${safeName()}_motion.json`));
-els.csv.addEventListener('click',()=>{const rows=['time_s,person_id,joint_index,joint_name,x_norm,y_norm,z,visibility,world_x,world_y,world_z'];for(const f of samples)for(const p of f.people)for(let i=0;i<p.landmarks.length;i++){const l=p.landmarks[i],w=p.world?.[i]||['','',''];rows.push([f.t,p.id,i,JOINTS[i],...l,...w].join(','))}dl(new Blob([rows.join('\n')],{type:'text/csv;charset=utf-8'}),`${safeName()}_motion.csv`)});
+els.csv.addEventListener('click',()=>{const rows=['time_s,track_id,possible_target,joint_index,joint_name,x_norm,y_norm,z,visibility,world_x,world_y,world_z'];for(const f of samples)for(const p of f.people)for(let i=0;i<p.landmarks.length;i++){const l=p.landmarks[i],w=p.world?.[i]||['','',''];rows.push([f.t,p.id,!!p.selected,i,JOINTS[i],...l,...w].join(','))}dl(new Blob([rows.join('\n')],{type:'text/csv;charset=utf-8'}),`${safeName()}_motion.csv`)});
 els.png.addEventListener('click',()=>{const c=document.createElement('canvas');c.width=overlay.width;c.height=overlay.height;const x=c.getContext('2d');x.drawImage(video,0,0,c.width,c.height);x.drawImage(overlay,0,0);c.toBlob(b=>{if(b)dl(b,`${safeName()}_pose_${Math.round(video.currentTime*1000)}.png`)},'image/png')});
 updateActions();
 </script>
