@@ -1,6 +1,38 @@
-# Furuya Motion Studio — v0.5 (protótipo experimental)
+# Furuya Motion Studio — captura v0.5 + compositor 2D v0.6
 
-## O que já está implementado
+## Novo módulo v0.6 — Compositor visual de personagens 2D
+
+**Abrir:** [Compositor 2D](https://furuya29.github.io/furuya-motion-studio/compositor.html?v=0.6)
+
+A página `compositor.html` e o motor `compositor.js` foram adicionados ao projeto sem modificar o algoritmo MediaPipe de captura v0.5.
+
+### O que já foi implementado de fato
+
+1. Importar no Chrome Android o **mesmo vídeo** MP4/WebM e o JSON previamente exportado pelo motor de captura.
+2. Adicionar **múltiplas camadas de personagem**, cada uma com uma imagem PNG/WebP e associação ao **alvo marcado** ou a um **ID de trilha** extraído do JSON.
+3. Posicionar a imagem pelos landmarks de ombros, cabeça/orelhas, quadris e rotação estimada; modos de imagem **cabeça/rosto** e **corpo rígido**, com controle de escala, opacidade e offsets X/Y.
+4. Prévia local por Canvas, reprodução do vídeo, busca temporal e interpolação **somente entre amostras próximas** da mesma trilha. Breves retenções de pose são permitidas, sem fingir que se trata de nova medição.
+5. Salvar um PNG do quadro ou tentar gravar vídeo local por `Canvas.captureStream()` + `MediaRecorder`; conforme o navegador, saída WebM ou MP4, **sem áudio**, em tempo real. Teto de dimensão de saída ~1280 pixels no maior lado.
+6. Mensagens de cobertura da trilha no JSON, avisos para vídeos de proporções/durações diferentes, indicador de transparência da imagem importada.
+
+### Primeiro teste recomendado
+
+- Faça uma captura v0.5 e exporte o JSON; mantenha o arquivo de vídeo original.
+- Abra o compositor v0.6; importe o mesmo vídeo e o arquivo JSON.
+- Em **Personagem 1**, importe uma imagem PNG **com fundo transparente** (ex.: rosto/cabeça do personagem).
+- Selecione `★ Alvo escolhido na captura`. Ajuste escala e posição na prévia de aproximadamente 2 a 8 segundos, pois o alvo esteve visível apenas num subconjunto da gravação de teste.
+- Se desejar, adicione personagem 2, atribuindo um **ID de trilha diferente**.
+- Salve um PNG, depois tente **Exportar vídeo** no Chrome Android. O formato de vídeo depende do suporte a `MediaRecorder`, e o browser pode limitar o FPS de saída.
+
+**Limites honestos:** isso é composição 2D sobre vídeo, NÃO face swap por inteligência artificial, recasting generativo, remoção do corpo original, reconstrução de membros ocultos, rig 2D segmentado ou preservação por IA de cabelo/roupa quadro a quadro. A arte carregada não é gerada novamente; por isso mantém os pixels da imagem, mas é apenas deslocada, escalada e girada como sprite rígido. Oclusões, mudanças drásticas de ângulo, rotatividade e trocas de trilha ainda exigem tratamento especializado.
+
+### Próximo motor: FaceSwap/Video-to-video (ainda não instalado)
+
+Será módulo opcional **desktop** com motor open-source e validação de uso no PC antes de qualquer promessa de tempo real ou qualidade. O PC Remote Agent está em manutenção; não houve execução remota nem instalação no PC nesta entrega. Não usar serviços externos pagos como dependência obrigatória. A face swap de pessoas reais e o recasting de corpos inteiros terão módulos e avisos separados.
+
+---
+
+## O que já está implementado no motor de captura
 
 - Importação local de arquivos MP4/WebM compatíveis com o Chrome Android.
 - MediaPipe Pose Landmarker Lite ou Full, inicialização GPU com fallback automático para CPU.
