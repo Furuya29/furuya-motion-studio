@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#0b1020">
+<title>Furuya Motion Studio · Recasting v0.7</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#151f34;--edge:#34435e;--muted:#b4c3dc;--ink:#f4f6ff;--mint:#80f0d3;--purple:#b8a2ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 85% -15%,#33294e,transparent 55%),#090e1b;color:var(--ink);font:14px/1.5 system-ui,-apple-system,Roboto,"Segoe UI",sans-serif}
+main{max-width:1120px;margin:auto;padding:17px 12px 55px}.brand{display:flex;gap:12px;align-items:center;margin-bottom:12px}.logo{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,#9778ff,#6ae5c8);color:#11152b;font-size:26px;font-weight:800;display:grid;place-items:center}
+h1{font-size:19px;line-height:1.2;margin:0}h2{font-size:15px;margin:0 0 10px}h3{font-size:13px;margin:0 0 6px}p{margin:5px 0 12px}.sub{font-size:11px;color:var(--muted)}
+.tag{margin-left:auto;border:1px solid #6f5ca0;color:#e1d6ff;background:#292139;padding:5px 9px;font-size:11px;border-radius:30px;white-space:nowrap}
+section{background:#131d30df;border:1px solid var(--edge);border-radius:15px;margin-bottom:12px;padding:14px}.columns{display:grid;gap:12px}.controlGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.row>*{flex:1}button{border:0;border-radius:9px;background:#273654;color:#fff;font:inherit;padding:10px 8px;min-height:42px;cursor:pointer;font-weight:650}button:disabled{opacity:.4;cursor:not-allowed}
+.primary{background:linear-gradient(110deg,#7f61e2,#6557c8)}.mint{background:#175b4e;color:#b9ffdf}.warning{background:#482e3a;color:#ffd6de}
+input,select{font:inherit;max-width:100%}input[type=file]{width:100%;font-size:12px}
+input[type=number],input[type=text],select{width:100%;border:1px solid #485879;background:#0b1426;color:var(--ink);border-radius:9px;padding:9px}
+input[type=range]{width:100%;accent-color:#a892ff}label{font-size:12px;color:var(--muted);display:block;margin:0 0 5px}
+a{color:#aaffdf;text-decoration:none}.message{padding:10px;background:#24324a;border-radius:10px;font-size:12px;margin:9px 0}.message.error{background:#4d2735;color:#ffe0e5}.note{padding:10px;border-left:3px solid #e9bd71;background:#3c3126;border-radius:8px;color:#ffe7bc;font-size:12px}
+.frame{max-width:480px;margin:auto;background:#070b16;position:relative;display:grid;place-items:center;border-radius:12px;overflow:hidden;border:1px solid #40506d}
+#stage{display:block;max-width:100%;height:auto;touch-action:none;background:#070b16}#stage:focus-visible{outline:2px solid #c8abff}
+.line{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin:5px 0}
+#timeline{margin:9px 0}.editorButtons{display:flex;gap:5px;flex-wrap:wrap}.editorButtons button{font-size:12px}
+#slots{display:grid;gap:10px}.slot{border:1px solid #4d5477;background:#101b32;border-radius:12px;padding:11px}.slot.selected{border-color:var(--mint)}.slot-head{display:flex;align-items:center;justify-content:space-between}
+.status-tag{font-size:11px;color:var(--mint)}.small{font-size:11px}.outGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hr{height:1px;background:#30405e;margin:13px 0}.stats{color:var(--muted);font-size:11px}
+.layerhint{color:#ffc98d}.thumb{height:66px;max-width:100px;object-fit:contain;background:#22314d;border-radius:8px;border:1px solid #4a5770}
+@media(min-width:850px){.columns{grid-template-columns:1.05fr .95fr;align-items:start}.frame{max-width:470px}}
+@media(max-width:430px){main{padding:11px 9px}.controlGrid{gap:7px}section{padding:12px}.row button{font-size:12px}.editorButtons button{min-height:36px}}
+</style></head><body><main>
+<header class="brand"><div class="logo">F</div><div><h1>Furuya Motion Studio</h1><div class="sub">VIDEO-FIRST · SUBSTITUIÇÃO INTEGRAL DE PERSONAGENS</div></div><div class="tag">ALPHA 0.7</div></header>
+<p class="sub"><a href="./">← Captura de poses</a> · <a href="./compositor.html?v=0.6.1">Compositor rígido antigo</a></p>
+<div class="note"><b>Editor de preparação para IA generativa.</b> Este módulo trabalha sem JSON MediaPipe. Prepara vídeos, referências visuais e máscaras para modelos de substituição do <b>corpo inteiro</b>. Não gera movimento por IA nem remove automaticamente pessoas do vídeo. A imagem sobreposta é apenas uma referência provisória; o quadro definitivo deve ser retocado com a pessoa completamente substituída.</div>
+<div class="columns" style="margin-top:12px">
+<div>
+<section><h2>01 · Vídeo original</h2><label for="videoFile">Carregar vídeo-base</label><input id="videoFile" type="file" accept="video/*,.mp4,.webm,.mov">
+<div class="controlGrid" style="margin-top:8px"><div><label for="clipStart">Início do trecho (s)</label><input id="clipStart" type="number" min="0" step=".1" value="0"></div><div><label for="clipLength">Duração do trecho (s)</label><select id="clipLength"><option value="3">3 segundos</option><option value="5" selected>5 segundos</option><option value="8">8 segundos</option></select></div></div>
+<div class="message" id="status" role="status" aria-live="polite">Carregue um vídeo. Nenhum arquivo será enviado à nuvem nesta etapa.</div>
+<p class="sub" id="videoInfo">O editor criará quadros na proporção do vídeo, até 1024 px no lado maior.</p>
+</section>
+<section><h2>02 · Quadro original e máscaras</h2>
+<div class="frame"><canvas id="stage" width="384" height="672" tabindex="0" aria-label="Editor de quadro"></canvas></div>
+<input id="timeline" aria-label="Linha do tempo" type="range" min="0" max="1000" value="0" disabled>
+<div class="line"><span id="now">00:00.00</span><span id="end">00:00.00</span></div>
+<div class="editorButtons"><button id="play" disabled>▶ Reprodução</button><button id="pause" disabled>Ⅱ Pausar</button><button id="maskMode" disabled>✎ Marcar silhueta</button><button id="dragMode" disabled>✥ Mover referência</button></div>
+<div class="editorButtons" style="margin-top:7px"><button id="undoMask" disabled>↶ Desfazer ponto</button><button id="clearMask" disabled>× Limpar máscara</button><button id="clearOverlay" disabled>◎ Ocultar sobreposição</button></div>
+<p class="sub">Modo <b>silhueta</b>: toque em pontos do contorno de UMA pessoa para produzir a máscara. Modo <b>mover</b>: arraste a imagem do personagem sobre o alvo. Essa máscara é material de preparação, não segmentação automática.</p>
+</section>
+</div>
+<div>
+<section><h2>03 · Substituição de pessoa inteira</h2><p class="sub">Cadastre a referência de cada personagem separadamente. Rosto, corpo, vestes, cabelo e acessórios fazem parte da mesma identidade visual. Escolha o personagem ativo para editar a máscara e sua posição.</p>
+<div id="slots"></div>
+<button id="addSlot" disabled class="mint">＋ Novo personagem</button>
+<div class="hr"></div>
+<div id="controls" hidden>
+<div class="controlGrid"><div><label for="scale">Escala <span id="scaleValue">100%</span></label><input id="scale" type="range" min="20" max="300" step="5" value="100"></div><div><label for="rotation">Rotação <span id="rotationValue">0°</span></label><input id="rotation" type="range" min="-180" max="180" step="1" value="0"></div><div><label for="offsetX">Horizontal <span id="xValue">0%</span></label><input id="offsetX" type="range" min="-100" max="100" step="1" value="0"></div><div><label for="offsetY">Vertical <span id="yValue">0%</span></label><input id="offsetY" type="range" min="-100" max="100" step="1" value="0"></div></div>
+</div>
+</section>
+<section><h2>04 · Quadro retocado para o modelo</h2>
+<label for="repaintFile">Opcional: importar quadro FINAL já retocado (PNG/JPG)</label>
+<input id="repaintFile" type="file" accept="image/png,image/jpeg,image/webp">
+<p class="sub" id="repaintInfo">Para Viggle-Animate, este quadro deve vir do próprio vídeo, com a pessoa inteira substituída e todo o restante preservado. A simples PNG sobreposta não substitui o trabalho de retoque.</p>
+<div class="row"><button id="repaintView" disabled>Ver quadro retocado</button><button id="sourceView" disabled>Ver vídeo-base</button></div>
+</section>
+<section><h2>05 · Pacote de preparação</h2>
+<div class="outGrid"><button id="saveSource" disabled>↓ Quadro-base PNG</button><button id="saveDraft" disabled>↓ Rascunho PNG</button><button id="saveMask" disabled>↓ Máscara PNG</button><button id="saveProject" disabled>↓ Projeto JSON</button><button id="saveRepaint" disabled>↓ Quadro retocado PNG</button><button id="saveSegment" disabled class="primary">↓ Trecho de vídeo</button></div>
+<div class="message" id="exportInfo">O vídeo é exportado localmente em WebM, quando o navegador permitir. Se o modelo exigir MP4, converta o trecho antes de executar a inferência.</div>
+<p class="sub">O pacote contém arquivos individuais. **Não é um vídeo gerado por IA.** Para a rota Viggle-Animate são necessários o trecho do vídeo e um quadro retocado daquele mesmo trecho. Para Wan2.2-Animate, o pré-processamento oficial é diferente e deve ser executado separadamente.</p>
+</section>
+</div></div>
+<video id="video" playsinline muted preload="auto" style="display:none"></video>
+<footer class="sub" style="margin-top:16px;text-align:center">Furuya Motion Studio v0.7 · Preparação local gratuita · Nenhuma API ou GPU remota conectada</footer>
+</main><script src="./recast.js?v=0.7" defer></script></body></html>
