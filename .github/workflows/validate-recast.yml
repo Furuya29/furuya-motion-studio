@@ -1,0 +1,28 @@
+name: Validate Furuya Motion Studio
+on:
+  push:
+    paths:
+      - 'recast.html'
+      - 'recast.js'
+      - 'cloud/**'
+      - 'tests/**'
+      - '.github/workflows/validate-recast.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: JavaScript syntax check
+        run: node --check recast.js
+      - name: Recasting editor smoke test
+        run: node tests/recast_smoke.mjs
+      - name: Python preflight syntax check
+        run: python -m py_compile cloud/free_gpu_preflight.py
+      - name: Free GPU preflight never needs GPU or payment
+        run: |
+          python cloud/free_gpu_preflight.py --workdir . > /tmp/furuya_gpu_report.json
+          python -c "import json; r=json.load(open('/tmp/furuya_gpu_report.json')); assert r['spent_money']==0 and r['downloads_started']==False and r['models_loaded']==False; print('PASS: preflight is read-only')"
