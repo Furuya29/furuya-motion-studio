@@ -1,8 +1,18 @@
 # Furuya Motion Studio — captura v0.5 + compositor 2D v0.6
 
+## Correção de usabilidade v0.8.1 — por que a personagem desaparece ao reproduzir
+
+A gravação real `1000585256.webm` de 5 segundos enviada pelo usuário mostrou apenas o **vídeo base** nas amostras examinadas. Isso é compatível com o funcionamento esperado do editor: a prévia com personagem é um **quadro-chave estático** (dentro de ~0,26 s do instante marcado); ao reproduzir, o original aparece, sem propagação de identidade. O botão **Vídeo ORIGINAL (sem IA)** exporta apenas o material de entrada para IA, sem alteração da pessoa. Isso não é bug de renderizador: a **geração temporal nunca foi implementada**.
+
+Na v0.8.1 foram adicionados avisos permanentes junto ao canvas, rótulos explícitos no play e na exportação, mensagens dinâmicas ao sair do instante de edição, e documentação das limitações. Nenhum processamento por IA foi adicionado; é incorreto recomendar o play como validação de animação. O próximo teste relevante exige realmente executar um modelo generativo de recasting, com quadro integralmente retocado, condições gratuitas verificadas e respeito aos limites do provedor.
+
+A avaliação de vídeo pelo usuário **não comprova que a pessoa foi substituída com fidelidade**. Não confundir preview de still, rascunho e vídeo final gerado.
+
+---
+
 ## Editor v0.8 — Quadros-chave e preparação reproduzível (implantado)
 
-**Abrir:** https://furuya29.github.io/furuya-motion-studio/recast.html?v=0.8
+**Abrir:** https://furuya29.github.io/furuya-motion-studio/recast.html?v=0.8.1
 
 A v0.8 implementa quadros-chave independentes para cada personagem, máscaras por instante, restauração de quadros salvos, importação e exportação de projetos JSON. Os arquivos de imagem e vídeo não são embutidos no JSON: ao restaurar o projeto, reimporte os arquivos originais.
 
