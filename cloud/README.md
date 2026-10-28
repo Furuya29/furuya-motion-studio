@@ -1,6 +1,35 @@
 # Furuya Motion Studio — Plano zero orçamento para geração video-to-video
 Verificado: 2026-10-28. Objetivo: substituição da pessoa **inteira** (corpo, cabelo, rosto, roupas, acessórios), não só face swap.
 
+## Implantação v0.8 — arquivos e pontos de entrada confirmados
+
+- Interface de preparação principal: https://furuya29.github.io/furuya-motion-studio/recast.html?v=0.8
+- `recast.js`: editor **sem MediaPipe**, várias pessoas, máscaras e referências temporais independentes, importação/exportação de projeto JSON `furuya-recast-project/0.8`.
+- `tools/prepare_clip.py`: prepara clipe H.264 24 fps `driving.mp4`, quadro do mesmo clipe `source-ref.png` e, se um quadro totalmente retocado tiver sido fornecido, `repainted-ref.png`. Usa FFmpeg já disponível; por padrão NÃO executa (dry-run).
+- `cloud/viggle_inference.py`: adaptador do `inference/sample.py` oficial; aponta para checkout e checkpoints existentes. Sem download, GPU, pagamento ou inferência a menos que `--execute` seja solicitado.
+- Testes CI: `tests/recast_smoke.mjs`, `tests/test_prepare_clip.py`, `tests/test_viggle_adapter.py`; compilação sintática Python e JavaScript. GitHub Actions em `.github/workflows/validate-recast.yml`.
+- Space público oficial [Viggle-Animate ZeroGPU](https://huggingface.co/spaces/Viggle/viggle-animate) estava marcado **Running on Zero** em 2026-10-28. Isso só confirma a disponibilidade pública da interface, **não** confirma que a quota Free completará o render do usuário. O uso envia vídeo e imagem ao provedor; é totalmente opcional.
+- **Sem teste final de inferência até esta data**. Não declarar que o fluxo IA está pronto ou que múltiplas pessoas terão fidelidade perfeita.
+
+### Preparação por CPU sem pagamento
+
+```bash
+python tools/prepare_clip.py --project furuya-projeto-recasting.json --video original.mp4 --outdir pasta_saida --repaint quadro_final_retocado.png
+# Se a validação estiver correta e FFmpeg já estiver instalado:
+python tools/prepare_clip.py --project furuya-projeto-recasting.json --video original.mp4 --outdir pasta_saida --repaint quadro_final_retocado.png --execute
+```
+
+### Adaptador de inferência (somente onde modelo e GPU já existirem)
+
+```bash
+python cloud/viggle_inference.py --checkout /caminho/Viggle-Animate --model-dir /caminho/MiniMax-H3 --video pasta_saida/driving.mp4 --repaint pasta_saida/repainted-ref.png --output resultado.mp4
+# Somente em ambiente previamente validado, adicione --execute; pode exigir >=96GB VRAM.
+```
+
+Para o teste generativo real, verificar antes consentimento e direitos de uso dos vídeos, licença de pesos, armazenamento e franquias do ambiente.
+
+---
+
 ## Estado real implementado
 
 - **v0.7 local no navegador**: `recast.html` + `recast.js`.
