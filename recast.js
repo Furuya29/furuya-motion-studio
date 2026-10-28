@@ -11,8 +11,9 @@ function make(tag,props={},label){const n=document.createElement(tag);for(const 
 function toPixel(point){return [point.x*stage.width,point.y*stage.height]}
 function widthHeight(){
  const targetLong=1024,scale=Math.min(1,targetLong/Math.max(video.videoWidth,video.videoHeight));
- stage.width=Math.max(2,Math.floor(video.videoWidth*scale/2)*2);
- stage.height=Math.max(2,Math.floor(video.videoHeight*scale/2)*2);
+ // Latent video models commonly require dimensions divisible by 32.
+ stage.width=Math.max(32,Math.round(video.videoWidth*scale/32)*32);
+ stage.height=Math.max(32,Math.round(video.videoHeight*scale/32)*32);
 }
 function canSave(){return ready()&&!exporting}
 function update(){
@@ -278,8 +279,9 @@ function packageCheck(){
  const candidates=[...keyframes,snapshotFrame()].filter(k=>k.time>=start-.001&&k.time<=end+.001);
  if(!candidates.length)issues.push('Nenhum quadro-chave pertencente ao trecho');
  if(!candidates.some(k=>k.characters.some(c=>c.polygon.length>=3)))notes.push('Máscara do personagem ainda não delimitada; útil para edição manual, mas Viggle-Animate não a exige');
- if(!candidates.some(k=>!!k.fullRepaintFilename))issues.push('Falta um quadro FINAL com a pessoa inteira retocada no mesmo trecho');
- if(repaint&&repaintTime!==null&&(repaint.width/repaint.height-stage.width/stage.height>0.025))notes.push('Proporção do quadro retocado pode não coincidir');
+ const editedHere=!!repaint&&repaintTime!==null&&candidates.some(k=>!!k.fullRepaintFilename&&k.fullRepaintFilename===repaintName&&Math.abs(k.time-repaintTime)<=.26);
+ if(!editedHere)issues.push('Falta importar neste aparelho o quadro FINAL retocado correspondente a um quadro-chave do trecho');
+ if(repaint&&repaintTime!==null&&Math.abs(repaint.width/repaint.height-stage.width/stage.height)>0.025)notes.push('Proporção do quadro retocado pode não coincidir');
  if(m.characters.length>1)notes.push('Várias pessoas podem exigir testes em tomadas separadas: o modelo não garante multi-personagem');
  notes.push('Ainda é necessário importar o vídeo recortado e o quadro editado em um motor generativo compatível e disponível');
  return {ready:issues.length===0,issues,notes,clip:{start,duration:m.video.clipDuration},keyframes:candidates.length};
@@ -328,6 +330,9 @@ function saveBlob(data,name){
 }
 function saveCanvas(name,kind){
  if(!canSave())return;
+ if((kind==='mask'||kind==='draft')&&Math.abs(video.currentTime-workingTime)>.26){
+  status('O instante da prévia não corresponde ao quadro em edição. Prepare ou recupere um quadro-chave antes de exportar a máscara/rascunho.',true);return;
+ }
  const canvas=document.createElement('canvas');canvas.width=stage.width;canvas.height=stage.height;
  const c=canvas.getContext('2d');
  if(kind==='mask'){
