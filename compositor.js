@@ -83,7 +83,7 @@ function addLayer(){
  if(!motion)return;
  const selectedExists=frames.some(f=>f.people.some(p=>p.selected));
  const defaultTrack=selectedExists?'selected':(trackOptions()[1]?.v||'selected');
- const layer={id:++serial,mode:'head',track:defaultTrack,scale:1,offsetX:0,offsetY:0,alpha:1,image:null,fileName:'',hasTransparency:false};
+ const layer={id:++serial,mode:'head',track:defaultTrack,scale:1,offsetX:0,offsetY:0,alpha:1,rotation:0,autoRotation:false,image:null,fileName:'',hasTransparency:false};
  layers.push(layer);
  const box=element('section',{className:'layer'});
  const heading=element('div',{className:'layerHead'}),remove=element('button',{className:'danger',type:'button'},'Remover');
@@ -93,6 +93,27 @@ function addLayer(){
  const controls=element('div',{className:'controlgrid'});
  const track=select(trackOptions(),layer.track),mode=select([{v:'head',label:'Cabeça / rosto'},{v:'body',label:'Corpo rígido'}],layer.mode);
  controls.append(field('Vincular à trilha',track),field('Posicionamento',mode));box.append(controls);
+ const rotationControls=element('div',{className:'rotation-controls'});
+ const rotationTitle=element('strong',{},'Rotação da personagem');
+ const rotationLabel=element('label',{className:'angle-label'});
+ const rotationValue=element('span',{className:'num'},'0°');
+ rotationLabel.append(document.createTextNode('Giro manual '),rotationValue);
+ const rotationSlider=element('input',{type:'range',min:-180,max:180,step:1,value:0});
+ rotationSlider.setAttribute('aria-label','Giro manual em graus');
+ rotationSlider.addEventListener('input',()=>{layer.rotation=Number(rotationSlider.value);rotationValue.textContent=layer.rotation+'°';draw()});
+ const buttons=element('div',{className:'row'});
+ const anticlockwise=element('button',{type:'button'},'↶ −15°'),reset=element('button',{type:'button'},'↺ 0°'),clockwise=element('button',{type:'button'},'↷ +15°');
+ function setAngle(deg){layer.rotation=clamp(Math.round(deg),-180,180);rotationSlider.value=String(layer.rotation);rotationValue.textContent=layer.rotation+'°';draw()}
+ anticlockwise.addEventListener('click',()=>setAngle(layer.rotation-15));
+ reset.addEventListener('click',()=>setAngle(0));
+ clockwise.addEventListener('click',()=>setAngle(layer.rotation+15));
+ buttons.append(anticlockwise,reset,clockwise);
+ const autoLabel=element('label',{className:'toggle-label'});
+ const auto=element('input',{type:'checkbox'});auto.checked=false;
+ autoLabel.append(auto,document.createTextNode(' Inclinar automaticamente pelos ombros'));
+ auto.addEventListener('change',()=>{layer.autoRotation=auto.checked;draw()});
+ rotationControls.append(rotationTitle,rotationLabel,rotationSlider,buttons,autoLabel);
+ box.append(rotationControls);
  const tuning=element('div',{className:'controlgrid'});
  tuning.append(slider('Escala',.3,3,.05,1,v=>layer.scale=v),slider('Opacidade',.25,1,.05,1,v=>layer.alpha=v),slider('Deslocamento X',-60,60,1,0,v=>layer.offsetX=v/100),slider('Deslocamento Y',-60,60,1,0,v=>layer.offsetY=v/100));
  box.append(tuning);
@@ -159,7 +180,12 @@ function geometry(p,mode,image){
  const shoulderDist=Math.hypot((l.x-r.x)*sw,(l.y-r.y)*sh);
  if(shoulderDist<8)return null;
  const middle={x:(l.x+r.x)/2,y:(l.y+r.y)/2};
- const angle=Math.atan2((r.y-l.y)*sh,(r.x-l.x)*sw);
+ // Shoulder labels may point right-to-left in image coordinates. Normalize
+ // orientation modulo 180° so a level torso cannot cause a 180° flip.
+ let angle=Math.atan2((r.y-l.y)*sh,(r.x-l.x)*sw);
+ if(angle>Math.PI/2)angle-=Math.PI;
+ if(angle<-Math.PI/2)angle+=Math.PI;
+ angle=clamp(angle,-Math.PI/4,Math.PI/4);
  const earL=point(p,7,.35),earR=point(p,8,.35),nose=point(p,0,.35);
  if(mode==='head'){
   const center=earL&&earR?{x:(earL.x+earR.x)/2,y:(earL.y+earR.y)/2}:nose;
@@ -185,7 +211,10 @@ function renderFrame(t){
   visible++;
   ctx.save();ctx.globalAlpha=layer.alpha;
   ctx.translate(g.x+layer.offsetX*screen.width,g.y+layer.offsetY*screen.height);
-  ctx.rotate(g.angle);
+  // Manual rotation is authoritative. Automatic torso tilt is opt-in and
+  // bounded independently from the imported artwork's baseline orientation.
+  const automatic=layer.autoRotation?clamp(g.angle,-Math.PI/8,Math.PI/8):0;
+  ctx.rotate(layer.rotation*Math.PI/180+automatic);
   const w=g.w*layer.scale,h=g.h*layer.scale;
   if(layer.mode==='head')ctx.drawImage(layer.image,-w/2,-h*.52,w,h);
   else ctx.drawImage(layer.image,-w/2,-h*.24,w,h);
