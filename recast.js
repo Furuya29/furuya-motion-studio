@@ -1,7 +1,7 @@
 'use strict';
 const $=id=>document.getElementById(id),video=$('video'),stage=$('stage'),cx=stage.getContext('2d');
-const ui={videoFile:$('videoFile'),clipStart:$('clipStart'),clipLength:$('clipLength'),markClipStart:$('markClipStart'),videoInfo:$('videoInfo'),status:$('status'),timeline:$('timeline'),now:$('now'),end:$('end'),play:$('play'),pause:$('pause'),maskMode:$('maskMode'),dragMode:$('dragMode'),undoMask:$('undoMask'),clearMask:$('clearMask'),clearOverlay:$('clearOverlay'),slots:$('slots'),addSlot:$('addSlot'),controls:$('controls'),scale:$('scale'),rotation:$('rotation'),offsetX:$('offsetX'),offsetY:$('offsetY'),scaleValue:$('scaleValue'),rotationValue:$('rotationValue'),xValue:$('xValue'),yValue:$('yValue'),repaintFile:$('repaintFile'),repaintInfo:$('repaintInfo'),repaintView:$('repaintView'),sourceView:$('sourceView'),saveSource:$('saveSource'),saveDraft:$('saveDraft'),saveMask:$('saveMask'),saveProject:$('saveProject'),saveRepaint:$('saveRepaint'),saveSegment:$('saveSegment'),exportInfo:$('exportInfo')};
-let duration=0,videoUrl='',slots=[],activeId=null,nextId=0,mode='drag',showOverlay=true,showRepaint=false,repaint=null,repaintName='',raf=0,dragging=null,exporting=false,record=null,clipStream=null,clipChunks=[],clipCanceled=false,clipType='',clipCanvas=null,clipContext=null;
+const ui={videoFile:$('videoFile'),clipStart:$('clipStart'),clipLength:$('clipLength'),markClipStart:$('markClipStart'),newKeyframe:$('newKeyframe'),saveKeyframe:$('saveKeyframe'),keyframeList:$('keyframeList'),projectFile:$('projectFile'),projectInfo:$('projectInfo'),checkPackage:$('checkPackage'),packageStatus:$('packageStatus'),videoInfo:$('videoInfo'),status:$('status'),timeline:$('timeline'),now:$('now'),end:$('end'),play:$('play'),pause:$('pause'),maskMode:$('maskMode'),dragMode:$('dragMode'),undoMask:$('undoMask'),clearMask:$('clearMask'),clearOverlay:$('clearOverlay'),slots:$('slots'),addSlot:$('addSlot'),controls:$('controls'),scale:$('scale'),rotation:$('rotation'),offsetX:$('offsetX'),offsetY:$('offsetY'),scaleValue:$('scaleValue'),rotationValue:$('rotationValue'),xValue:$('xValue'),yValue:$('yValue'),repaintFile:$('repaintFile'),repaintInfo:$('repaintInfo'),repaintView:$('repaintView'),sourceView:$('sourceView'),saveSource:$('saveSource'),saveDraft:$('saveDraft'),saveMask:$('saveMask'),saveProject:$('saveProject'),saveRepaint:$('saveRepaint'),saveSegment:$('saveSegment'),exportInfo:$('exportInfo')};
+let duration=0,videoUrl='',slots=[],activeId=null,nextId=0,mode='drag',showOverlay=true,showRepaint=false,repaint=null,repaintName='',raf=0,dragging=null,exporting=false,record=null,clipStream=null,clipChunks=[],clipCanceled=false,clipType='',clipCanvas=null,clipContext=null,keyframes=[],workingTime=0,repaintTime=null;
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 const clock=t=>{t=Number.isFinite(t)?Math.max(0,t):0;return String(Math.floor(t/60)).padStart(2,'0')+':'+(t%60).toFixed(2).padStart(5,'0')};
 const ready=()=>video.readyState>=2&&Number.isFinite(video.duration)&&video.duration>0;
@@ -26,7 +26,7 @@ function update(){
  ui.saveProject.disabled=!ok;ui.saveRepaint.disabled=!ok||!repaint;
  ui.saveSegment.disabled=!ok&&!exporting;
  ui.repaintView.disabled=!ok||!repaint;ui.sourceView.disabled=!ok;
- ui.controls.hidden=!slot;
+ ui.controls.hidden=!slot;ui.newKeyframe.disabled=!ok||!slot;ui.saveKeyframe.disabled=!ok||!slot;ui.checkPackage.disabled=!ok;
  ui.now.textContent=clock(video.currentTime);ui.end.textContent=clock(duration);
 }
 function drawImageCanvas(img,c,fit=true){
@@ -58,9 +58,11 @@ function render(t=video.currentTime,options={}){
  if(ready()){try{c.drawImage(video,0,0,w,h)}catch{}}
  else{c.fillStyle='#0a1020';c.fillRect(0,0,w,h)}
  if(options.raw)return;
- if(showRepaint&&repaint&&!options.forceDraft){c.drawImage(repaint,0,0,w,h);return}
- if(showOverlay||options.forceDraft)for(const s of slots)paintSlot(c,s);
- if(!options.noGuides&&!options.forceDraft)for(const s of slots)drawPolygon(c,s);
+ if(showRepaint&&repaint&&!options.forceDraft&&repaintTime!==null&&Math.abs(t-repaintTime)<=.25){c.drawImage(repaint,0,0,w,h);return}
+ // Do not pretend to track people across video time: a manual edit applies ONLY to its own frame.
+ const onEditedFrame=Math.abs(t-workingTime)<=.26;
+ if((showOverlay&&onEditedFrame)||options.forceDraft)for(const s of slots)paintSlot(c,s);
+ if(onEditedFrame&&!options.noGuides&&!options.forceDraft)for(const s of slots)drawPolygon(c,s);
 }
 function draw(){render();if(!exporting){ui.timeline.value=duration?Math.round(clamp(video.currentTime/duration,0,1)*1000):0;ui.now.textContent=clock(video.currentTime)}}
 function stopLoop(){if(raf)cancelAnimationFrame(raf);raf=0}
@@ -69,10 +71,15 @@ ui.markClipStart.addEventListener('click',()=>{if(!canSave())return;ui.clipStart
 ui.videoFile.addEventListener('change',()=>{
  const file=ui.videoFile.files?.[0];if(!file)return;
  video.pause();stopLoop();if(videoUrl)URL.revokeObjectURL(videoUrl);
+ // A new video invalidates image alignment and the timeline of saved reference frames.
+ keyframes=[];workingTime=0;repaintTime=null;showRepaint=false;
+ if(repaint?.close)repaint.close();repaint=null;repaintName='';
+ for(const slot of slots)if(slot.image?.close)slot.image.close();
+ slots=[];activeId=null;nextId=0;ui.slots.replaceChildren();renderKeyframeList();
  videoUrl=URL.createObjectURL(file);video.src=videoUrl;video.load();status('Carregando vídeo local: '+file.name);update();
 });
 video.addEventListener('loadeddata',()=>{
- duration=video.duration;widthHeight();
+ duration=video.duration;widthHeight();workingTime=video.currentTime||0;
  ui.videoInfo.textContent=(ui.videoFile.files?.[0]?.name||'')+' · '+video.videoWidth+'×'+video.videoHeight+' · '+clock(duration)+' · quadros exportados a '+stage.width+'×'+stage.height+'.';
  ui.clipStart.value='0';
  if(!slots.length)addSlot();
@@ -174,13 +181,148 @@ ui.repaintFile.addEventListener('change',async()=>{
  try{
   const img=await createImageBitmap(file);
   const diff=Math.abs(img.width/img.height-stage.width/stage.height);
-  if(repaint?.close)repaint.close();repaint=img;repaintName=file.name;
+  if(repaint?.close)repaint.close();repaint=img;repaintName=file.name;repaintTime=video.currentTime;workingTime=video.currentTime;
   ui.repaintInfo.textContent=file.name+' · '+img.width+'×'+img.height+(diff>.025?' · ATENÇÃO: proporções divergentes; pode distorcer.':' · enquadramento compatível. O conteúdo deve corresponder a um quadro original.');
   showRepaint=true;update();draw();status('Quadro retocado carregado. Confira se ele representa a pessoa inteira e se preserva o cenário.');
  }catch(e){status('Não foi possível abrir o quadro retocado: '+e.message,true)}
 });
 ui.repaintView.addEventListener('click',()=>{showRepaint=true;draw()});
 ui.sourceView.addEventListener('click',()=>{showRepaint=false;draw()});
+function slotSnapshot(s){
+ return {slot:s.id,name:s.name,referenceFilename:s.referenceFile,x:s.x,y:s.y,rotationDegrees:s.rotation,scale:s.scale,markedAtTime:workingTime,
+   polygon:s.polygon.map(p=>({x:p.x,y:p.y}))};
+}
+function snapshotFrame(){
+ const time=Number(video.currentTime.toFixed(3));
+ return {time,characters:slots.map(slotSnapshot),
+   fullRepaintFilename:repaint&&repaintTime!==null&&Math.abs(time-repaintTime)<=.26?repaintName:null};
+}
+function validPoint(p){return !!p&&Number.isFinite(p.x)&&Number.isFinite(p.y)&&p.x>=0&&p.x<=1&&p.y>=0&&p.y<=1}
+function safeSnapshot(k){
+ if(!k||!Number.isFinite(k.time)||k.time<0||k.time>duration+.2||!Array.isArray(k.characters)||k.characters.length>30)throw Error('Quadro-chave fora do intervalo ou inválido');
+ return {time:Number(k.time.toFixed(3)),
+  fullRepaintFilename:typeof k.fullRepaintFilename==='string'?k.fullRepaintFilename.slice(0,200):null,
+  characters:k.characters.map(a=>{
+   if(!Number.isInteger(a.slot)||a.slot<1||a.slot>9999||!Array.isArray(a.polygon)||a.polygon.length>90||!a.polygon.every(validPoint))throw Error('Máscara ou personagem inválido');
+   for(const v of [a.x,a.y,a.scale,a.rotationDegrees])if(!Number.isFinite(v))throw Error('Transformações inválidas');
+   return {slot:a.slot,name:String(a.name||'Personagem').slice(0,75),referenceFilename:String(a.referenceFilename||'').slice(0,200),
+     x:clamp(a.x,-1,1),y:clamp(a.y,-1,1),scale:clamp(a.scale,.2,3),rotationDegrees:clamp(a.rotationDegrees,-180,180),
+     markedAtTime:Number.isFinite(a.markedAtTime)?a.markedAtTime:k.time,polygon:a.polygon.map(p=>({x:p.x,y:p.y}))};
+  })};
+}
+function renderKeyframeList(){
+ ui.keyframeList.replaceChildren();
+ if(!keyframes.length){ui.keyframeList.append(make('p',{className:'sub'},'Nenhum quadro-chave salvo. Eles serão preservados no JSON do projeto.'));return}
+ for(let i=0;i<keyframes.length;i++){
+  const k=keyframes[i],wrapper=make('div',{className:'slot'});
+  const row=make('div',{className:'row'}),select=make('button',{type:'button'},'Ir para '+clock(k.time));
+  const deleteButton=make('button',{type:'button',className:'warning'},'Excluir');
+  select.addEventListener('click',()=>restoreKeyframe(i));
+  deleteButton.addEventListener('click',()=>{
+   if(exporting)return;keyframes.splice(i,1);renderKeyframeList();update();status('Quadro-chave excluído.');});
+  row.append(select,deleteButton);wrapper.append(row);
+  wrapper.append(make('div',{className:'sub'},
+   k.characters.length+' personagem(ns) · '+k.characters.filter(x=>x.polygon.length>=3).length+' máscara(s)'
+   +(k.fullRepaintFilename?' · quadro retocado referenciado':' · sem quadro retocado')));
+  ui.keyframeList.append(wrapper);
+ }
+}
+function saveCurrentKeyframe(){
+ if(!canSave())return;
+ if(Math.abs(video.currentTime-workingTime)>.26){status('A edição pertence a outro instante. Toque em Preparar outro quadro para marcar o momento atual.',true);return}
+ try{
+  const snap=safeSnapshot(snapshotFrame());
+  const at=keyframes.findIndex(k=>Math.abs(k.time-snap.time)<=.07);
+  if(at>=0)keyframes[at]=snap;else keyframes.push(snap);
+  keyframes.sort((a,b)=>a.time-b.time);
+  renderKeyframeList();update();
+  status('Quadro-chave salvo em '+clock(snap.time)+'. O movimento ENTRE quadros ainda não foi gerado.');
+ }catch(e){status('Falha ao salvar quadro-chave: '+e.message,true)}
+}
+function prepareNewKeyframe(){
+ if(!canSave()||!active())return;
+ workingTime=video.currentTime;showRepaint=false;
+ for(const s of slots){s.polygon=[];s.anchorTime=workingTime}
+ ui.repaintInfo.textContent='Novo instante de edição: '+clock(workingTime)+'. Importe outro quadro retocado quando necessário.';
+ buildSlots();update();draw();status('Novo quadro em '+clock(workingTime)+'. Posicione personagens e marque as silhuetas antes de salvar.');
+}
+function restoreKeyframe(index){
+ if(!canSave()||!keyframes[index])return;
+ const k=keyframes[index],previous=new Map(slots.map(s=>[s.id,s]));
+ slots=k.characters.map(a=>({
+  id:a.slot,name:a.name,referenceFile:a.referenceFilename,
+  image:previous.get(a.slot)?.image||null,x:a.x,y:a.y,rotation:a.rotationDegrees,
+  scale:a.scale,polygon:a.polygon.map(p=>({...p})),anchorTime:k.time
+ }));
+ nextId=Math.max(nextId,...slots.map(s=>s.id),0);
+ activeId=slots[0]?.id||null;workingTime=k.time;
+ showRepaint=false;
+ const sameRepaint=!!repaint&&repaintName===k.fullRepaintFilename;
+ repaintTime=sameRepaint?k.time:null;
+ ui.repaintInfo.textContent=k.fullRepaintFilename?
+   'Quadro retocado registrado: '+k.fullRepaintFilename+(sameRepaint?' · imagem disponível':' · reimporte esta imagem para visualizá-la'):
+   'Nenhum quadro retocado anexado a este instante.';
+ video.pause();stopLoop();video.currentTime=k.time;
+ buildSlots();fillControls();update();draw();
+ status('Quadro-chave '+clock(k.time)+' recuperado. Referências não incluídas no JSON precisam ser importadas novamente.');
+}
+ui.newKeyframe.addEventListener('click',prepareNewKeyframe);
+ui.saveKeyframe.addEventListener('click',saveCurrentKeyframe);
+function packageCheck(){
+ const m=manifest(),issues=[],notes=[];
+ if(!ready()){issues.push('Vídeo original não carregado');return {ready:false,issues,notes}}
+ if(!m.video.clipDuration||m.video.clipDuration<1||m.video.clipDuration>5.2)issues.push('Trecho deve durar entre 1 e 5,2 segundos para teste do Viggle-Animate');
+ if(m.video.width%1!==0||m.video.height%1!==0)issues.push('Metadados de vídeo inválidos');
+ if(stage.width%32||stage.height%32)issues.push('A saída do quadro não está alinhada em múltiplos de 32 pixels');
+ const start=m.video.clipStart,end=start+m.video.clipDuration;
+ const candidates=[...keyframes,snapshotFrame()].filter(k=>k.time>=start-.001&&k.time<=end+.001);
+ if(!candidates.length)issues.push('Nenhum quadro-chave pertencente ao trecho');
+ if(!candidates.some(k=>k.characters.some(c=>c.polygon.length>=3)))notes.push('Máscara do personagem ainda não delimitada; útil para edição manual, mas Viggle-Animate não a exige');
+ if(!candidates.some(k=>!!k.fullRepaintFilename))issues.push('Falta um quadro FINAL com a pessoa inteira retocada no mesmo trecho');
+ if(repaint&&repaintTime!==null&&(repaint.width/repaint.height-stage.width/stage.height>0.025))notes.push('Proporção do quadro retocado pode não coincidir');
+ if(m.characters.length>1)notes.push('Várias pessoas podem exigir testes em tomadas separadas: o modelo não garante multi-personagem');
+ notes.push('Ainda é necessário importar o vídeo recortado e o quadro editado em um motor generativo compatível e disponível');
+ return {ready:issues.length===0,issues,notes,clip:{start,duration:m.video.clipDuration},keyframes:candidates.length};
+}
+ui.checkPackage.addEventListener('click',()=>{
+ const check=packageCheck();
+ ui.packageStatus.textContent=(check.ready?'Pré-preparação válida para um TESTE, não para geração local.':'Pacote incompleto:')
+   +' '+(check.issues.length?check.issues.join(' · '):'Trecho e referência temporal identificados.')
+   +' '+check.notes.join(' · ');
+ status(check.ready?'Pré-requisitos de preparação identificados. O render por IA ainda não está conectado.':
+  'Confira os itens do painel de validação. Nenhuma GPU foi utilizada.',!check.ready);
+});
+ui.projectFile.addEventListener('change',async()=>{
+ const file=ui.projectFile.files?.[0];if(!file)return;
+ if(!ready()){status('Carregue primeiro o vídeo original e depois importe o JSON do projeto.',true);return}
+ try{
+  if(file.size>5e6)throw Error('O JSON do projeto deve ter até 5 MB');
+  const data=JSON.parse(await file.text());
+  if(!['furuya-recast-project/0.7','furuya-recast-project/0.8'].includes(data?.schema))throw Error('Formato de projeto não reconhecido');
+  if(data.video?.width!==video.videoWidth||data.video?.height!==video.videoHeight||Math.abs((data.video?.duration||0)-duration)>.8)
+   throw Error('O projeto não corresponde à resolução ou duração do vídeo carregado');
+  if(!Array.isArray(data.characters)||data.characters.length>30)throw Error('Lista de personagens inválida');
+  const imported=(data.keyframes?.length?data.keyframes:[{time:data.keyframe?.sourceTime||0,characters:data.characters,fullRepaintFilename:data.keyframe?.referenceFilename||null}]);
+  if(imported.length>200)throw Error('Máximo de 200 quadros-chave');
+  const validated=imported.map(safeSnapshot).sort((a,b)=>a.time-b.time);
+  const oldImages=new Map(slots.map(s=>[s.id,s.image]));
+  const head=validated[0]||{time:0,characters:[]};
+  keyframes=validated;
+  slots=head.characters.map(a=>({id:a.slot,name:a.name,referenceFile:a.referenceFilename,
+   image:oldImages.get(a.slot)||null,x:a.x,y:a.y,rotation:a.rotationDegrees,scale:a.scale,
+   polygon:a.polygon.map(p=>({...p})),anchorTime:head.time}));
+  activeId=slots[0]?.id||null;nextId=Math.max(...slots.map(s=>s.id),0);
+  workingTime=head.time;showRepaint=false;repaintTime=null;
+  ui.clipStart.value=String(clamp(Number(data.video?.clipStart)||0,0,duration));
+  const requested=Number(data.video?.clipDuration)||5;
+  ui.clipLength.value=[3,5,8].includes(requested)?String(requested):'5';
+  video.pause();stopLoop();video.currentTime=head.time;
+  buildSlots();fillControls();renderKeyframeList();update();draw();
+  ui.projectInfo.textContent='Projeto restaurado: '+keyframes.length+' quadros-chave. Reimporte imagens do(s) personagem(ns) e quadros retocados; o JSON não contém esses arquivos.';
+  status('Projeto v0.8 carregado em memória. Não houve envio à nuvem.');
+ }catch(e){status('Não foi possível reabrir o projeto: '+e.message,true)}
+});
+
 function saveBlob(data,name){
  const u=URL.createObjectURL(data),a=make('a',{href:u,download:name});document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(u);a.remove()},8000);
 }
@@ -205,7 +347,7 @@ ui.saveRepaint.addEventListener('click',()=>saveCanvas('furuya-quadro-retocado.p
 function manifest(){
  const start=clamp(Number(ui.clipStart.value)||0,0,Math.max(0,duration-.1));
  const len=Math.min(Number(ui.clipLength.value)||5,duration-start);
- return {schema:'furuya-recast-project/0.7',created:new Date().toISOString(),video:{filename:ui.videoFile.files?.[0]?.name||null,width:video.videoWidth,height:video.videoHeight,duration,clipStart:start,clipDuration:len},keyframe:{sourceTime:video.currentTime,relativeToClip:video.currentTime-start,referenceFilename:repaintName||null,frameCanvasWidth:stage.width,frameCanvasHeight:stage.height,hasFullRepaint:!!repaint},characters:slots.map(s=>({slot:s.id,name:s.name,referenceFilename:s.referenceFile,x:s.x,y:s.y,rotationDegrees:s.rotation,scale:s.scale,markedAtTime:s.anchorTime,polygon:s.polygon.map(p=>({x:p.x,y:p.y}))})),paths:{originalFrame:'furuya-quadro-original.png',draft:'furuya-rascunho-personagens.png',mask:'furuya-mascara-pessoa-[slot].png',repaintedFrame:'furuya-quadro-retocado.png',drivingClip:'furuya-trecho-video.webm'},pipeline:{recommended:'video-conditioned whole-character replacement',viggleAnimate:'Requires driving clip plus fully repainted frame FROM THAT CLIP; no pose JSON needed.',wan22Animate:'Requires official pose/face/mask/background preprocess; manually drawn mask here does not replace it.',status:'PREPARATION_ONLY; NO AI VIDEO GENERATED'},privacy:'Files local. No remote upload performed.'};
+ return {schema:'furuya-recast-project/0.8',created:new Date().toISOString(),video:{filename:ui.videoFile.files?.[0]?.name||null,width:video.videoWidth,height:video.videoHeight,duration,clipStart:start,clipDuration:len},keyframe:{sourceTime:workingTime,relativeToClip:workingTime-start,referenceFilename:repaint&&repaintTime!==null&&Math.abs(workingTime-repaintTime)<=.26?repaintName:null,frameCanvasWidth:stage.width,frameCanvasHeight:stage.height,hasFullRepaint:!!repaint&&repaintTime!==null&&Math.abs(workingTime-repaintTime)<=.26},keyframes:keyframes.map(k=>({time:k.time,characters:k.characters.map(a=>({...a,polygon:a.polygon.map(p=>({...p}))})),fullRepaintFilename:k.fullRepaintFilename})),characters:slots.map(slotSnapshot),paths:{originalFrame:'furuya-quadro-original.png',draft:'furuya-rascunho-personagens.png',mask:'furuya-mascara-pessoa-[slot].png',repaintedFrame:'furuya-quadro-retocado.png',drivingClip:'furuya-trecho-video.webm'},pipeline:{recommended:'video-conditioned whole-character replacement',viggleAnimate:'Requires driving clip plus fully repainted frame FROM THAT CLIP; no pose JSON needed.',wan22Animate:'Requires official pose/face/mask/background preprocess; manually drawn mask here does not replace it.',status:'PREPARATION_ONLY; NO AI VIDEO GENERATED'},privacy:'Files local. No remote upload performed.'};
 }
 ui.saveProject.addEventListener('click',()=>{if(!canSave())return;saveBlob(new Blob([JSON.stringify(manifest(),null,2)],{type:'application/json'}),'furuya-projeto-recasting.json')});
 function mediaType(){
@@ -268,4 +410,4 @@ async function saveVideoSegment(){
  }
 }
 ui.saveSegment.addEventListener('click',saveVideoSegment);
-setMode('drag');draw();update();
+setMode('drag');renderKeyframeList();draw();update();
