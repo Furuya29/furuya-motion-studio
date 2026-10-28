@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#0b1020">
-<title>Furuya Motion Studio · Recasting v0.8</title>
+<title>Furuya Motion Studio · Recasting v0.8.1</title>
 <style>
 :root{color-scheme:dark;--bg:#0b1020;--panel:#151f34;--edge:#34435e;--muted:#b4c3dc;--ink:#f4f6ff;--mint:#80f0d3;--purple:#b8a2ff}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 85% -15%,#33294e,transparent 55%),#090e1b;color:var(--ink);font:14px/1.5 system-ui,-apple-system,Roboto,"Segoe UI",sans-serif}
@@ -25,7 +25,7 @@ a{color:#aaffdf;text-decoration:none}.message{padding:10px;background:#24324a;bo
 @media(min-width:850px){.columns{grid-template-columns:1.05fr .95fr;align-items:start}.frame{max-width:470px}}
 @media(max-width:430px){main{padding:11px 9px}.controlGrid{gap:7px}section{padding:12px}.row button{font-size:12px}.editorButtons button{min-height:36px}}
 </style></head><body><main>
-<header class="brand"><div class="logo">F</div><div><h1>Furuya Motion Studio</h1><div class="sub">VIDEO-FIRST · SUBSTITUIÇÃO INTEGRAL DE PERSONAGENS</div></div><div class="tag">ALPHA 0.8</div></header>
+<header class="brand"><div class="logo">F</div><div><h1>Furuya Motion Studio</h1><div class="sub">VIDEO-FIRST · SUBSTITUIÇÃO INTEGRAL DE PERSONAGENS</div></div><div class="tag">ALPHA 0.8.1</div></header>
 <p class="sub"><a href="./">← Captura de poses</a> · <a href="./compositor.html?v=0.6.1">Compositor rígido antigo</a></p>
 <div class="note"><b>Editor de preparação para IA generativa.</b> Este módulo trabalha sem JSON MediaPipe. Prepara vídeos, referências visuais e máscaras para modelos de substituição do <b>corpo inteiro</b>. Não gera movimento por IA nem remove automaticamente pessoas do vídeo. A imagem sobreposta é apenas uma referência provisória; o quadro definitivo deve ser retocado com a pessoa completamente substituída.</div>
 <div class="columns" style="margin-top:12px">
@@ -37,11 +37,13 @@ a{color:#aaffdf;text-decoration:none}.message{padding:10px;background:#24324a;bo
 <p class="sub" id="videoInfo">O editor criará quadros na proporção do vídeo, até 1024 px no lado maior.</p>
 </section>
 <section><h2>02 · Quadro original e máscaras</h2>
+<div class="note" id="playbackNotice" role="status" aria-live="polite" style="margin-bottom:9px"><b>Modo edição:</b> a personagem aparece somente no quadro-chave. Dar play reproduz o vídeo real e NÃO cria os quadros seguintes.</div>
 <div class="frame"><canvas id="stage" width="384" height="672" tabindex="0" aria-label="Editor de quadro"></canvas></div>
 <input id="timeline" aria-label="Linha do tempo" type="range" min="0" max="1000" value="0" disabled>
 <div class="line"><span id="now">00:00.00</span><span id="end">00:00.00</span></div>
-<div class="editorButtons"><button id="play" disabled>▶ Reprodução</button><button id="pause" disabled>Ⅱ Pausar</button><button id="maskMode" disabled>✎ Marcar silhueta</button><button id="dragMode" disabled>✥ Mover referência</button></div>
+<div class="editorButtons"><button id="play" disabled>▶ Reproduzir vídeo original</button><button id="pause" disabled>Ⅱ Pausar</button><button id="maskMode" disabled>✎ Marcar silhueta</button><button id="dragMode" disabled>✥ Mover referência</button></div>
 <div class="editorButtons" style="margin-top:7px"><button id="undoMask" disabled>↶ Desfazer ponto</button><button id="clearMask" disabled>× Limpar máscara</button><button id="clearOverlay" disabled>◎ Ocultar sobreposição</button></div>
+<p class="sub"><b>Por que a personagem desaparece?</b> Ela é apenas um quadro de referência: ainda não existe rastreamento ou geração temporal. Na reprodução você vê os dançarinos originais; salve o quadro editado para preparar um futuro render por IA.</p>
 <p class="sub">Modo <b>silhueta</b>: toque em pontos do contorno de UMA pessoa para produzir a máscara. Modo <b>mover</b>: arraste a imagem do personagem sobre o alvo. Essa máscara é material de preparação, não segmentação automática.</p>
 </section>
 </div>
@@ -71,8 +73,8 @@ a{color:#aaffdf;text-decoration:none}.message{padding:10px;background:#24324a;bo
 <section><h2>06 · Pacote de preparação</h2>
 <button id="checkPackage" class="mint" disabled style="width:100%;margin-bottom:10px">◉ Validar pacote para geração</button>
 <div id="packageStatus" class="message">Verifica segmento, quadros-chave, referência retocada e dimensões. Não executa inferência.</div>
-<div class="outGrid"><button id="saveSource" disabled>↓ Quadro-base PNG</button><button id="saveDraft" disabled>↓ Rascunho PNG</button><button id="saveMask" disabled>↓ Máscara PNG</button><button id="saveProject" disabled>↓ Projeto JSON</button><button id="saveRepaint" disabled>↓ Quadro retocado PNG</button><button id="saveSegment" disabled class="primary">↓ Trecho de vídeo</button></div>
-<div class="message" id="exportInfo">O vídeo é exportado localmente em WebM, quando o navegador permitir. Se o modelo exigir MP4, converta o trecho antes de executar a inferência.</div>
+<div class="outGrid"><button id="saveSource" disabled>↓ Quadro-base PNG</button><button id="saveDraft" disabled>↓ Rascunho PNG</button><button id="saveMask" disabled>↓ Máscara PNG</button><button id="saveProject" disabled>↓ Projeto JSON</button><button id="saveRepaint" disabled>↓ Quadro retocado PNG</button><button id="saveSegment" disabled class="primary">↓ Vídeo ORIGINAL (sem IA)</button></div>
+<div class="message" id="exportInfo">O botão acima exporta exclusivamente o vídeo-base com as pessoas originais, SEM personagem inserida. É material de entrada para o motor generativo. Exporta em WebM quando o navegador permitir; modelos que exigem MP4 precisam de conversão.</div>
 <p class="sub">O pacote contém arquivos individuais. Não é um vídeo gerado por IA. Para a rota Viggle-Animate são necessários o trecho do vídeo e um quadro retocado daquele mesmo trecho. Para Wan2.2-Animate, o pré-processamento oficial é diferente e deve ser executado separadamente.</p>
 </section>
 <section><h2>07 · Motor generativo opcional — nuvem gratuita</h2>
@@ -83,5 +85,5 @@ a{color:#aaffdf;text-decoration:none}.message{padding:10px;background:#24324a;bo
 </section>
 </div></div>
 <video id="video" playsinline muted preload="auto" style="display:none"></video>
-<footer class="sub" style="margin-top:16px;text-align:center">Furuya Motion Studio v0.8 · Preparação local gratuita · Nenhuma API ou GPU remota conectada</footer>
-</main><script src="./recast.js?v=0.8" defer></script></body></html>
+<footer class="sub" style="margin-top:16px;text-align:center">Furuya Motion Studio v0.8.1 · Preparação local gratuita · Nenhuma API ou GPU remota conectada</footer>
+</main><script src="./recast.js?v=0.8.1" defer></script></body></html>
