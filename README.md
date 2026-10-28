@@ -1,5 +1,19 @@
 # Furuya Motion Studio — captura v0.5 + compositor 2D v0.6
 
+## Editor v0.7 — Recasting integral VIDEO-FIRST (novo)
+
+Acesse: [Furuya Recasting v0.7](https://furuya29.github.io/furuya-motion-studio/recast.html?v=0.7)
+
+O fluxo principal agora é **vídeo original → quadros do vídeo → referências de personagem inteiro (cabelo, rosto, corpo, roupas, acessórios) → silhueta/máscara por pessoa → quadro original retocado → assets preparados para IA de vídeo**. Não há dependência de JSON MediaPipe.
+
+O editor implementado funciona inteiramente no Chrome Android/PC: linha do tempo do vídeo, recorte de trecho 3/5/8 s, múltiplas referências visuais, máscara manual por pontos, posicionamento de PNG com escala, giro e arraste, importação do quadro retocado final, exportação individual de PNG original, rascunho, máscara, quadro retocado, projeto JSON e tentativa de exportação do vídeo-base recortado em WebM/MP4 conforme navegador (sem áudio). Para selecionar o início do trecho, pressione **Usar o instante atual como início do trecho**.
+
+**Transparência sobre o estágio atual:** o PNG provisoriamente sobreposto não é uma troca real de personagem. O quadro definitivo deve conter a substituição INTEGRAL da pessoa com cenário preservado; a propagação generativa para o vídeo ainda **não está implementada** e demandará um serviço/modelo de inferência adicional. O Wan2.2-Animate exige seu próprio pré-processamento, e a máscara desenhada no editor não equivale à saída desse pipeline.
+
+Verificação gratuita de hardware: `python cloud/free_gpu_preflight.py --workdir . --project furuya-projeto-recasting.json`. Esse script apenas inspeciona CPU/RAM/disco/NVIDIA GPU, sem executar modelos, instalar bibliotecas ou consumir uma quota remota. Leia [os critérios GO/NO-GO para GPUs gratuitas](cloud/README.md) antes de tentar Hugging Face ZeroGPU, Colab ou Kaggle. **Nenhuma GPU foi conectada, nenhum modelo pesado foi executado e nenhuma cobrança foi gerada.**
+
+---
+
 ## Novo módulo v0.6.1 — Compositor visual de personagens 2D
 
 **Abrir:** [Compositor 2D](https://furuya29.github.io/furuya-motion-studio/compositor.html?v=0.6.1)
