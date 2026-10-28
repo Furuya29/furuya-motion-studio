@@ -1,5 +1,23 @@
 # Furuya Motion Studio — captura v0.5 + compositor 2D v0.6
 
+## Editor v0.8 — Quadros-chave e preparação reproduzível (implantado)
+
+**Abrir:** https://furuya29.github.io/furuya-motion-studio/recast.html?v=0.8
+
+A v0.8 implementa quadros-chave independentes para cada personagem, máscaras por instante, restauração de quadros salvos, importação e exportação de projetos JSON. Os arquivos de imagem e vídeo não são embutidos no JSON: ao restaurar o projeto, reimporte os arquivos originais.
+
+Uma sobreposição manual **só aparece perto do quadro em que foi editada**: não se apresenta como rastreamento contínuo. A referência retocada é vinculada ao tempo da tomada e o validador não aprova somente um nome de arquivo sem a imagem carregada no dispositivo. Dimensões do Canvas são alinhadas em múltiplos de 32 para compatibilidade com modelos de vídeo.
+
+**Ferramenta CPU para preparação de clipe MP4:** `tools/prepare_clip.py` recebe o projeto e o vídeo e valida metadados, duração (até 5,2 s), dimensões e um quadro-chave do trecho. Por padrão só mostra os comandos; com `--execute` e FFmpeg previamente instalado gera `driving.mp4`, `source-ref.png` e, quando fornecido um quadro **inteiramente** retocado por imagem, `repainted-ref.png`. O resultado não é vídeo gerado por IA; sem GPU e sem upload. Não sobrescreve arquivos existentes.
+
+**Adaptador de inferência oficial Viggle-Animate:** `cloud/viggle_inference.py` prepara uma chamada ao script original `inference/sample.py` com `--cond driving.mp4 --ref repainted-ref.png`. Só executa com `--execute`, checkpoint e instalação existentes. Não baixa modelos, não inicia máquinas remotas nem garante recursos ou franquia.
+
+**Demonstração externa oficial:** https://huggingface.co/spaces/Viggle/viggle-animate . O Space aparece como ZeroGPU, mas dispõe de quota gratuita limitada; não houve geração real comprovada na conta do usuário. O envio de vídeo/imagem a essa página é uma ação externa e opcional.
+
+O pipeline atual segue sendo **preparação + integração local opcional**; a geração de vídeo de personagem inteiro no aplicativo NÃO está operacional até que um backend passe no teste real de 3 segundos. Video-to-video multi-personagem, oclusões e preservação visual ainda não estão aprovados.
+
+---
+
 ## Editor v0.7 — Recasting integral VIDEO-FIRST (novo)
 
 Acesse: [Furuya Recasting v0.7](https://furuya29.github.io/furuya-motion-studio/recast.html?v=0.7)
