@@ -32,6 +32,7 @@ a{color:#aaffdf;text-decoration:none}.message{padding:10px;background:#24324a;bo
 <div>
 <section><h2>01 · Vídeo original</h2><label for="videoFile">Carregar vídeo-base</label><input id="videoFile" type="file" accept="video/*,.mp4,.webm,.mov">
 <div class="controlGrid" style="margin-top:8px"><div><label for="clipStart">Início do trecho (s)</label><input id="clipStart" type="number" min="0" step=".1" value="0"></div><div><label for="clipLength">Duração do trecho (s)</label><select id="clipLength"><option value="3">3 segundos</option><option value="5" selected>5 segundos</option><option value="8">8 segundos</option></select></div></div>
+<button id="markClipStart" style="width:100%;margin-top:9px">⌖ Usar o instante atual como início do trecho</button>
 <div class="message" id="status" role="status" aria-live="polite">Carregue um vídeo. Nenhum arquivo será enviado à nuvem nesta etapa.</div>
 <p class="sub" id="videoInfo">O editor criará quadros na proporção do vídeo, até 1024 px no lado maior.</p>
 </section>
@@ -62,7 +63,7 @@ a{color:#aaffdf;text-decoration:none}.message{padding:10px;background:#24324a;bo
 <section><h2>05 · Pacote de preparação</h2>
 <div class="outGrid"><button id="saveSource" disabled>↓ Quadro-base PNG</button><button id="saveDraft" disabled>↓ Rascunho PNG</button><button id="saveMask" disabled>↓ Máscara PNG</button><button id="saveProject" disabled>↓ Projeto JSON</button><button id="saveRepaint" disabled>↓ Quadro retocado PNG</button><button id="saveSegment" disabled class="primary">↓ Trecho de vídeo</button></div>
 <div class="message" id="exportInfo">O vídeo é exportado localmente em WebM, quando o navegador permitir. Se o modelo exigir MP4, converta o trecho antes de executar a inferência.</div>
-<p class="sub">O pacote contém arquivos individuais. **Não é um vídeo gerado por IA.** Para a rota Viggle-Animate são necessários o trecho do vídeo e um quadro retocado daquele mesmo trecho. Para Wan2.2-Animate, o pré-processamento oficial é diferente e deve ser executado separadamente.</p>
+<p class="sub">O pacote contém arquivos individuais. Não é um vídeo gerado por IA. Para a rota Viggle-Animate são necessários o trecho do vídeo e um quadro retocado daquele mesmo trecho. Para Wan2.2-Animate, o pré-processamento oficial é diferente e deve ser executado separadamente.</p>
 </section>
 </div></div>
 <video id="video" playsinline muted preload="auto" style="display:none"></video>
