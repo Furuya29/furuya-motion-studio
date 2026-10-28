@@ -1,6 +1,6 @@
 'use strict';
 const $=id=>document.getElementById(id),video=$('video'),stage=$('stage'),cx=stage.getContext('2d');
-const ui={videoFile:$('videoFile'),clipStart:$('clipStart'),clipLength:$('clipLength'),videoInfo:$('videoInfo'),status:$('status'),timeline:$('timeline'),now:$('now'),end:$('end'),play:$('play'),pause:$('pause'),maskMode:$('maskMode'),dragMode:$('dragMode'),undoMask:$('undoMask'),clearMask:$('clearMask'),clearOverlay:$('clearOverlay'),slots:$('slots'),addSlot:$('addSlot'),controls:$('controls'),scale:$('scale'),rotation:$('rotation'),offsetX:$('offsetX'),offsetY:$('offsetY'),scaleValue:$('scaleValue'),rotationValue:$('rotationValue'),xValue:$('xValue'),yValue:$('yValue'),repaintFile:$('repaintFile'),repaintInfo:$('repaintInfo'),repaintView:$('repaintView'),sourceView:$('sourceView'),saveSource:$('saveSource'),saveDraft:$('saveDraft'),saveMask:$('saveMask'),saveProject:$('saveProject'),saveRepaint:$('saveRepaint'),saveSegment:$('saveSegment'),exportInfo:$('exportInfo')};
+const ui={videoFile:$('videoFile'),clipStart:$('clipStart'),clipLength:$('clipLength'),markClipStart:$('markClipStart'),videoInfo:$('videoInfo'),status:$('status'),timeline:$('timeline'),now:$('now'),end:$('end'),play:$('play'),pause:$('pause'),maskMode:$('maskMode'),dragMode:$('dragMode'),undoMask:$('undoMask'),clearMask:$('clearMask'),clearOverlay:$('clearOverlay'),slots:$('slots'),addSlot:$('addSlot'),controls:$('controls'),scale:$('scale'),rotation:$('rotation'),offsetX:$('offsetX'),offsetY:$('offsetY'),scaleValue:$('scaleValue'),rotationValue:$('rotationValue'),xValue:$('xValue'),yValue:$('yValue'),repaintFile:$('repaintFile'),repaintInfo:$('repaintInfo'),repaintView:$('repaintView'),sourceView:$('sourceView'),saveSource:$('saveSource'),saveDraft:$('saveDraft'),saveMask:$('saveMask'),saveProject:$('saveProject'),saveRepaint:$('saveRepaint'),saveSegment:$('saveSegment'),exportInfo:$('exportInfo')};
 let duration=0,videoUrl='',slots=[],activeId=null,nextId=0,mode='drag',showOverlay=true,showRepaint=false,repaint=null,repaintName='',raf=0,dragging=null,exporting=false,record=null,clipStream=null,clipChunks=[],clipCanceled=false,clipType='',clipCanvas=null,clipContext=null;
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 const clock=t=>{t=Number.isFinite(t)?Math.max(0,t):0;return String(Math.floor(t/60)).padStart(2,'0')+':'+(t%60).toFixed(2).padStart(5,'0')};
@@ -21,7 +21,7 @@ function update(){
  ui.maskMode.disabled=!ok||!slot;ui.dragMode.disabled=!ok||!slot;
  ui.undoMask.disabled=!ok||!slot||!slot.polygon.length;
  ui.clearMask.disabled=!ok||!slot||!slot.polygon.length;
- ui.clearOverlay.disabled=!ok||!slot;ui.addSlot.disabled=!ok;
+ ui.clearOverlay.disabled=!ok||!slot;ui.addSlot.disabled=!ok;ui.markClipStart.disabled=!ok;
  ui.saveSource.disabled=!ok;ui.saveDraft.disabled=!ok;ui.saveMask.disabled=!ok||!slot||slot.polygon.length<3;
  ui.saveProject.disabled=!ok;ui.saveRepaint.disabled=!ok||!repaint;
  ui.saveSegment.disabled=!ok&&!exporting;
@@ -65,6 +65,7 @@ function render(t=video.currentTime,options={}){
 function draw(){render();if(!exporting){ui.timeline.value=duration?Math.round(clamp(video.currentTime/duration,0,1)*1000):0;ui.now.textContent=clock(video.currentTime)}}
 function stopLoop(){if(raf)cancelAnimationFrame(raf);raf=0}
 function animate(){draw();if(!video.paused&&!exporting)raf=requestAnimationFrame(animate)}
+ui.markClipStart.addEventListener('click',()=>{if(!canSave())return;ui.clipStart.value=String(Math.round(video.currentTime*100)/100);status('Início do trecho definido em '+clock(video.currentTime)+'. Escolha um quadro pertencente a esse trecho para retocá-lo.');});
 ui.videoFile.addEventListener('change',()=>{
  const file=ui.videoFile.files?.[0];if(!file)return;
  video.pause();stopLoop();if(videoUrl)URL.revokeObjectURL(videoUrl);
