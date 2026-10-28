@@ -1,8 +1,8 @@
 # Furuya Motion Studio — captura v0.5 + compositor 2D v0.6
 
-## Novo módulo v0.6 — Compositor visual de personagens 2D
+## Novo módulo v0.6.1 — Compositor visual de personagens 2D
 
-**Abrir:** [Compositor 2D](https://furuya29.github.io/furuya-motion-studio/compositor.html?v=0.6)
+**Abrir:** [Compositor 2D](https://furuya29.github.io/furuya-motion-studio/compositor.html?v=0.6.1)
 
 A página `compositor.html` e o motor `compositor.js` foram adicionados ao projeto sem modificar o algoritmo MediaPipe de captura v0.5.
 
@@ -14,6 +14,15 @@ A página `compositor.html` e o motor `compositor.js` foram adicionados ao proje
 4. Prévia local por Canvas, reprodução do vídeo, busca temporal e interpolação **somente entre amostras próximas** da mesma trilha. Breves retenções de pose são permitidas, sem fingir que se trata de nova medição.
 5. Salvar um PNG do quadro ou tentar gravar vídeo local por `Canvas.captureStream()` + `MediaRecorder`; conforme o navegador, saída WebM ou MP4, **sem áudio**, em tempo real. Teto de dimensão de saída ~1280 pixels no maior lado.
 6. Mensagens de cobertura da trilha no JSON, avisos para vídeos de proporções/durações diferentes, indicador de transparência da imagem importada.
+
+### Correção da rotação — v0.6.1 (a partir de vídeo de teste real)
+
+- Vídeo exportado pelo usuário: WebM VP9 720×1280, ~29,5 segundos de quadros; o contêiner WebM não possui duração explícita detectada pelo ffprobe. Isso será tratado separadamente.
+- A pose 2D da personagem aparece inclinada entre aproximadamente 3 e 9 segundos, enquanto a pessoa de referência permanece predominantemente ereta. A imagem do personagem é um sprite rígido: ainda não há rigging, deformação de braços/pernas ou substituição generativa do corpo.
+- Origem do bug: `atan2` entre os ombros podia resultar próximo de `±π` para um torso horizontal quando os índices dos ombros estavam invertidos. Multiplicar esse ângulo por 0,2–0,25 causava inclinação artificial de cerca de 36–45 graus.
+- Alterações executadas: orientação dos ombros normalizada módulo π, inclinação limitada; por padrão, **automática desligada**. Em cada camada existe agora um controle **Giro manual −180° a +180°**, botões **−15°, 0°, +15°** e checkbox para permitir inclinação automática. O ajuste funciona na prévia e na exportação.
+- O personagem desaparecer após ~12 segundos no teste é consequência de perda de associação do dançarino no JSON v0.5; **não corrigido pela rotação**. A correção requer rastreamento visual melhor, referências de novos trechos ou edição manual com keyframes.
+- Executados testes sintáticos e testes simulados dos controles, rotação manual, opt-in de auto inclinação e anti-180°. É indispensável validar o layout e exportar novo clipe no Redmi.
 
 ### Primeiro teste recomendado
 
