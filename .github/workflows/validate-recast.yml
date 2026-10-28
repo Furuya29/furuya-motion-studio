@@ -20,6 +20,10 @@ jobs:
         run: node --check recast.js
       - name: Recasting editor smoke test
         run: node tests/recast_smoke.mjs
+      - name: Python clip tools syntax check
+        run: python -m py_compile tools/prepare_clip.py tests/test_prepare_clip.py
+      - name: Reproducible CPU-only clip preparation tests
+        run: python -m unittest discover -s tests -p 'test_prepare_clip.py' -v
       - name: Python preflight syntax check
         run: python -m py_compile cloud/free_gpu_preflight.py
       - name: Free GPU preflight never needs GPU or payment
