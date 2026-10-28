@@ -1,6 +1,6 @@
 'use strict';
 const $=id=>document.getElementById(id),video=$('video'),stage=$('stage'),cx=stage.getContext('2d');
-const ui={videoFile:$('videoFile'),clipStart:$('clipStart'),clipLength:$('clipLength'),markClipStart:$('markClipStart'),newKeyframe:$('newKeyframe'),saveKeyframe:$('saveKeyframe'),keyframeList:$('keyframeList'),projectFile:$('projectFile'),projectInfo:$('projectInfo'),checkPackage:$('checkPackage'),packageStatus:$('packageStatus'),videoInfo:$('videoInfo'),status:$('status'),timeline:$('timeline'),now:$('now'),end:$('end'),play:$('play'),pause:$('pause'),maskMode:$('maskMode'),dragMode:$('dragMode'),undoMask:$('undoMask'),clearMask:$('clearMask'),clearOverlay:$('clearOverlay'),slots:$('slots'),addSlot:$('addSlot'),controls:$('controls'),scale:$('scale'),rotation:$('rotation'),offsetX:$('offsetX'),offsetY:$('offsetY'),scaleValue:$('scaleValue'),rotationValue:$('rotationValue'),xValue:$('xValue'),yValue:$('yValue'),repaintFile:$('repaintFile'),repaintInfo:$('repaintInfo'),repaintView:$('repaintView'),sourceView:$('sourceView'),saveSource:$('saveSource'),saveDraft:$('saveDraft'),saveMask:$('saveMask'),saveProject:$('saveProject'),saveRepaint:$('saveRepaint'),saveSegment:$('saveSegment'),exportInfo:$('exportInfo')};
+const ui={playbackNotice:$('playbackNotice'),videoFile:$('videoFile'),clipStart:$('clipStart'),clipLength:$('clipLength'),markClipStart:$('markClipStart'),newKeyframe:$('newKeyframe'),saveKeyframe:$('saveKeyframe'),keyframeList:$('keyframeList'),projectFile:$('projectFile'),projectInfo:$('projectInfo'),checkPackage:$('checkPackage'),packageStatus:$('packageStatus'),videoInfo:$('videoInfo'),status:$('status'),timeline:$('timeline'),now:$('now'),end:$('end'),play:$('play'),pause:$('pause'),maskMode:$('maskMode'),dragMode:$('dragMode'),undoMask:$('undoMask'),clearMask:$('clearMask'),clearOverlay:$('clearOverlay'),slots:$('slots'),addSlot:$('addSlot'),controls:$('controls'),scale:$('scale'),rotation:$('rotation'),offsetX:$('offsetX'),offsetY:$('offsetY'),scaleValue:$('scaleValue'),rotationValue:$('rotationValue'),xValue:$('xValue'),yValue:$('yValue'),repaintFile:$('repaintFile'),repaintInfo:$('repaintInfo'),repaintView:$('repaintView'),sourceView:$('sourceView'),saveSource:$('saveSource'),saveDraft:$('saveDraft'),saveMask:$('saveMask'),saveProject:$('saveProject'),saveRepaint:$('saveRepaint'),saveSegment:$('saveSegment'),exportInfo:$('exportInfo')};
 let duration=0,videoUrl='',slots=[],activeId=null,nextId=0,mode='drag',showOverlay=true,showRepaint=false,repaint=null,repaintName='',raf=0,dragging=null,exporting=false,record=null,clipStream=null,clipChunks=[],clipCanceled=false,clipType='',clipCanvas=null,clipContext=null,keyframes=[],workingTime=0,repaintTime=null;
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 const clock=t=>{t=Number.isFinite(t)?Math.max(0,t):0;return String(Math.floor(t/60)).padStart(2,'0')+':'+(t%60).toFixed(2).padStart(5,'0')};
@@ -65,7 +65,19 @@ function render(t=video.currentTime,options={}){
  if((showOverlay&&onEditedFrame)||options.forceDraft)for(const s of slots)paintSlot(c,s);
  if(onEditedFrame&&!options.noGuides&&!options.forceDraft)for(const s of slots)drawPolygon(c,s);
 }
-function draw(){render();if(!exporting){ui.timeline.value=duration?Math.round(clamp(video.currentTime/duration,0,1)*1000):0;ui.now.textContent=clock(video.currentTime)}}
+function setPreviewNotice(){
+ if(!ui.playbackNotice)return;
+ if(!ready()){ui.playbackNotice.textContent='Carregue o vídeo e edite um quadro-chave. O modo de geração por IA ainda não está conectado.';return}
+ const nearFrame=Math.abs(video.currentTime-workingTime)<=.26;
+ if(!video.paused){
+  ui.playbackNotice.textContent='▶ Reprodução do vídeo ORIGINAL: o personagem NÃO acompanha a pessoa. Para ver a edição, pause e volte ao quadro-chave marcado em '+clock(workingTime)+'.';
+ }else if(nearFrame){
+  ui.playbackNotice.textContent='✎ Quadro-chave em '+clock(workingTime)+': a referência visual é uma composição estática, NÃO uma animação do corpo.';
+ }else{
+  ui.playbackNotice.textContent='◉ Fora do quadro-chave ('+clock(workingTime)+'). Só o vídeo original aparece aqui; escolha um quadro salvo ou prepare outra edição.';
+ }
+}
+function draw(){render();setPreviewNotice();if(!exporting){ui.timeline.value=duration?Math.round(clamp(video.currentTime/duration,0,1)*1000):0;ui.now.textContent=clock(video.currentTime)}}
 function stopLoop(){if(raf)cancelAnimationFrame(raf);raf=0}
 function animate(){draw();if(!video.paused&&!exporting)raf=requestAnimationFrame(animate)}
 ui.markClipStart.addEventListener('click',()=>{if(!canSave())return;ui.clipStart.value=String(Math.round(video.currentTime*100)/100);status('Início do trecho definido em '+clock(video.currentTime)+'. Escolha um quadro pertencente a esse trecho para retocá-lo.');});
@@ -92,7 +104,11 @@ ui.timeline.addEventListener('input',()=>{if(!canSave())return;video.pause();sto
 video.addEventListener('seeked',()=>{if(!exporting)draw()});
 video.addEventListener('timeupdate',()=>{if(!exporting)ui.now.textContent=clock(video.currentTime)});
 video.addEventListener('ended',()=>{stopLoop();if(!exporting)draw()});
-ui.play.addEventListener('click',()=>{if(!canSave())return;video.play().then(()=>{stopLoop();animate()}).catch(e=>status(e.message,true))});
+ui.play.addEventListener('click',()=>{
+ if(!canSave())return;
+ status('Reproduzindo somente o vídeo original. Este editor NÃO produz automaticamente a substituição de personagens.');
+ video.play().then(()=>{stopLoop();animate();setPreviewNotice()}).catch(e=>status(e.message,true))
+});
 ui.pause.addEventListener('click',()=>{video.pause();stopLoop();draw()});
 function addSlot(){
  if(!ready()||exporting)return;
@@ -382,7 +398,7 @@ async function saveVideoSegment(){
  if(Math.abs(video.currentTime-start)>1&&repaint)status('Atenção: o quadro retocado deve pertencer ao mesmo trecho selecionado.');
  try{
   video.pause();stopLoop();exporting=true;clipCanceled=false;clipChunks=[];update();
-  ui.saveSegment.disabled=false;ui.saveSegment.textContent='■ Cancelar gravação';
+  ui.saveSegment.disabled=false;ui.saveSegment.textContent='■ Cancelar exportação ORIGINAL';
   await seek(start);
   clipCanvas=document.createElement('canvas');clipCanvas.width=stage.width;clipCanvas.height=stage.height;
   clipContext=clipCanvas.getContext('2d');clipContext.drawImage(video,0,0,clipCanvas.width,clipCanvas.height);
@@ -393,8 +409,8 @@ async function saveVideoSegment(){
   record.onstop=()=>{
    clipStream?.getTracks().forEach(t=>t.stop());clipStream=null;
    if(!clipCanceled&&clipChunks.length)saveBlob(new Blob(clipChunks,{type:clipType}),'furuya-trecho-video.'+(clipType.includes('mp4')?'mp4':'webm'));
-   ui.exportInfo.textContent=clipCanceled?'Gravação cancelada.':'Trecho exportado no navegador. Confira a reprodução e duração antes de usar na IA.';
-   exporting=false;record=null;ui.saveSegment.textContent='↓ Trecho de vídeo';update();draw();
+   ui.exportInfo.textContent=clipCanceled?'Exportação cancelada.':'Vídeo ORIGINAL exportado — sem personagem substituída. Use como vídeo-condição para o motor generativo.';
+   exporting=false;record=null;ui.saveSegment.textContent='↓ Vídeo ORIGINAL (sem IA)';update();draw();
   };
   record.start(300);
   await video.play();
@@ -402,7 +418,7 @@ async function saveVideoSegment(){
   function step(){
    if(!exporting)return;
    clipContext.drawImage(video,0,0,clipCanvas.width,clipCanvas.height);
-   ui.exportInfo.textContent='Exportando vídeo original: '+clock(Math.max(0,video.currentTime-start))+' / '+clock(length)+' (sem áudio)';
+   ui.exportInfo.textContent='Exportando vídeo ORIGINAL (sem IA): '+clock(Math.max(0,video.currentTime-start))+' / '+clock(length)+' (sem áudio)';
    if(video.currentTime>=target-.025||video.ended){stopRecord(false);return}
    if(video.paused){stopRecord(true);return}
    raf=requestAnimationFrame(step);
@@ -411,7 +427,7 @@ async function saveVideoSegment(){
  }catch(e){
   status('Exportação não iniciada: '+e.message,true);
   if(record&&record.state!=='inactive')stopRecord(true);
-  else{clipStream?.getTracks().forEach(t=>t.stop());exporting=false;ui.saveSegment.textContent='↓ Trecho de vídeo';update()}
+  else{clipStream?.getTracks().forEach(t=>t.stop());exporting=false;ui.saveSegment.textContent='↓ Vídeo ORIGINAL (sem IA)';update()}
  }
 }
 ui.saveSegment.addEventListener('click',saveVideoSegment);
