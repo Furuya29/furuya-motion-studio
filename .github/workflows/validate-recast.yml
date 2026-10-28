@@ -21,9 +21,9 @@ jobs:
       - name: Recasting editor smoke test
         run: node tests/recast_smoke.mjs
       - name: Python clip tools syntax check
-        run: python -m py_compile tools/prepare_clip.py tests/test_prepare_clip.py
+        run: python -m py_compile tools/prepare_clip.py cloud/viggle_inference.py tests/test_prepare_clip.py tests/test_viggle_adapter.py
       - name: Reproducible CPU-only clip preparation tests
-        run: python -m unittest discover -s tests -p 'test_prepare_clip.py' -v
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
       - name: Python preflight syntax check
         run: python -m py_compile cloud/free_gpu_preflight.py
       - name: Free GPU preflight never needs GPU or payment
