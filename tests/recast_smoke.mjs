@@ -4,8 +4,8 @@ import {pathToFileURL} from 'node:url';
 
 const script=readFileSync(new URL('../recast.js',import.meta.url),'utf8');
 const html=readFileSync(new URL('../recast.html',import.meta.url),'utf8');
-assert.match(html,/ALPHA 0\.8/);
-assert.match(html,/recast\.js\?v=0\.8/);
+assert.match(html,/ALPHA 0\.8\.1/);
+assert.match(html,/recast\.js\?v=0\.8\.1/);
 new Function(script);
 
 const nodes=new Map();
@@ -30,7 +30,7 @@ const video=document.getElementById('video');
 video.readyState=2;video.duration=29.58;video.currentTime=2;
 video.videoWidth=2160;video.videoHeight=3840;video.paused=true;
 const app=new Function('document','window','requestAnimationFrame','cancelAnimationFrame',script+
- '\nreturn {slots,active,ui,stage,manifest};')(document,{},()=>0,()=>{});
+ '\nreturn {slots,active,ui,stage,manifest,draw};')(document,{},()=>0,()=>{});
 video.events.loadeddata();
 assert.equal(app.slots.length,1);
 const stage=document.getElementById('stage');
@@ -84,4 +84,15 @@ app.ui.markClipStart.events.click();
 assert.equal(Number(app.ui.clipStart.value),2);
 app.ui.clipStart.value='28.9';
 assert.ok(app.manifest().video.clipDuration<.71);
+video.currentTime=10;
+app.draw();
+assert.match(app.ui.playbackNotice.textContent,/Fora do quadro-chave/);
+video.paused=false;
+app.draw();
+assert.match(app.ui.playbackNotice.textContent,/vídeo ORIGINAL/);
+video.paused=true;
+video.currentTime=2;
+app.draw();
+assert.match(app.ui.playbackNotice.textContent,/Quadro-chave/);
+assert.match(html,/Vídeo ORIGINAL \(sem IA\)/);
 console.log('PASS: initial loading, 4-point silhouette, mask control, undo, drag, rotation, manifest, bounded clip and mobile start button');
