@@ -1,7 +1,7 @@
 'use strict';
 const $ = id => document.getElementById(id);
 let connected=false, prepared=false, available=null, requiredCredits=null, jobStatus='IDLE', refreshing=false;
-let engineCatalog=null;
+let engineCatalog=null, routePolicy=null;
 const button=(id,enable)=>{$(id).disabled=!enable};
 function notice(msg,bad=false){$('state').textContent=msg;$('state').className=bad?'note error':'note'}
 async function request(route,options){
@@ -12,6 +12,50 @@ async function request(route,options){
  return data;
 }
 function currentEngine(){return $('engine').value}
+function automaticTask(){
+ const count=Number($('targetCount').value||1);
+ return count>1?'multi_scene_replacement':$('preserveScene').value==='true'?'scene_replacement':'motion_transfer';
+}
+function recommendFromPolicy(){
+ const task=automaticTask();
+ const ids=routePolicy?.priorities?.[task]||[];
+ const engines=engineCatalog?.[task]||[];
+ const found=ids.map(id=>engines.find(e=>e.id===id)).find(Boolean)||engines[0];
+ return found?{task,engine:found}:null;
+}
+function applyMode(){
+ const automatic=$('selectionMode').value==='auto';
+ $('advancedEngineControls').hidden=automatic;
+ if(automatic){
+  const suggestion=recommendFromPolicy();
+  if(suggestion){
+   $('task').value=suggestion.task;
+   renderEngines();
+   $('engine').value=suggestion.engine.id;
+   describeEngine();
+   $('autoRecommendation').textContent=
+    'Furuya recomenda: '+suggestion.engine.name+' · '+(routePolicy?.explanation?.[suggestion.task]||'')+
+    ' · Situação: '+suggestion.engine.state+
+    '. Isto é uma recomendação por regras; GPU, créditos e geração NÃO foram validados.';
+  }else{
+   $('autoRecommendation').textContent='O catálogo ainda não está disponível. Nenhuma geração será iniciada.';
+  }
+ }else{
+  $('autoRecommendation').textContent='Modo avançado: escolha manualmente a categoria e o motor. As mesmas verificações de recursos e custos continuam obrigatórias.';
+  renderEngines();
+ }
+ refreshControls();
+}
+async function loadPolicy(){
+ try{
+  const response=await fetch('./routing-policy.json',{cache:'no-store'});
+  if(!response.ok)throw new Error('Regras não disponíveis.');
+  const policy=await response.json();
+  if(policy.schema!=='furuya-routing-policy/1')throw new Error('Versão de regras incompatível.');
+  routePolicy=policy;
+ }catch(e){routePolicy=null;$('autoRecommendation').textContent='Não foi possível carregar a política de seleção automática: '+e.message}
+}
+
 function engineIsLive(){return currentEngine()==='viggle_video_remix'&&$('task').value==='motion_transfer'}
 function renderEngines(){
  const task=$('task').value, list=engineCatalog?.[task]||[];
@@ -37,12 +81,12 @@ function describeEngine(){
  refreshControls();
 }
 async function loadEngines(){
- try{engineCatalog=await request('engines');renderEngines()}
+ try{engineCatalog=await request('engines');await loadPolicy();applyMode()}
  catch(e){$('engineInfo').textContent='Catálogo local indisponível: '+e.message}
 }
 function refreshControls(){
  button('credits',connected&&engineIsLive());
- button('prepare',connected);
+ button('prepare',connected&&$('task').value!=='multi_scene_replacement');
  button('generate',connected&&engineIsLive()&&prepared&&available!==null&&requiredCredits!==null&&available>=requiredCredits&&jobStatus==='PREPARED'&&$('confirm').checked);
  button('resume',connected&&['PENDING','SUBMITTED'].includes(jobStatus));
 }
@@ -56,10 +100,12 @@ async function connect(){
    : 'Gateway não disponível.';
   if(connected){await loadEngines()}
   if(connected&&status.status==='PREPARED'){
-   if(status.task&&['scene_replacement','motion_transfer'].includes(status.task))$('task').value=status.task;
+   if(status.task&&['scene_replacement','motion_transfer','multi_scene_replacement'].includes(status.task))$('task').value=status.task;
    renderEngines();
    if(status.route&&[...($('engine').options||[])].some(e=>e.value===status.route))$('engine').value=status.route;
-   prepared=true;requiredCredits=status.required_balance;
+   // Restore only if the current selection matches the recovered job.
+   prepared=Boolean(status.route===currentEngine()&&status.task===$('task').value);
+   requiredCredits=prepared?status.required_balance:null;
    $('prepared').textContent='Pacote preparado neste servidor. '+(status.backend_ready_for_submission?'Consulte os créditos para gerar.':'Motor offline: nenhum render pode ser iniciado aqui.');
    refreshControls();
   }
@@ -70,7 +116,7 @@ async function connect(){
   $('connection').textContent='Servidor local indisponível: o catálogo pode ser consultado neste site, mas nenhum motor será executado no GitHub Pages.';
   try{
    const response=await fetch('./engine-catalog.json',{cache:'no-store'});
-   if(response.ok){engineCatalog=await response.json();renderEngines()}
+   if(response.ok){engineCatalog=await response.json();await loadPolicy();applyMode()}
   }catch{}
   refreshControls();
  }
@@ -109,7 +155,11 @@ async function showStatus(s){
 }
 async function prepare(){
  const image=$('image').files[0],motion=$('motion').files[0];
- if(!image||!motion){notice('Selecione a PNG original da Albedo e o driving.mp4.',true);return}
+ if(!image||!motion){notice('Selecione a imagem da personagem e o vídeo original.',true);return}
+ if($('task').value==='multi_scene_replacement'){
+  notice('Para duas a quatro pessoas, use o planejador multipersonagem. O backend de rastreamento/render ainda não está conectado.',true);
+  return;
+ }
  const form=new FormData();
  form.append('image',image);form.append('motion_video',motion);
  form.append('task',$('task').value);form.append('engine_id',currentEngine());
@@ -155,6 +205,9 @@ $('resume').addEventListener('click',resume);
 $('confirm').addEventListener('change',refreshControls);
 $('task').addEventListener('change',renderEngines);
 $('engine').addEventListener('change',describeEngine);
+$('selectionMode').addEventListener('change',applyMode);
+$('targetCount').addEventListener('change',applyMode);
+$('preserveScene').addEventListener('change',applyMode);
 connect();
 // Polling only queries local status. It never submits a render.
 setInterval(()=>{if(connected&&['SUBMISSION_UNCERTAIN','SUBMITTED','PENDING'].includes(jobStatus))refresh()},5000);
