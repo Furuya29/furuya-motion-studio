@@ -1,5 +1,14 @@
 # Furuya Motion Studio — captura v0.5 + compositor 2D v0.6
 
+## Novo teste P0 de geração temporal (29/10/2026; experimental, ainda sem render real)
+
+O módulo [generate.html](./generate.html) introduz a tela de geração de vídeo da Albedo com o backend [cloud/local_render_gateway.py](./cloud/local_render_gateway.py). Ele usa a API Viggle V1 Video Remix para **uma pessoa em um clipe de 3 segundos** e pode, após confirmação do usuário, enviar a PNG original e o MP4, consultar o estado da geração e baixar o vídeo resultante. Não depende da GPU do Redmi ou da RX580, mas exige créditos gratuitos existentes na conta do provedor. O backend protege a chave em uma variável de ambiente do Python. **No GitHub Pages a tela é demonstrativa e não pode gerar sozinha**, pois a chave não pode ficar num JavaScript público. Para a execução, siga [docs/P0_ALBEDO_GERACAO_REAL_2026-10-29.md](docs/P0_ALBEDO_GERACAO_REAL_2026-10-29.md) e abra a página servida pelo gateway local.
+
+A v0.8.1 continua sendo exclusivamente um editor de preparação. **Nenhum vídeo final de Albedo animada por IA foi renderizado ou aprovado até esta atualização.** A documentação do serviço informa uma franquia inicial para contas novas, não créditos garantidos para uma conta específica.
+
+---
+
+
 ## Correção de usabilidade v0.8.1 — por que a personagem desaparece ao reproduzir
 
 A gravação real `1000585256.webm` de 5 segundos enviada pelo usuário mostrou apenas o **vídeo base** nas amostras examinadas. Isso é compatível com o funcionamento esperado do editor: a prévia com personagem é um **quadro-chave estático** (dentro de ~0,26 s do instante marcado); ao reproduzir, o original aparece, sem propagação de identidade. O botão **Vídeo ORIGINAL (sem IA)** exporta apenas o material de entrada para IA, sem alteração da pessoa. Isso não é bug de renderizador: a **geração temporal nunca foi implementada**.
