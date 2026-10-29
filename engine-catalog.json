@@ -1,0 +1,37 @@
+{
+  "schema": "furuya-engine-catalog/1",
+  "source": "offline-static-display-only; actual server catalog via /api/engines",
+  "scene_replacement": [
+    {
+      "id": "wan22_replace",
+      "name": "Wan2.2-Animate 14B — replacement",
+      "state": "OFFLINE_ADAPTER",
+      "strengths": "Troca personagem inteiro preservando cena com máscara e fundo pré-processados.",
+      "limitations": "Exige checkpoints, pré-processamento oficial e GPU CUDA grande. Sem GPU gratuita verificada."
+    },
+    {
+      "id": "viggle_animate_open",
+      "name": "Viggle-Animate aberto — repainted frame",
+      "state": "OFFLINE_ADAPTER",
+      "strengths": "Propaga frame retocado da própria tomada mantendo coreografia.",
+      "limitations": "~96 GB VRAM recomendado; sem inferência gratuita comprovada."
+    }
+  ],
+  "motion_transfer": [
+    {
+      "id": "wan_animate2_motion",
+      "name": "Wan-Animate-2 (2026) — motion transfer",
+      "state": "OFFLINE_ADAPTER",
+      "strengths": "Imagem de personagem + vídeo de dança diretamente; variante distilada.",
+      "limitations": "Modelo pesado, requer GPUs; não conserva multidão original."
+    },
+    {
+      "id": "viggle_video_remix",
+      "name": "Viggle V1 Video Remix — hospedado",
+      "state": "INTEGRATED_API_UNVERIFIED",
+      "strengths": "Imagem e vídeo geram animação por API quando houver créditos.",
+      "limitations": "Precisa credenciais e créditos; não garante troca localizada em multidão."
+    }
+  ],
+  "notes": "Catálogo demonstrativo. Motores offline não criam vídeo no GitHub Pages. Nenhuma GPU/inferência disponível foi verificada."
+}
