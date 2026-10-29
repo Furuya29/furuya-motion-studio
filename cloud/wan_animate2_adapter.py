@@ -60,25 +60,28 @@ def plan(args) -> dict:
 
 
 def execution_preflight(args) -> None:
-    """Verify model file referenced by the upstream YAML without executing it."""
-    import re
+    """Verify weights and GPU count required by the unmodified upstream YAML."""
     config = args.checkout.expanduser().resolve() / "infer" / (
         "wan_animate_2_distillation.yaml" if args.distilled else "wan_animate_2.yaml"
     )
-    text = config.read_text(encoding="utf-8")
-    match = re.search(r"^\\s*model_path:\\s*['\\\"]?([^'\\\"#\\r\\n]+)", text, flags=re.MULTILINE)
-    if not match:
-        raise ValueError("Upstream config lacks a model_path entry; verify weights manually.")
-    path = (config.parent / match.group(1).strip()).resolve()
+    entries = {}
+    for line in config.read_text(encoding="utf-8").splitlines():
+        line = line.split("#", 1)[0].strip()
+        if ":" not in line:
+            continue
+        key, value = line.split(":", 1)
+        if key.strip() in ("model_path", "sp_size", "sharding_size"):
+            entries[key.strip()] = value.strip().strip("'\\\"")
+    if not entries.get("model_path"):
+        raise ValueError("Upstream config lacks model_path; verify weights manually.")
+    path = (config.parent / entries["model_path"]).resolve()
     if not path.is_file() or path.stat().st_size < 1024:
         raise ValueError("Checkpoint referenced in YAML does not exist: " + str(path))
     configured = args.require_model_dir.expanduser().resolve()
     if not path.is_relative_to(configured):
-        raise ValueError("Configured model checkpoint is outside --require-model-dir.")
-    # The YAML also controls GPU parallelism; never silently modify it.
-    matches = re.findall(r"^\\s*(sp_size|sharding_size):\\s*(\\d+)", text, flags=re.MULTILINE)
-    params = {name: int(value) for name, value in matches}
-    requested = max(params.get("sp_size", 1), params.get("sharding_size", 1))
+        raise ValueError("Configured checkpoint is outside --require-model-dir.")
+    requested = max(int(entries.get("sp_size", 1)),
+                    int(entries.get("sharding_size", 1)))
     try:
         checked = subprocess.run(["nvidia-smi", "--query-gpu=name",
                                   "--format=csv,noheader"],
