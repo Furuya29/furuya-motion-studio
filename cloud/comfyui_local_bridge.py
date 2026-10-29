@@ -199,6 +199,8 @@ def run(args) -> int:
         raise ValueError("--max-wait must be between 1 and 3600 seconds")
     if args.output.suffix.lower() not in (".mp4", ".webm"):
         raise ValueError("Output path must end with .mp4 or .webm")
+    if args.execute and args.receipt.expanduser().resolve().exists():
+        raise ValueError("A previous job receipt exists. Refusing to resubmit; inspect status and recover manually.")
     result = job_plan(args)
     print(json.dumps(result, ensure_ascii=False, indent=2), flush=True)
     if not args.execute:
