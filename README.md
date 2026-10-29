@@ -1,5 +1,17 @@
 # Furuya Motion Studio — captura v0.5 + compositor 2D v0.6
 
+## Arquitetura principal multimotor — 29/10/2026
+
+**Missão:** transformar o Furuya Motion Studio na plataforma de geração de vídeos com substituição de personagens inteiros. A plataforma controla preparação, seleção do alvo, motores, execução, download e auditoria; nenhum provedor (inclusive Viggle) deve ser obrigatório.
+
+O novo núcleo `cloud/engine_registry.py` separa duas tarefas: **substituição na cena existente** (clipe da dança no Rio; preservar a multidão) e **transferência de movimento** (personagens de animes/cinema executando coreografias de vídeos virais). A interface `generate.html` oferece seleção de motor, mas **apenas o Viggle Remix possui submissão via API experimental**, exclusivamente para motion-transfer. Os motores abertos Wan2.2-Animate replacement, Viggle-Animate open e Wan-Animate-2 motion têm adaptadores CLI em dry-run, sem GPUs provisionadas. Motor Kling 3.0 está catalogado como candidato de pesquisa sujeito a cobrança e indisponível no orçamento zero até comprovar créditos gratuitos com controles de gasto.
+
+Os critérios, fontes oficiais, comparação e plano de execução encontram-se em **[docs/MOTORES_MULTIMOTOR_P0_2026-10-29.md](docs/MOTORES_MULTIMOTOR_P0_2026-10-29.md)**. O comando `tools/audit_generated_video.py` também impede confundir cópias do vídeo original com resultados novos e exige revisão de identidade/oclusões antes de aprovar o primeiro MP4.
+
+**Limite atual: nenhum motor pesado foi executado; o vídeo final da Albedo na festa do Rio ainda não existe.** Nenhuma contratação ou gasto adicional foi feito.
+
+---
+
 ## Novo teste P0 de geração temporal (29/10/2026; experimental, ainda sem render real)
 
 O módulo [generate.html](./generate.html) introduz a tela de geração de vídeo da Albedo com o backend [cloud/local_render_gateway.py](./cloud/local_render_gateway.py). Ele usa a API Viggle V1 Video Remix para **uma pessoa em um clipe de 3 segundos** e pode, após confirmação do usuário, enviar a PNG original e o MP4, consultar o estado da geração e baixar o vídeo resultante. Não depende da GPU do Redmi ou da RX580, mas exige créditos gratuitos existentes na conta do provedor. O backend protege a chave em uma variável de ambiente do Python. **No GitHub Pages a tela é demonstrativa e não pode gerar sozinha**, pois a chave não pode ficar num JavaScript público. Para a execução, siga [docs/P0_ALBEDO_GERACAO_REAL_2026-10-29.md](docs/P0_ALBEDO_GERACAO_REAL_2026-10-29.md) e abra a página servida pelo gateway local.

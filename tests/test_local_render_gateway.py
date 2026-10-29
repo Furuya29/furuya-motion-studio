@@ -46,6 +46,31 @@ class GatewayTests(unittest.TestCase):
         self.assertTrue((self.state.session / "receipt.json").exists())
 
     @mock.patch.object(gateway, "probe_seconds", return_value=3)
+    def test_scene_replacement_cannot_route_to_video_remix(self, probe):
+        with self.assertRaisesRegex(ValueError, "does not support"):
+            self.state.prepare({
+                "image": self.image.read_bytes(),
+                "motion_video": self.video.read_bytes(),
+                "task": "scene_replacement",
+                "engine_id": "viggle_video_remix",
+            })
+
+    @mock.patch.object(gateway, "probe_seconds", return_value=3)
+    def test_wan22_scene_package_stays_offline(self, probe):
+        payload = self.state.prepare({
+            "image": self.image.read_bytes(),
+            "motion_video": self.video.read_bytes(),
+            "task": "scene_replacement",
+            "engine_id": "wan22_replace",
+        })
+        self.assertEqual(payload["route"], "wan22_replace")
+        self.assertFalse(payload["backend_ready_for_submission"])
+        with mock.patch.dict(os.environ, {"VIGGLE_API_KEY": "synthetic-token"}):
+            with mock.patch.object(gateway, "api_json", side_effect=AssertionError("unexpected request")):
+                with self.assertRaisesRegex(ValueError, "no live API render backend"):
+                    self.state.start()
+
+    @mock.patch.object(gateway, "probe_seconds", return_value=3)
     def test_no_credit_key_prevents_render(self, probe):
         self.state.prepare({"image": self.image.read_bytes(),
                             "motion_video": self.video.read_bytes()})

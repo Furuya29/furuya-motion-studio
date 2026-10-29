@@ -30,6 +30,16 @@ class LocalHTTPTests(unittest.TestCase):
         self.addCleanup(self.server.shutdown)
         self.base = "http://127.0.0.1:" + str(self.server.server_port)
 
+    def test_multimotor_catalog_http(self):
+        with urlopen(self.base + "/api/engines", timeout=5) as response:
+            payload = json.load(response)
+        self.assertEqual(payload["schema"], "furuya-engine-catalog/1")
+        scene = {item["id"] for item in payload["scene_replacement"]}
+        motion = {item["id"] for item in payload["motion_transfer"]}
+        self.assertIn("wan22_replace", scene)
+        self.assertNotIn("viggle_video_remix", scene)
+        self.assertIn("wan_animate2_motion", motion)
+
     def test_ui_status_and_forbidden_post(self):
         with urlopen(self.base + "/api/status", timeout=5) as response:
             state = json.load(response)
@@ -38,7 +48,7 @@ class LocalHTTPTests(unittest.TestCase):
         with urlopen(self.base + "/generate.html", timeout=5) as response:
             html = response.read().decode("utf-8")
         self.assertIn("Furuya Motion Studio", html)
-        self.assertIn("Gerar Albedo", html)
+        self.assertIn("Gerar vídeo com motor selecionado", html)
         request = Request(self.base + "/api/start", data=b"", method="POST")
         with self.assertRaises(HTTPError) as error:
             urlopen(request, timeout=5)

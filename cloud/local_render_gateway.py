@@ -23,6 +23,7 @@ from urllib.parse import urlsplit
 from uuid import uuid4
 
 from viggle_remix_api import BASE, api_json, download, probe_seconds
+from engine_registry import get, candidates
 
 MAX_UPLOAD = 35 * 1024 * 1024
 SAFE_RENDER = re.compile(r"^render_[A-Za-z0-9_-]+$")
@@ -39,6 +40,11 @@ def parse_form(content_type: str, data: bytes) -> dict:
     for part in message.iter_parts():
         name = part.get_param("name", header="Content-Disposition")
         payload = part.get_payload(decode=True)
+        if name in ("engine_id", "task"):
+            if name in files or payload is None or len(payload) > 60:
+                raise ValueError("Invalid or duplicate engine/task field.")
+            files[name] = payload.decode("utf-8")
+            continue
         if name == "background_mode":
             if payload != b"original":
                 raise ValueError("Only original background mode is permitted.")
@@ -98,6 +104,13 @@ class RenderState:
                 json.dumps(self.job, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     def prepare(self, files: dict) -> dict:
+        task = files.get("task", "motion_transfer")
+        engine_id = files.get("engine_id", "viggle_video_remix")
+        engine = get(engine_id)
+        if task not in engine.tasks:
+            raise ValueError("Engine does not support the requested task.")
+        if engine.state == "RESEARCH_ONLY" or engine.expected_paid_cost is True:
+            raise ValueError("Research-only/paid engine disabled by zero-budget policy.")
         with self.lock:
             if self.job["status"] not in ("IDLE", "PREPARED", "FAILED", "RENDERED_UNREVIEWED"):
                 raise ValueError("Previous render is pending or uncertain. Do not submit another.")
@@ -131,7 +144,10 @@ class RenderState:
                 "duration_seconds": round(seconds, 3),
                 "credit_estimate": round(seconds, 3),
                 "required_balance": math.ceil(seconds),
-                "route": "VIGGLE_VIDEO_REMIX",
+                "route": engine.id,
+                "task": task,
+                "backend_ready_for_submission": engine.id == "viggle_video_remix",
+                "engine_status": engine.state,
                 "background_mode": "original",
                 "repaint_included": "repaint" in files,
                 "notice": "Repaint is saved for Viggle-Animate, not used by Video Remix.",
@@ -157,6 +173,8 @@ class RenderState:
         if not token:
             raise ValueError("Viggle API key not configured in the local server.")
         with self.lock:
+            if self.job.get("route") != "viggle_video_remix" or self.job.get("task") != "motion_transfer":
+                raise ValueError("This engine has no live API render backend. Use its guarded offline adapter after verifying free GPU availability.")
             if self.job.get("status") != "PREPARED" or not self.image or not self.motion:
                 raise ValueError("Prepare the files first. No retries or duplicate renders.")
             balance = self.credits()["available"]
@@ -280,6 +298,13 @@ class Handler(BaseHTTPRequestHandler):
             return self._file(self.root / "generate.js", "text/javascript; charset=utf-8")
         if route == "/api/status":
             return self._json(self.state.public())
+        if route == "/api/engines":
+            return self._json({
+                "schema": "furuya-engine-catalog/1",
+                "scene_replacement": candidates("scene_replacement"),
+                "motion_transfer": candidates("motion_transfer"),
+                "notes": "An adapter or listed engine is not proof that GPU, free quota or real inference works.",
+            })
         if route == "/api/credits":
             try:
                 return self._json(self.state.credits())
