@@ -23,20 +23,20 @@ Requer Python 3.10+ e o checkout atualizado do Furuya. ComfyUI deve estar execut
 Exemplo ilustrativo de linha de comando (os IDs e caminhos **não são universais**, substitua pelos reais do workflow):
 
 ```powershell
-python cloud/comfyui_local_bridge.py \
-  --workflow "E:\\ComfyUI\\user\\default\\workflows\\my-viral-recast-api.json" \
-  --server "http://127.0.0.1:8188" \
-  --input-dir "E:\\ComfyUI\\input" \
-  --video "E:\\Furuya\\driving.mp4" \
-  --image "E:\\Furuya\\Albedo_original.png" \
-  --video-node "11" --video-field "video" \
-  --image-node "12" --image-field "image" \
-  --output "E:\\Furuya\\albedo_rio_generated.mp4"
+python cloud/comfyui_local_bridge.py `
+  --workflow 'E:\ComfyUI\workflows\viral-api.json' `
+  --server 'http://127.0.0.1:8188' `
+  --input-dir 'E:\ComfyUI\input' `
+  --video 'E:\Furuya\driving.mp4' `
+  --image 'E:\Furuya\Albedo_original.png' `
+  --video-node 11 --video-field video `
+  --image-node 12 --image-field image `
+  --output 'E:\Furuya\albedo_rio_generated.mp4'
 ```
 
 O comando acima é **dry-run**: não envia nem gera nada, apenas valida a forma do workflow, arquivos e destino. No momento de execução, usar `--execute --confirm-free-gpu` **somente** depois de verificar que a instância realmente possui GPU gratuita apropriada e todos os pesos. ComfyUI aceita a tarefa uma vez; o recibo impede repetir submissões após timeout. A ferramenta não pode recuperar automaticamente jobs com recibo incerto; a recuperação do `prompt_id` precisa ser verificada no ComfyUI. 
 
-A ponte salva um arquivo como `RENDERED_UNREVIEWED`. A aprovação final deve ser feita com `tools/audit_generated_video.py` e inspeção humana da personagem, multidão, oclusões e 72 frames.
+A ponte registra o arquivo recebido do ComfyUI como `RENDERED_UNREVIEWED` (necessário executar `ffprobe` e auditoria visual antes de tratar como vídeo válido). A aprovação final deve ser feita com `tools/audit_generated_video.py` e inspeção humana da personagem, multidão, oclusões e 72 frames.
 
 ## Máscaras temporais: exportar rascunhos, não dados definitivos
 
