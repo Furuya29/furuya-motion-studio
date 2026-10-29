@@ -112,6 +112,26 @@ class LocalComfyBridgeTests(unittest.TestCase):
             comfy.run(self.args)
         self.assertEqual(len(FakeComfy.submitted), 1)
 
+    def test_two_character_references_are_bound_without_identity_mixup(self):
+        second = self.root / "Diana.png"
+        second.write_bytes(b"\x89PNG\r\n\x1a\n" + b"b" * 1300)
+        graph = json.loads(self.workflow.read_text())
+        graph["3"] = {"class_type": "ImageReaderFake", "inputs": {"image": "other.png"}}
+        self.workflow.write_text(json.dumps(graph))
+        self.args.extra_image = ["3=" + str(second)]
+        self.args.execute = True
+        self.args.confirm_free_gpu = True
+        self.assertEqual(comfy.run(self.args), 0)
+        submitted = FakeComfy.submitted[0]["prompt"]
+        self.assertNotEqual(submitted["2"]["inputs"]["image"],
+                            submitted["3"]["inputs"]["image"])
+        self.assertTrue((self.input / submitted["3"]["inputs"]["image"]).exists())
+
+    def test_duplicate_extra_reference_node_refused(self):
+        self.args.extra_image = ["2=" + str(self.image)]
+        with self.assertRaisesRegex(ValueError, "Duplicate"):
+            comfy.run(self.args)
+
     def test_no_local_gpu_confirmation_no_prompt_submitted(self):
         self.args.execute = True
         with self.assertRaisesRegex(ValueError, "confirm-free-gpu"):
