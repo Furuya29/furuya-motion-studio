@@ -39,6 +39,10 @@ def parse_form(content_type: str, data: bytes) -> dict:
     for part in message.iter_parts():
         name = part.get_param("name", header="Content-Disposition")
         payload = part.get_payload(decode=True)
+        if name == "background_mode":
+            if payload != b"original":
+                raise ValueError("Only original background mode is permitted.")
+            continue
         if name in files or name not in ("image", "motion_video", "repaint"):
             raise ValueError("Unexpected or duplicate form field.")
         if not part.get_filename() or not payload:
@@ -181,9 +185,15 @@ class RenderState:
             self._poll(token, render_id)
         except Exception as error:
             with self.lock:
-                # Error after attempting POST may still mean a charge/job exists.
-                self.job.update(status="SUBMISSION_UNCERTAIN", stage="CHECK_PROVIDER",
-                                error=str(error)[:400])
+                # Once a render_id is known, recovery must use GET, never a new POST.
+                known_id = self.job.get("render_id")
+                if known_id:
+                    self.job.update(status="PENDING", stage="POLL_ERROR",
+                                    error=str(error)[:400])
+                else:
+                    # Error after attempting POST may still mean a charge/job exists.
+                    self.job.update(status="SUBMISSION_UNCERTAIN", stage="CHECK_PROVIDER",
+                                    error=str(error)[:400])
                 self.store()
 
     def _poll(self, token: str, render_id: str) -> None:
