@@ -48,7 +48,7 @@ class LocalHTTPTests(unittest.TestCase):
         with urlopen(self.base + "/generate.html", timeout=5) as response:
             html = response.read().decode("utf-8")
         self.assertIn("Furuya Motion Studio", html)
-        self.assertIn("Gerar Albedo", html)
+        self.assertIn("Gerar vídeo com motor selecionado", html)
         request = Request(self.base + "/api/start", data=b"", method="POST")
         with self.assertRaises(HTTPError) as error:
             urlopen(request, timeout=5)
