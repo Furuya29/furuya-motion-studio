@@ -149,7 +149,10 @@ class AdapterTests(unittest.TestCase):
     def test_no_external_install_or_execution_in_tests(self):
         with mock.patch.object(wan22.subprocess, "run", side_effect=AssertionError("GPU run attempted")):
             with mock.patch.object(wan2.subprocess, "run", side_effect=AssertionError("GPU run attempted")):
-                self.assertEqual(len(registry.ENGINES), 5)
+                self.assertEqual(len(registry.ENGINES), 8)
+                multi = registry.candidates("multi_scene_replacement")
+                self.assertEqual(len(multi), 3)
+                self.assertTrue(all(e["state"] == "RESEARCH_ONLY" for e in multi))
 
 
 if __name__ == "__main__":

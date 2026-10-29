@@ -6,6 +6,9 @@ on:
       - 'recast.js'
       - 'generate.html'
       - 'generate.js'
+      - 'multicast.html'
+      - 'multicast.js'
+      - 'engine-catalog.json'
       - 'cloud/**'
       - 'tools/**'
       - 'tests/**'
@@ -16,6 +19,9 @@ on:
       - 'recast.js'
       - 'generate.html'
       - 'generate.js'
+      - 'multicast.html'
+      - 'multicast.js'
+      - 'engine-catalog.json'
       - 'cloud/**'
       - 'tools/**'
       - 'tests/**'
@@ -41,12 +47,14 @@ jobs:
         run: |
           node --check recast.js
           node --check generate.js
+          node --check multicast.js
       - name: Recasting editor smoke test
         run: |
           node tests/recast_smoke.mjs
           node tests/multiengine_ui_smoke.mjs
+          node tests/multicast_ui_smoke.mjs
       - name: Python clip tools syntax check
-        run: python -m py_compile tools/prepare_clip.py cloud/viggle_inference.py cloud/viggle_remix_api.py cloud/local_render_gateway.py cloud/engine_registry.py cloud/wan22_animate_adapter.py cloud/wan_animate2_adapter.py tools/audit_generated_video.py tests/test_generated_video_audit.py tests/test_multiengine.py tests/test_local_render_gateway.py tests/test_prepare_clip.py tests/test_viggle_remix_api.py tests/test_gpu_preflight.py tests/test_viggle_adapter.py
+        run: python -m py_compile tools/prepare_clip.py cloud/viggle_inference.py cloud/viggle_remix_api.py cloud/local_render_gateway.py cloud/engine_registry.py cloud/wan22_animate_adapter.py cloud/wan_animate2_adapter.py tools/audit_generated_video.py tools/validate_multicast_plan.py tests/test_multicast_plan.py tests/test_generated_video_audit.py tests/test_multiengine.py tests/test_local_render_gateway.py tests/test_prepare_clip.py tests/test_viggle_remix_api.py tests/test_gpu_preflight.py tests/test_viggle_adapter.py
       - name: Reproducible CPU-only clip preparation tests
         run: python -m unittest discover -s tests -p 'test_*.py' -v
       - name: Python preflight syntax check

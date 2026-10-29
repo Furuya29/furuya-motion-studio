@@ -33,5 +33,28 @@
       "limitations": "Precisa credenciais e créditos; não garante troca localizada em multidão."
     }
   ],
-  "notes": "Catálogo demonstrativo. Motores offline não criam vídeo no GitHub Pages. Nenhuma GPU/inferência disponível foi verificada."
+  "notes": "Catálogo demonstrativo. Multi-scene requer rastreamento multi-ID e inferência comprovada; planner não gera vídeos. Nenhuma GPU gratuita verificada.",
+  "multi_scene_replacement": [
+    {
+      "id": "openjutsu_advanced",
+      "name": "Openjutsu Advanced — MiniMax H3 / SAM 3.1",
+      "state": "RESEARCH_ONLY",
+      "strengths": "Projeto open-source declara associação individual de até 4 personagens e preservação dos demais.",
+      "limitations": "Exige ambiente ComfyUI, NVIDIA GPU, pesos, scripts e integração; não testado pelo Furuya."
+    },
+    {
+      "id": "henge_tara_multi",
+      "name": "Henge TARA-H3 — múltiplos personagens",
+      "state": "RESEARCH_ONLY",
+      "strengths": "Demonstra dois personagens transformados numa mesma sequência; múltiplas identidades e máscaras.",
+      "limitations": "A demonstração divulgada utilizou RunPod pago; a preservação do cenário depende da configuração de máscaras."
+    },
+    {
+      "id": "wan_vace_masked",
+      "name": "Wan VACE — edição localizada com máscaras",
+      "state": "RESEARCH_ONLY",
+      "strengths": "Edição regional com máscaras, possível fluxo sequencial de vários alvos.",
+      "limitations": "Fluxo multipersonagem não é nativo validado; montagem e inferência ainda não implementadas."
+    }
+  ]
 }

@@ -11,7 +11,7 @@ from dataclasses import dataclass, asdict
 import json
 from typing import Literal
 
-Task = Literal["scene_replacement", "motion_transfer"]
+Task = Literal["scene_replacement", "motion_transfer", "multi_scene_replacement"]
 State = Literal["INTEGRATED_API_UNVERIFIED", "OFFLINE_ADAPTER", "RESEARCH_ONLY"]
 
 
@@ -104,6 +104,54 @@ ENGINES: tuple[Engine, ...] = (
         official_source="https://github.com/Wan-Video/Wan-Animate-2",
     ),
     Engine(
+        id="openjutsu_advanced",
+        name="Openjutsu Advanced (MiniMax H3 + SAM 3.1)",
+        tasks=("multi_scene_replacement",),
+        state="RESEARCH_ONLY",
+        execution="COMFYUI_GPU_CHECKOUT_UNCONFIGURED",
+        scene_preservation=True,
+        target_selection="SAM_3_1_TRACKS_WITH_ROLE_ASSIGNMENT",
+        requires_gpu=True,
+        account_or_local_weights=True,
+        expected_paid_cost=False,
+        local_entrypoint=None,
+        strengths="Upstream documents role assignment for 1–4 characters, leaving unmatched people untouched.",
+        limitations="No Furuya inference adapter or weights installed; upstream tested RTX 4060 Ti 16GB + 64GB RAM; quality and free hosting unverified.",
+        official_source="https://github.com/D3voz/openjutsu",
+    ),
+    Engine(
+        id="henge_tara_multi",
+        name="Henge TARA-H3 — multi-character motion/character swap",
+        tasks=("multi_scene_replacement",),
+        state="RESEARCH_ONLY",
+        execution="COMFYUI_GPU_CHECKOUT_UNCONFIGURED",
+        scene_preservation=False,
+        target_selection="SAM_3_1_TRACKS_AND_REFERENCE_ROLES",
+        requires_gpu=True,
+        account_or_local_weights=True,
+        expected_paid_cost=False,
+        local_entrypoint=None,
+        strengths="Two-person character replacements in demo; per-subject masks and shot-aware temporal alignment.",
+        limitations="Original background is not guaranteed without masked mode; cited showcase used paid RunPod Serverless; not validated at zero cost.",
+        official_source="https://github.com/alisson-anjos/Henge",
+    ),
+    Engine(
+        id="wan_vace_masked",
+        name="Wan2.1 VACE — masked video inpainting",
+        tasks=("multi_scene_replacement",),
+        state="RESEARCH_ONLY",
+        execution="COMFYUI_GPU_CHECKOUT_UNCONFIGURED",
+        scene_preservation=True,
+        target_selection="REGION_MASKS_PER_PERSON; serial or composited passes",
+        requires_gpu=True,
+        account_or_local_weights=True,
+        expected_paid_cost=False,
+        local_entrypoint=None,
+        strengths="Spatially localized video editing can preserve surrounding regions when masks are accurate.",
+        limitations="Multi-person support requires masks, pass ordering and compositing; not a native validated one-pass multi-person swap; GPU unverified.",
+        official_source="https://comfy.org/workflows/video_wan_vace_inpainting-a1bb55d904c9/",
+    ),
+    Engine(
         id="kling3_motion",
         name="Kling VIDEO 3.0 Motion Control — candidate",
         tasks=("motion_transfer",),
@@ -130,7 +178,7 @@ def get(engine_id: str) -> Engine:
 
 
 def candidates(task: Task, *, zero_paid_budget: bool = True) -> list[dict]:
-    if task not in ("scene_replacement", "motion_transfer"):
+    if task not in ("scene_replacement", "motion_transfer", "multi_scene_replacement"):
         raise ValueError("Unknown task: " + str(task))
     result = []
     for engine in ENGINES:
@@ -151,7 +199,7 @@ def candidates(task: Task, *, zero_paid_budget: bool = True) -> list[dict]:
 
 def manifest(*, task: Task, clip_seconds: float, target_count: int = 1,
              strict_background: bool = True) -> dict:
-    if task not in ("scene_replacement", "motion_transfer"):
+    if task not in ("scene_replacement", "motion_transfer", "multi_scene_replacement"):
         raise ValueError("Unsupported task")
     if not isinstance(clip_seconds, (int, float)) or not 0.5 <= clip_seconds <= 30:
         raise ValueError("Clip duration must be 0.5–30s")
@@ -180,7 +228,7 @@ def manifest(*, task: Task, clip_seconds: float, target_count: int = 1,
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--task", choices=["scene_replacement", "motion_transfer"], default="scene_replacement")
+    parser.add_argument("--task", choices=["scene_replacement", "motion_transfer", "multi_scene_replacement"], default="scene_replacement")
     parser.add_argument("--duration", type=float, default=3)
     parser.add_argument("--targets", type=int, default=1)
     args = parser.parse_args()
