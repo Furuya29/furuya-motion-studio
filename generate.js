@@ -80,7 +80,7 @@ async function generate(){
  if(!window.confirm('Confirma enviar imagem e vídeo ao Viggle e usar até os créditos disponíveis para este teste? Não haverá compra automática.'))return;
  try{
   button('generate',false);
-  const job=await request('start',{method:'POST',headers:{'X-Furuya-Intent':'local-explicit-user-action','X-Furuya-Confirm':'AUTHORIZE_EXISTING_CREDITS','Content-Length':'0'}});
+  const job=await request('start',{method:'POST',headers:{'X-Furuya-Intent':'local-explicit-user-action','X-Furuya-Confirm':'AUTHORIZE_EXISTING_CREDITS'}});
   await showStatus(job);
  }catch(e){notice('Não foi possível iniciar: '+e.message,true)}
 }
