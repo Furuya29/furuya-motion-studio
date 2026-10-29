@@ -125,7 +125,7 @@ def video_outputs(history: dict, prompt_id: str) -> list[dict]:
                 if (isinstance(filename, str) and SAFE_FILE.fullmatch(filename)
                         and Path(filename).suffix.lower() in (".mp4", ".webm")
                         and isinstance(subfolder, str)
-                        and not (Path(subfolder).is_absolute() or ".." in Path(subfolder).parts)
+                        and not (Path(subfolder).is_absolute() or ".." in Path(subfolder).parts or "\\" in subfolder)
                         and ftype in ("output", "temp")):
                     files.append({"filename": filename, "subfolder": subfolder, "type": ftype})
     return files
@@ -151,6 +151,13 @@ def download(base: str, file: dict, output: Path) -> int:
                     dest.write(chunk)
             if size < 1024:
                 raise ValueError("ComfyUI output video too small")
+            with tmp.open("rb") as check:
+                signature = check.read(32)
+            suffix = output.suffix.lower()
+            if suffix == ".mp4" and b"ftyp" not in signature:
+                raise ValueError("ComfyUI output is not a valid MP4 container header")
+            if suffix == ".webm" and not signature.startswith(b"\x1a\x45\xdf\xa3"):
+                raise ValueError("ComfyUI output is not a valid WebM container header")
             if output.exists():
                 raise ValueError("Refusing to overwrite existing output")
             tmp.replace(output)
@@ -188,6 +195,10 @@ def job_plan(args) -> dict:
 
 
 def run(args) -> int:
+    if not isinstance(args.max_wait, int) or not 1 <= args.max_wait <= 3600:
+        raise ValueError("--max-wait must be between 1 and 3600 seconds")
+    if args.output.suffix.lower() not in (".mp4", ".webm"):
+        raise ValueError("Output path must end with .mp4 or .webm")
     result = job_plan(args)
     print(json.dumps(result, ensure_ascii=False, indent=2), flush=True)
     if not args.execute:
