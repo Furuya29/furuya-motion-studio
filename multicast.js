@@ -82,8 +82,20 @@ video.addEventListener('loadedmetadata',()=>{
  ready=video.videoWidth>0&&video.videoHeight>0&&Number.isFinite(video.duration)&&video.duration>0;
  if(!ready){setStatus('Não foi possível ler metadados do vídeo.',true);return}
  canvas.width=video.videoWidth;canvas.height=video.videoHeight;
- addRole();updateButtons();paint();
+ addRole();updateButtons();$('playPause').disabled=false;$('seek').disabled=false;paint();
  setStatus('Vídeo carregado. Pause em um quadro, selecione uma referência e marque quem será substituído. O vídeo continua intacto.');
+});
+$('playPause').addEventListener('click',()=>{
+ if(!ready)return;
+ if(video.paused)video.play().catch(e=>setStatus(e.message,true));else video.pause();
+});
+$('seek').addEventListener('input',()=>{
+ if(!ready)return;video.pause();video.currentTime=video.duration*Number($('seek').value)/1000;paint();
+});
+video.addEventListener('timeupdate',()=>{
+ if(!ready)return;
+ $('seek').value=String(Math.round(1000*video.currentTime/video.duration));
+ $('time').textContent=video.currentTime.toFixed(2).replace('.',',')+' s';
 });
 video.addEventListener('play',repaintWhenPlaying);
 video.addEventListener('seeked',paint);
