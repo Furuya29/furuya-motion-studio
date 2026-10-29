@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const html=readFileSync(new URL('../generate.html',import.meta.url),'utf8');
+const js=readFileSync(new URL('../generate.js',import.meta.url),'utf8');
+assert.match(html,/id="task"/);
+assert.match(html,/id="engine"/);
+assert.match(html,/scene_replacement/);
+assert.match(html,/motion_transfer/);
+assert.match(js,/\/api\/['"]\+route|request\('engines'\)/);
+assert.match(js,/engineIsLive\(\)/);
+assert.match(js,/form\.append\('engine_id'/);
+assert.match(js,/form\.append\('task'/);
+assert.doesNotMatch(html,/VIGGLE_API_KEY\s*=/);
+assert.doesNotMatch(js,/localStorage\.setItem\(['"]VIGGLE_API_KEY/);
+new Function(js);
+console.log('PASS: multimotor UI, task capability filtering and safe token handling');
