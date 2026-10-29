@@ -84,6 +84,8 @@ def export(plan: dict, directory: Path, *, fps: float = 24.0,
         raise ValueError("Output directory already exists. No overwrites or mixing assignments.")
     directory.mkdir(parents=True)
     width, height = plan["video"]["width"], plan["video"]["height"]
+    if width * height > 1920 * 1080:
+        raise ValueError("Temporal proposals limited to 2,073,600 pixels per frame; downscale the planning video first.")
     summaries = []
     try:
         for role in plan["targets"]:
