@@ -1,0 +1,44 @@
+{
+  "schema": "furuya-routing-policy/1",
+  "mode": "ADVISORY_ONLY",
+  "default_intent": {
+    "target_count": 1,
+    "preserve_original_scene": true,
+    "source_type": "existing_viral_video"
+  },
+  "task_rules": {
+    "single_preserve_scene": "scene_replacement",
+    "single_motion_only": "motion_transfer",
+    "multiple_targets": "multi_scene_replacement"
+  },
+  "priorities": {
+    "scene_replacement": [
+      "wan22_replace",
+      "viggle_animate_open"
+    ],
+    "motion_transfer": [
+      "wan_animate2_motion",
+      "viggle_video_remix"
+    ],
+    "multi_scene_replacement": [
+      "openjutsu_advanced",
+      "wan_vace_masked",
+      "henge_tara_multi"
+    ]
+  },
+  "exclusions": [
+    "kling3_motion"
+  ],
+  "constraints": {
+    "max_targets": 4,
+    "require_verified_free_resources": true,
+    "never_auto_submit": true,
+    "block_paid_fallback": true
+  },
+  "explanation": {
+    "scene_replacement": "Preservar a festa e substituir somente a pessoa escolhida exige edição localizada, máscara e consistência temporal.",
+    "motion_transfer": "Reproduzir a coreografia com uma personagem, permitindo reconstruir o cenário, favorece modelos de transferência direta de movimento.",
+    "multi_scene_replacement": "Várias pessoas exigem associação de identidades, rastreamento individual, máscaras e resolução de oclusões."
+  },
+  "notes": "Recomendação por regras verificáveis, não por LLM. Ranking não prova que o motor está instalado ou oferece GPU gratuita. Nunca inicia inferência nem compra créditos."
+}
