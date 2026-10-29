@@ -57,6 +57,28 @@ class RenderState:
         self.session: Path | None = None
         self.image: Path | None = None
         self.motion: Path | None = None
+        # Restore the latest receipt; a restart must never enable duplicate billing.
+        receipts = sorted(root.glob("job-*/receipt.json"),
+                          key=lambda p: p.stat().st_mtime, reverse=True)
+        if receipts:
+            try:
+                previous = json.loads(receipts[0].read_text(encoding="utf-8"))
+                if isinstance(previous, dict) and isinstance(previous.get("status"), str):
+                    self.session = receipts[0].parent
+                    self.image = self.session / "character.png"
+                    self.motion = self.session / "driving.mp4"
+                    if not self.image.is_file() or not self.motion.is_file():
+                        raise ValueError("receipt without original media")
+                    self.job = previous
+                    if self.job["status"] == "SUBMITTED":
+                        self.job["status"] = "PENDING"
+                        self.job["stage"] = "AWAITING_MANUAL_RESUME"
+                        self.store()
+            except (OSError, ValueError, TypeError):
+                # Corrupt receipt must fail closed; never silently permit a new POST.
+                self.job = {"status": "SUBMISSION_UNCERTAIN",
+                            "stage": "RECOVERY_BLOCKED",
+                            "error": "Unreadable receipt: review job folder manually."}
 
     def public(self) -> dict:
         with self.lock:
