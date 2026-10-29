@@ -65,7 +65,15 @@ async function connect(){
   }
   refreshControls();
   await showStatus(status);
- }catch(e){connected=false;$('connection').textContent='Servidor local indisponível. Esta página pode mostrar os controles no GitHub Pages, mas precisa do gateway para gerar: '+e.message;refreshControls()}
+ }catch(e){
+  connected=false;
+  $('connection').textContent='Servidor local indisponível: o catálogo pode ser consultado neste site, mas nenhum motor será executado no GitHub Pages.';
+  try{
+   const response=await fetch('./engine-catalog.json',{cache:'no-store'});
+   if(response.ok){engineCatalog=await response.json();renderEngines()}
+  }catch{}
+  refreshControls();
+ }
 }
 async function credits(){
  try{
