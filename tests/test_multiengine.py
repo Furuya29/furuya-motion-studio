@@ -73,9 +73,60 @@ class AdapterTests(unittest.TestCase):
         self.assertEqual(plan["full_character_replacement"], True)
         args.stage = "render"
         dest.mkdir()
-        (dest / "ref.data").touch()
+        for name in ("src_pose.mp4", "src_face.mp4", "src_bg.mp4", "src_mask.mp4"):
+            (dest / name).write_bytes(b"video fixture")
         render = wan22.plan(args)
         self.assertIn("--use_relighting_lora", render["command"])
+
+    def test_wan22_incomplete_crowd_mask_blocks_render(self):
+        checkout = self.root / "Wan2.2"
+        prep = checkout / "wan/modules/animate/preprocess/preprocess_data.py"
+        prep.parent.mkdir(parents=True)
+        prep.touch()
+        (checkout / "generate.py").touch()
+        ckpt = self.root / "weights"
+        (ckpt / "process_checkpoint").mkdir(parents=True)
+        work = self.root / "processed"
+        work.mkdir()
+        (work / "src_pose.mp4").write_bytes(b"fixture")
+        args = argparse.Namespace(checkout=checkout, checkpoint=ckpt,
+              video=self.video, image=self.image, preprocessed=work,
+              mode="replace", stage="render", python="python", execute=False)
+        with self.assertRaisesRegex(ValueError, "Incomplete official preprocessing"):
+            wan22.plan(args)
+        for name in ("src_face.mp4", "src_bg.mp4", "src_mask.mp4"):
+            (work / name).write_bytes(b"fixture")
+        (ckpt / "wan.safetensors").write_bytes(b"fake weights")
+        args.crowd_scene = True
+        args.verified_target_mask = False
+        self.assertTrue(wan22.plan(args)["preprocessing_files_present"])
+        with self.assertRaisesRegex(ValueError, "Crowd scene blocked"):
+            wan22.execution_preflight(args)
+        args.verified_target_mask = True
+        wan22.execution_preflight(args)
+
+    def test_wan_animate2_execute_blocks_missing_weights_and_gpus(self):
+        root = self.root / "Wan-Animate-2"
+        config_dir = root / "infer"
+        config_dir.mkdir(parents=True)
+        (config_dir / "wan_animate_2_distillation.yaml").write_text(
+           "model_path: '../ckpts/model.safetensors'\nsp_size: 2\nsharding_size: 2\n"
+        )
+        checkpoints = root / "ckpts"
+        checkpoints.mkdir()
+        args = argparse.Namespace(checkout=root, distilled=True,
+                                  require_model_dir=checkpoints)
+        with self.assertRaisesRegex(ValueError, "does not exist"):
+            wan2.execution_preflight(args)
+        (checkpoints / "model.safetensors").write_bytes(b"x" * 2048)
+        with mock.patch.object(wan2.subprocess, "run") as invoke:
+            invoke.return_value.stdout = "NVIDIA GPU A\n"
+            with self.assertRaisesRegex(ValueError, "requires at least 2"):
+                wan2.execution_preflight(args)
+            invoke.assert_called_once()
+        with mock.patch.object(wan2.subprocess, "run") as invoke:
+            invoke.return_value.stdout = "NVIDIA GPU A\nNVIDIA GPU B\n"
+            wan2.execution_preflight(args)
 
     def test_wan_animate2_motion_only_distilled(self):
         root = self.root / "Wan-Animate-2"
