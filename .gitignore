@@ -1,0 +1,7 @@
+# Local-only assets and secrets
+local-render-jobs/
+.env
+.env.*
+!*.env.example
+__pycache__/
+*.pyc
