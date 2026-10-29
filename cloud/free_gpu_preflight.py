@@ -84,13 +84,29 @@ def main() -> int:
         project_path = Path(args.project).expanduser().resolve()
         try:
             data = json.loads(project_path.read_text(encoding="utf-8"))
-            if data.get("schema") != "furuya-recast-project/0.7":
+            if data.get("schema") not in ("furuya-recast-project/0.7", "furuya-recast-project/0.8"):
                 p.error("incompatible project schema")
             source = data.get("video", {})
-            project = {"clip_duration_seconds": source.get("clipDuration"),
+            keyframes = data.get("keyframes", [])
+            if not isinstance(keyframes, list):
+                p.error("invalid keyframes list")
+            legacy_frame = data.get("keyframe") or {}
+            if not isinstance(legacy_frame, dict):
+                p.error("invalid legacy keyframe")
+            characters = data.get("characters", [])
+            if not isinstance(characters, list):
+                p.error("invalid characters list")
+            repaint_candidates = [k for k in keyframes
+                                  if isinstance(k, dict) and
+                                  (k.get("hasFullRepaint") or k.get("fullRepaintFilename"))]
+            project = {"schema": data["schema"],
+                       "clip_duration_seconds": source.get("clipDuration"),
                        "input_file": source.get("filename"),
-                       "characters": len(data.get("characters", [])),
-                       "has_repainted_frame": data.get("keyframe", {}).get("hasFullRepaint", False)}
+                       "characters": len(characters),
+                       "keyframes": len(keyframes),
+                       "has_repainted_frame": bool(
+                           repaint_candidates or legacy_frame.get("hasFullRepaint")),
+                       "repaint_image_loaded": "UNKNOWN_FROM_JSON"}
         except (OSError, ValueError, AttributeError, TypeError) as e:
             p.error(f"Cannot read project: {e}")
     free_disk = round(shutil.disk_usage(folder).free / 1024**3, 2)
