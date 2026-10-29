@@ -8,6 +8,14 @@ on:
       - 'tools/**'
       - 'tests/**'
       - '.github/workflows/validate-recast.yml'
+  pull_request:
+    paths:
+      - 'recast.html'
+      - 'recast.js'
+      - 'cloud/**'
+      - 'tools/**'
+      - 'tests/**'
+      - '.github/workflows/validate-recast.yml'
   workflow_dispatch:
 permissions:
   contents: read
