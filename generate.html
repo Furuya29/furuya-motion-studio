@@ -14,7 +14,7 @@ button:disabled{opacity:.43;cursor:not-allowed}.row{display:flex;flex-wrap:wrap;
 video{max-height:440px;width:100%;background:black;border-radius:10px}
 #resultPanel[hidden]{display:none}a{color:#abeddb}
 </style></head><body><main>
-<header><h1>Furuya Motion Studio</h1><p class="sub">GERAÇÃO TEMPORAL · P0 ALBEDO · PROTÓTIPO EXPERIMENTAL</p></header>
+<header><h1>Furuya Motion Studio</h1><p class="sub">GERAÇÃO TEMPORAL · VÍDEOS VIRAIS · MULTIMOTOR EXPERIMENTAL</p></header>
 <div class="note"><b>Este é o módulo de geração, não a prévia estática.</b> A v0.8.1 continua sendo o editor de preparação. Aqui o objetivo é solicitar um MP4 animado real a um modelo externo e verificá-lo. Sem serviço de inferência, não existe render. O módulo não transforma PNG rígida em dança.</div>
 <section><h2>01 · Conexão segura</h2><p>Os motores são coordenados por um <b>gateway Python local</b>. Ele mantém a chave no ambiente do computador, nunca no HTML ou no GitHub Pages. Nenhum job começa automaticamente.</p>
 <p class="sub">Para habilitar a geração, o gateway deve estar executando localmente em <code>http://127.0.0.1:8765</code>. Um site público estático não pode proteger sua chave de API.</p>
@@ -54,9 +54,9 @@ video{max-height:440px;width:100%;background:black;border-radius:10px}
 <p class="small"><b>Para múltiplas pessoas:</b> <a href="./multicast.html">Abrir o planejador multipersonagem (até 4 alvos)</a>, atribuir uma personagem a cada pessoa e exportar o plano. Essa etapa não é renderização.</p>
 </section>
 <section><h2>03 · Arquivos de vídeo e personagem</h2>
-<label for="image">Albedo — imagem PNG original (2731 × 4096 quando disponível)</label>
+<label for="image">Imagem original da personagem (anime, cinema ou criação própria)</label>
 <input type="file" id="image" accept=".png,image/png">
-<label for="motion">Dança — vídeo original MP4 de 3 segundos</label>
+<label for="motion">Vídeo viral original (MP4 curto; backend P0 até 5,2 segundos)</label>
 <input type="file" id="motion" accept=".mp4,video/mp4">
 <label for="repaint">Quadro retocado opcional — arquivado para a rota Viggle-Animate (não utilizado no Remix)</label>
 <input type="file" id="repaint" accept=".png,image/png">
@@ -73,7 +73,7 @@ video{max-height:440px;width:100%;background:black;border-radius:10px}
 <section id="resultPanel" hidden><h2>05 · Resultado generativo</h2>
 <video id="resultVideo" controls playsinline preload="metadata"></video>
 <p><a id="download" class="action" download="albedo_3s_rendered.mp4" href="/api/result">Baixar MP4 realmente gerado</a></p>
-<p class="sub">A existência do MP4 é apenas uma prova de renderização, não de fidelidade. Verifique rosto, asas, chifres, roupa, membros, multidão e 72 quadros antes de aprovar o teste.</p>
+<p class="sub">A existência do MP4 é apenas uma prova de renderização, não de fidelidade. Verifique identidade, anatomia, roupas, acessórios, coreografia, fundo e consistência temporal antes de aprovar o teste.</p>
 </section>
 <footer class="sub"><a href="./recast.html?v=0.8.1">Voltar ao editor v0.8.1</a> · Render não executado até confirmação explícita · Nenhuma assinatura exigida pelo Furuya</footer>
 </main><script src="./generate.js?v=p0-20261029" defer></script></body></html>
