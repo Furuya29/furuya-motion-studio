@@ -137,7 +137,7 @@ async function showStatus(s){
   $('resultPanel').hidden=false;
   $('resultVideo').src='/api/result';
   $('download').href='/api/result';
-  notice('MP4 generativo renderizado e recebido. A identidade da Albedo, a coreografia e a multidão ainda precisam de auditoria visual. Arquivo: '+s.output_bytes+' bytes.');
+  notice('MP4 generativo renderizado e recebido. A identidade da personagem, a coreografia e as pessoas do fundo ainda precisam de auditoria visual. Arquivo: '+s.output_bytes+' bytes.');
  }else if(s.status==='PREPARED'){
   notice(s.backend_ready_for_submission
    ? 'Arquivos preparados: '+s.duration_seconds+' s; custo estimado '+s.credit_estimate+' crédito(s). Aguardando autorização explícita.'
