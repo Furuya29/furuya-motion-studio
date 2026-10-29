@@ -46,7 +46,7 @@ def plan(args) -> dict:
         "command": cmd,
         "cwd": str(root / "infer"),
         "environment": {"PYTHONPATH": str(root)},
-        "status": "PREFLIGHT_COMPLETE_NOT_GPU_VERIFIED",
+        "status": "COMMAND_PREPARED_WEIGHTS_AND_GPU_NOT_VERIFIED",
         "execution": "DISABLED" if not args.execute else "OPT_IN_GPU",
         "preserves_original_background": False,
         "output_path": "UPSTREAM_MANAGED; inspect generated MP4 manually",
@@ -57,6 +57,40 @@ def plan(args) -> dict:
             "This is motion-transfer output; NOT an existing-crowd video replacement.",
         ],
     }
+
+
+def execution_preflight(args) -> None:
+    """Verify model file referenced by the upstream YAML without executing it."""
+    import re
+    config = args.checkout.expanduser().resolve() / "infer" / (
+        "wan_animate_2_distillation.yaml" if args.distilled else "wan_animate_2.yaml"
+    )
+    text = config.read_text(encoding="utf-8")
+    match = re.search(r"^\\s*model_path:\\s*['\\\"]?([^'\\\"#\\r\\n]+)", text, flags=re.MULTILINE)
+    if not match:
+        raise ValueError("Upstream config lacks a model_path entry; verify weights manually.")
+    path = (config.parent / match.group(1).strip()).resolve()
+    if not path.is_file() or path.stat().st_size < 1024:
+        raise ValueError("Checkpoint referenced in YAML does not exist: " + str(path))
+    configured = args.require_model_dir.expanduser().resolve()
+    if not path.is_relative_to(configured):
+        raise ValueError("Configured model checkpoint is outside --require-model-dir.")
+    # The YAML also controls GPU parallelism; never silently modify it.
+    matches = re.findall(r"^\\s*(sp_size|sharding_size):\\s*(\\d+)", text, flags=re.MULTILINE)
+    params = {name: int(value) for name, value in matches}
+    requested = max(params.get("sp_size", 1), params.get("sharding_size", 1))
+    try:
+        checked = subprocess.run(["nvidia-smi", "--query-gpu=name",
+                                  "--format=csv,noheader"],
+                                 capture_output=True, text=True, timeout=6, check=True)
+        present = len([line for line in checked.stdout.splitlines() if line.strip()])
+    except (OSError, subprocess.SubprocessError):
+        present = 0
+    if present < requested:
+        raise ValueError(
+            f"Upstream YAML requires at least {requested} CUDA GPUs, found {present}. "
+            "Adjust parallel configs only in a compatible validated environment."
+        )
 
 
 def main(argv=None) -> int:
@@ -78,6 +112,7 @@ def main(argv=None) -> int:
             return 0
         if not args.confirm_free_gpu or not args.require_model_dir:
             raise ValueError("Execution requires verified local checkpoints and --confirm-free-gpu.")
+        execution_preflight(args)
         import os
         env = os.environ.copy()
         env["PYTHONPATH"] = result["environment"]["PYTHONPATH"]
