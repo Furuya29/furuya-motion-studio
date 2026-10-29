@@ -40,6 +40,18 @@ Fontes oficiais:
 - cloud/local_render_gateway.py: GET /api/engines retorna apenas candidatos compatíveis, POST /api/prepare guarda tarefa e motor escolhido e bloqueia POST de inferência para mecanismos sem backend autorizado.
 - generate.html / generate.js: seleção de tarefa e motor; botão Gerar ativado apenas se backend e saldo confirmados. Nesse estágio, somente Viggle Remix possui adaptador HTTP de submissão. Os demais são adaptadores de execução offline opcional.
 
+## Aceitação do primeiro MP4
+
+O novo comando CPU-only `tools/audit_generated_video.py` lê metadados reais por FFprobe e recusa um resultado que seja apenas uma cópia byte a byte do vídeo de entrada. Também testa duração, proporções e quantidade de quadros. A saída só pode receber `PASS_REVIEWED` quando os dez critérios de auditoria visual forem explicitamente revisados e aprovados, incluindo cabelo, chifres, asas, roupas, movimento, cenário e outros dançarinos.
+
+Exemplo **somente depois** de obter um vídeo real:
+
+```bash
+python tools/audit_generated_video.py --source assets/driving.mp4 --output albedo_3s_rendered.mp4
+```
+
+Se não houver arquivo MP4 realmente renderizado, o comando devolve NO_GO. Um resultado `RENDERED_NEEDS_VISUAL_REVIEW` significa apenas que a estrutura do vídeo é compatível, **não que IA ou substituição fiel tenham sido provadas**. O JSON opcional de revisão precisa ser preenchido a partir de inspeção dos quadros. Não automatizar essa aprovação com respostas simuladas.
+
 ## O que continua faltando para renderizar o Rio
 
 1. Verificar disponibilidade e instalar checkout + pesos do Wan2.2-Animate onde houver GPU gratuita suficiente. **Ainda não foi executado.**
