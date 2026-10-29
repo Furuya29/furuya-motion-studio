@@ -19,11 +19,12 @@ import re
 import shutil
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, parse_qs
 from uuid import uuid4
 
 from viggle_remix_api import BASE, api_json, download, probe_seconds
 from engine_registry import get, candidates
+from auto_router import recommend
 
 MAX_UPLOAD = 35 * 1024 * 1024
 SAFE_RENDER = re.compile(r"^render_[A-Za-z0-9_-]+$")
@@ -298,12 +299,29 @@ class Handler(BaseHTTPRequestHandler):
             return self._file(self.root / "generate.html", "text/html; charset=utf-8")
         if route == "/generate.js":
             return self._file(self.root / "generate.js", "text/javascript; charset=utf-8")
+        if route == "/routing-policy.json":
+            return self._file(self.root / "routing-policy.json", "application/json; charset=utf-8")
         if route == "/multicast.html":
             return self._file(self.root / "multicast.html", "text/html; charset=utf-8")
         if route == "/multicast.js":
             return self._file(self.root / "multicast.js", "text/javascript; charset=utf-8")
         if route == "/api/status":
             return self._json(self.state.public())
+        if route == "/api/recommend":
+            params = parse_qs(urlsplit(self.path).query)
+            try:
+                if any(len(values) != 1 for values in params.values()):
+                    raise ValueError("Duplicate route inputs are not allowed.")
+                if set(params) - {"targets", "preserve_scene"}:
+                    raise ValueError("Unsupported routing input.")
+                count = int(params.get("targets", ["1"])[0])
+                scene_raw = params.get("preserve_scene", ["true"])[0]
+                if scene_raw not in ("true", "false"):
+                    raise ValueError("preserve_scene must be true or false")
+                return self._json(recommend(target_count=count,
+                                            preserve_original_scene=(scene_raw == "true")))
+            except (ValueError, TypeError) as exc:
+                return self._json({"error": str(exc)[:250]}, 400)
         if route == "/api/engines":
             return self._json({
                 "schema": "furuya-engine-catalog/1",

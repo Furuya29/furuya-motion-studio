@@ -30,6 +30,28 @@ class LocalHTTPTests(unittest.TestCase):
         self.addCleanup(self.server.shutdown)
         self.base = "http://127.0.0.1:" + str(self.server.server_port)
 
+    def test_automatic_routing_never_executes(self):
+        with urlopen(self.base + "/api/recommend?targets=1&preserve_scene=true", timeout=5) as response:
+            value = json.load(response)
+        self.assertEqual(value["preferred_engine"], "wan22_replace")
+        self.assertFalse(value["execution_authorized"])
+        self.assertFalse(value["can_generate_now"])
+        with urlopen(self.base + "/api/recommend?targets=3&preserve_scene=true", timeout=5) as response:
+            three = json.load(response)
+        self.assertEqual(three["task"], "multi_scene_replacement")
+        self.assertEqual(three["preferred_engine"], "openjutsu_advanced")
+        with urlopen(self.base + "/routing-policy.json", timeout=5) as response:
+            policy = json.load(response)
+        self.assertEqual(policy["mode"], "ADVISORY_ONLY")
+
+    def test_automatic_routing_invalid_input(self):
+        with self.assertRaises(HTTPError) as error:
+            urlopen(self.base + "/api/recommend?targets=50", timeout=5)
+        self.assertEqual(error.exception.code, 400)
+        with self.assertRaises(HTTPError) as error:
+            urlopen(self.base + "/api/recommend?targets=2&preserve_scene=unknown", timeout=5)
+        self.assertEqual(error.exception.code, 400)
+
     def test_multimotor_catalog_http(self):
         with urlopen(self.base + "/api/engines", timeout=5) as response:
             payload = json.load(response)
