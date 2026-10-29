@@ -5,6 +5,7 @@ on:
       - 'recast.html'
       - 'recast.js'
       - 'cloud/**'
+      - 'tools/**'
       - 'tests/**'
       - '.github/workflows/validate-recast.yml'
   workflow_dispatch:
@@ -21,7 +22,7 @@ jobs:
       - name: Recasting editor smoke test
         run: node tests/recast_smoke.mjs
       - name: Python clip tools syntax check
-        run: python -m py_compile tools/prepare_clip.py cloud/viggle_inference.py tests/test_prepare_clip.py tests/test_viggle_adapter.py
+        run: python -m py_compile tools/prepare_clip.py cloud/viggle_inference.py cloud/viggle_remix_api.py tests/test_prepare_clip.py tests/test_viggle_remix_api.py tests/test_gpu_preflight.py tests/test_viggle_adapter.py
       - name: Reproducible CPU-only clip preparation tests
         run: python -m unittest discover -s tests -p 'test_*.py' -v
       - name: Python preflight syntax check
