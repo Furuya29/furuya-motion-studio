@@ -131,8 +131,10 @@ class LocalComfyBridgeTests(unittest.TestCase):
     def test_unavailable_comfy_nodes_block_before_submit(self):
         self.args.execute = True
         self.args.confirm_free_gpu = True
-        self.workflow.write_text(json.dumps({"1": {"class_type": "UninstalledNode",
-                "inputs": {"video": "old.mp4", "image": "old.png"}}}))
+        self.workflow.write_text(json.dumps({
+            "1": {"class_type": "UninstalledNode", "inputs": {"video": "old.mp4"}},
+            "2": {"class_type": "ImageReaderFake", "inputs": {"image": "old.png"}}
+        }))
         with self.assertRaisesRegex(ValueError, "Required ComfyUI nodes"):
             comfy.run(self.args)
         self.assertEqual(len(FakeComfy.submitted), 0)
