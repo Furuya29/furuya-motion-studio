@@ -1,6 +1,6 @@
 'use strict';
 const $ = id => document.getElementById(id);
-let connected=false, prepared=false, available=null, jobStatus='IDLE', refreshing=false;
+let connected=false, prepared=false, available=null, requiredCredits=null, jobStatus='IDLE', refreshing=false;
 const button=(id,enable)=>{$(id).disabled=!enable};
 function notice(msg,bad=false){$('state').textContent=msg;$('state').className=bad?'note error':'note'}
 async function request(route,options){
@@ -13,7 +13,7 @@ async function request(route,options){
 function refreshControls(){
  button('credits',connected);
  button('prepare',connected);
- button('generate',connected&&prepared&&available!==null&&available>=0&&jobStatus==='PREPARED'&&$('confirm').checked);
+ button('generate',connected&&prepared&&available!==null&&requiredCredits!==null&&available>=requiredCredits&&jobStatus==='PREPARED'&&$('confirm').checked);
  button('resume',connected&&['PENDING','SUBMITTED'].includes(jobStatus));
 }
 async function connect(){
@@ -24,7 +24,7 @@ async function connect(){
   $('connection').textContent=connected
    ? 'Gateway local conectado. Chave da API '+(status.api_key_configured?'configurada.':'não configurada — sem submissões.')
    : 'Gateway não disponível.';
-  if(connected&&status.status==='PREPARED'){prepared=true;$('prepared').textContent='Pacote preparado neste servidor. Consulte os créditos antes de gerar.'}
+  if(connected&&status.status==='PREPARED'){prepared=true;requiredCredits=status.required_balance;$('prepared').textContent='Pacote preparado neste servidor. Consulte os créditos antes de gerar.'}
   refreshControls();
   await showStatus(status);
  }catch(e){connected=false;$('connection').textContent='Servidor local indisponível. Esta página pode mostrar os controles no GitHub Pages, mas precisa do gateway para gerar: '+e.message;refreshControls()}
@@ -68,7 +68,7 @@ async function prepare(){
  try{
   button('prepare',false);notice('Validando arquivos localmente, sem gerar vídeo…');
   const job=await request('prepare',{method:'POST',headers:{'X-Furuya-Intent':'local-explicit-user-action'},body:form});
-  prepared=true;available=null;
+  prepared=true;available=null;requiredCredits=job.required_balance;
   $('prepared').textContent='Vídeo: '+job.duration_seconds+'s · Custo estimado: '+job.credit_estimate+' crédito(s). Quadro retocado é arquivado, não usado no Remix.';
   await showStatus(job);
  }catch(e){notice('Falha na preparação: '+e.message,true)}
