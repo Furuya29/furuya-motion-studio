@@ -1,4 +1,25 @@
 # Furuya Motion Studio — Plano zero orçamento para geração video-to-video
+
+## Atualização P0 em 29/10/2026 — Rota oficial Viggle V1 Video Remix (sem GPU local)
+
+A API Viggle V1 agora é o primeiro candidato de teste **programático** de 3 segundos. Novo adaptador: `cloud/viggle_remix_api.py`. Ele recebe uma PNG da Albedo e o `driving.mp4`, usa `background_mode=original` e solicita 1 personagem por vez. **Não exige** `repainted-ref.png` para esse endpoint de Remix; o quadro retocado continua obrigatório para o motor aberto Viggle-Animate em separado.
+
+O provedor documenta 100 créditos gratuitos **para novas contas**, custo de cerca de 1 crédito por segundo de Remix e consulta gratuita `GET /v1/credits`. O adaptador só faz upload após `--execute`, precisa de `VIGGLE_API_KEY` em variável de ambiente local, consulta o saldo, não compra créditos, não usa GPU paga e não tenta reenviar automaticamente pedidos incertos. Em caso de erro após a submissão, utilize o `render_id` com `--resume-id` para consultar o trabalho existente. O saldo pode incluir créditos comprados, e o adaptador não consegue distinguir sua origem: não execute se seu objetivo é preservar um saldo previamente adquirido. **Não coloque a API key no GitHub Pages, no JS público, em issues ou no chat.**
+
+```bash
+python cloud/viggle_remix_api.py --image albedo_original.png --video driving.mp4 --output albedo_3s.mp4
+# Em ambiente próprio, com a variável VIGGLE_API_KEY definida e saldo conferido:
+python cloud/viggle_remix_api.py --image albedo_original.png --video driving.mp4 --output albedo_3s.mp4 --execute
+# Somente para recuperar um trabalho já submetido, sem cobrar outro:
+python cloud/viggle_remix_api.py --image albedo_original.png --video driving.mp4 --output albedo_3s.mp4 --execute --resume-id render_SEU_ID
+```
+
+A API específica Viggle-Animate (`/v1/videos`) exige pelo menos 5 s de vídeo de movimento nos modos normais, portanto **não corresponde ao clipe de 3 s**. O Remix usa `/v1/renders` e é o candidato inicial para esse trecho; a fidelidade à Albedo e a manutenção da multidão precisam ser avaliadas no arquivo MP4 resultante. Nenhum render real foi feito na preparação desta integração.
+
+Documentação: https://docs.viggle.ai/v1/guides/quickstart-mix · https://docs.viggle.ai/v1/pricing · https://docs.viggle.ai/v1/api-reference/credits
+
+---
+
 Verificado: 2026-10-28. Objetivo: substituição da pessoa **inteira** (corpo, cabelo, rosto, roupas, acessórios), não só face swap.
 
 ## Implantação v0.8 — arquivos e pontos de entrada confirmados
