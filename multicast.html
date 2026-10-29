@@ -22,6 +22,7 @@ input[type=file]{max-width:100%;display:block;margin:6px 0}input[type=text]{back
 <section class="panel"><h2>1. Carregue o vídeo original</h2>
 <label for="source">Vídeo de referência (MP4, WebM ou MOV)</label><input id="source" type="file" accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov">
 <div id="videoHolder"><video id="video" controls playsinline preload="metadata"></video><canvas id="overlay" width="720" height="1280" aria-label="Marcação dos personagens no quadro"></canvas></div>
+<div class="row" style="margin-top:10px"><button id="playPause" disabled>▶ Reproduzir / Pausar</button><input id="seek" type="range" min="0" max="1000" step="1" value="0" disabled aria-label="Instante do vídeo"><span id="time" class="small">0,00 s</span></div>
 <p class="small">Pause o vídeo, escolha a pessoa do elenco e arraste um retângulo em volta do corpo no quadro. Adicione novos pontos de referência em outros instantes se necessário.</p></section>
 <section class="panel"><h2>2. Personagens e pessoas substituídas</h2>
 <div id="roles"></div>
