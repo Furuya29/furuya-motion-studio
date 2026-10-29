@@ -23,7 +23,23 @@ Fontes oficiais:
 - Viggle V1: https://docs.viggle.ai/v1/guides/quickstart-mix
 - Kling 3.0 Motion: https://kling.ai/quickstart/motion-control-user-guide
 
-### Onde conseguir GPU/credits a custo adicional zero — ainda NÃO validados na conta
+### Auditoria do upstream e endurecimento de preflight — 29/10/2026
+
+**Problema P0 confirmado pela documentação oficial do Wan2.2:** a extração de máscaras oferecida pelo preprocessador foi projetada **somente para vídeos com uma pessoa**. A festa do Rio contém várias pessoas; portanto, não basta rodar `preprocess_data.py` no clipe e presumir que selecionou corretamente o dançarino central.
+
+O adaptador passou a exigir arquivos não vazios `src_pose.mp4`, `src_face.mp4`, `src_bg.mp4`, `src_mask.mp4` para o modo replacement, e os modelos oficiais de detecção/pose/segmentação antes de pré-processar. Para uma cena com multidão, usar `--crowd-scene` na etapa de render obriga `--verified-target-mask` após **inspeção humana do conteúdo da máscara em todos os frames**. **O argumento não corrige nem gera uma máscara**; marca somente uma verificação efetuada. Até termos tracking/segmentação multi-pessoa confiável, o risco de dançarino errado segue NO-GO.
+
+A preparação de referência de personagem deve preservar a PNG original (2731×4096). Quadro repintado experimental não substitui a âncora original. Asas e chifres podem ultrapassar a máscara do torso; considerar margem e oclusões somente após uma máscara correta.
+
+No Wan-Animate-2, a chamada oficial em `infer/wan_animate_2_demo.py` permanece válida. Antes de `--execute`, o adaptador agora lê o `model_path` no YAML e confere se há checkpoint não vazio dentro de `--require-model-dir` e **ao menos o número de CUDA GPUs solicitado por sp_size/sharding_size**. Isso identifica configurações evidentemente incompatíveis, mas não garante VRAM suficiente, recursos gratuitos, licença de modelos, nem qualidade final.
+
+**Testes reais por CPU:** a pipeline CI deverá instalar FFmpeg/FFprobe quando ausentes e deixar de ignorar o teste de recorte H.264. Testes de adaptadores continuam **sem pesos/GPU real**.
+
+Fontes oficiais:
+- https://github.com/Wan-Video/Wan2.2/blob/main/wan/modules/animate/preprocess/UserGuider.md
+- https://github.com/Wan-Video/Wan-Animate-2/blob/main/README.md
+
+## Onde conseguir GPU/credits a custo adicional zero — ainda NÃO validados na conta
 
 1. **Vercel AI Gateway** anuncia US$5 de crédito a cada 30 dias para contas Free sem pagamentos prévios. O Kling 3.0 Motion Control aparece com tarifa base de US$0,13/s (~US$0,39 para três segundos, antes de variações). Requer conta, autorização, verificação de saldo e teto de gasto zero com recarga automática desabilitada. A disponibilidade e a contabilização efetiva do vídeo não foram confirmadas. É um candidato para MOTION_TRANSFER, não garantia de substituição do Rio. Fontes: https://vercel.com/ai-gateway/models/kling-v3.0-motion-control e https://vercel.com/docs/ai-gateway/pricing
 2. **Comfy Cloud** anuncia cinco execuções experimentais gratuitas em GPUs reais, sem cartão. A execução específica de Wan-Animate-2, duração das sessões, disponibilidade e política de retenção não foram testadas na conta. Fonte: https://comfy.org/wan-animate-2/
