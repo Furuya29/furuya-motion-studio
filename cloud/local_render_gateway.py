@@ -107,6 +107,8 @@ class RenderState:
         task = files.get("task", "motion_transfer")
         engine_id = files.get("engine_id", "viggle_video_remix")
         engine = get(engine_id)
+        if task == "multi_scene_replacement":
+            raise ValueError("For multiple people use multicast.html to export assignments. Multi-object tracking and rendering backends are not connected.")
         if task not in engine.tasks:
             raise ValueError("Engine does not support the requested task.")
         if engine.state == "RESEARCH_ONLY" or engine.expected_paid_cost is True:
@@ -296,6 +298,10 @@ class Handler(BaseHTTPRequestHandler):
             return self._file(self.root / "generate.html", "text/html; charset=utf-8")
         if route == "/generate.js":
             return self._file(self.root / "generate.js", "text/javascript; charset=utf-8")
+        if route == "/multicast.html":
+            return self._file(self.root / "multicast.html", "text/html; charset=utf-8")
+        if route == "/multicast.js":
+            return self._file(self.root / "multicast.js", "text/javascript; charset=utf-8")
         if route == "/api/status":
             return self._json(self.state.public())
         if route == "/api/engines":
@@ -303,6 +309,7 @@ class Handler(BaseHTTPRequestHandler):
                 "schema": "furuya-engine-catalog/1",
                 "scene_replacement": candidates("scene_replacement"),
                 "motion_transfer": candidates("motion_transfer"),
+                "multi_scene_replacement": candidates("multi_scene_replacement"),
                 "notes": "An adapter or listed engine is not proof that GPU, free quota or real inference works.",
             })
         if route == "/api/credits":
