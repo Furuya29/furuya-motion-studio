@@ -1,5 +1,8 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
+const catalog=JSON.parse(readFileSync(new URL('../engine-catalog.json',import.meta.url),'utf8'));
+assert.ok(catalog.scene_replacement.some(x=>x.id==='wan22_replace'));
+assert.ok(catalog.motion_transfer.some(x=>x.id==='wan_animate2_motion'));
 const html=readFileSync(new URL('../generate.html',import.meta.url),'utf8');
 const js=readFileSync(new URL('../generate.js',import.meta.url),'utf8');
 assert.match(html,/id="task"/);
@@ -8,6 +11,7 @@ assert.match(html,/scene_replacement/);
 assert.match(html,/motion_transfer/);
 assert.match(js,/\/api\/['"]\+route|request\('engines'\)/);
 assert.match(js,/engineIsLive\(\)/);
+assert.match(js,/engine-catalog\.json/);
 assert.match(js,/form\.append\('engine_id'/);
 assert.match(js,/form\.append\('task'/);
 assert.doesNotMatch(html,/VIGGLE_API_KEY\s*=/);
