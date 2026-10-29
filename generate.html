@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0c1424">
+<title>Furuya Motion Studio · Gerador temporal P0</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif;background:#091020;color:#f4f7ff}
+*{box-sizing:border-box}body{margin:0}main{width:min(880px,100%);margin:auto;padding:18px 13px 48px}
+h1{font-size:23px;margin:0 0 5px}h2{font-size:17px;margin:0 0 10px}.sub{font-size:12px;color:#afc0d8}
+section{background:#142037;border:1px solid #354462;border-radius:14px;padding:16px;margin:13px 0}
+label{display:block;margin:12px 0 5px}input[type=file]{width:100%}button,a.action{border:0;border-radius:9px;min-height:43px;padding:11px;background:#6251b2;color:white;font-weight:700;cursor:pointer;font-size:14px}
+button:disabled{opacity:.43;cursor:not-allowed}.row{display:flex;flex-wrap:wrap;gap:8px}.row>*{flex:1}
+.note{padding:11px 12px;border-left:3px solid #deb36a;background:#302919;border-radius:8px}
+.error{color:#ffcbd2}.good{color:#94f0cb}#state{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
+video{max-height:440px;width:100%;background:black;border-radius:10px}
+#resultPanel[hidden]{display:none}a{color:#abeddb}
+</style></head><body><main>
+<header><h1>Furuya Motion Studio</h1><p class="sub">GERAÇÃO TEMPORAL · P0 ALBEDO · PROTÓTIPO EXPERIMENTAL</p></header>
+<div class="note"><b>Este é o módulo de geração, não a prévia estática.</b> A v0.8.1 continua sendo o editor de preparação. Aqui o objetivo é solicitar um MP4 animado real a um modelo externo e verificá-lo. Sem serviço de inferência, não existe render. O módulo não transforma PNG rígida em dança.</div>
+<section><h2>01 · Conexão segura</h2><p>O motor Viggle Video Remix é chamado por um <b>gateway Python local</b>. Ele mantém a chave no ambiente do computador, nunca no HTML ou no GitHub Pages. Nenhum job começa automaticamente.</p>
+<p class="sub">Para habilitar a geração, o gateway deve estar executando localmente em <code>http://127.0.0.1:8765</code>. Um site público estático não pode proteger sua chave de API.</p>
+<div class="row"><button id="connect">Verificar conexão</button><button id="credits" disabled>Consultar créditos</button></div>
+<div id="connection" role="status" class="sub">Verificando disponibilidade local…</div>
+</section>
+<section><h2>02 · Teste Albedo: arquivos originais</h2>
+<label for="image">Albedo — imagem PNG original (2731 × 4096 quando disponível)</label>
+<input type="file" id="image" accept=".png,image/png">
+<label for="motion">Dança — vídeo original MP4 de 3 segundos</label>
+<input type="file" id="motion" accept=".mp4,video/mp4">
+<label for="repaint">Quadro retocado opcional — arquivado para a rota Viggle-Animate (não utilizado no Remix)</label>
+<input type="file" id="repaint" accept=".png,image/png">
+<p class="sub">Este fluxo Video Remix usa a imagem canônica e a coreografia do vídeo. Não usa máscara MediaPipe, face swap, nem substitui a referência original por ilustração gerada. O resultado preservará o fundo apenas na medida em que o provedor conseguir.</p>
+<button id="prepare" disabled>Validar e preparar geração</button><p id="prepared" class="sub"></p>
+</section>
+<section><h2>03 · Gerar vídeo real</h2>
+<p class="sub">Custo anunciado no Viggle: 1 crédito por segundo de Remix; o resultado pode usar créditos gratuitos existentes. O saldo não diferencia créditos gratuitos dos comprados. Não há compra automática. O envio transfere seu vídeo/imagem ao provedor.</p>
+<label><input type="checkbox" id="confirm"> Autorizo enviar os arquivos ao Viggle e consumir apenas créditos já disponíveis na minha conta (sem comprar créditos).</label>
+<button id="generate" disabled>Gerar Albedo dançando — IA temporal</button>
+<div id="state" role="status" aria-live="polite" class="note" style="margin-top:13px">Aguardando preparação. Nenhum render foi iniciado.</div>
+<div class="row" style="margin-top:10px"><button id="refresh">Atualizar estado</button><button id="resume" disabled>Consultar job existente (sem nova cobrança)</button></div>
+</section>
+<section id="resultPanel" hidden><h2>04 · Resultado generativo</h2>
+<video id="resultVideo" controls playsinline preload="metadata"></video>
+<p><a id="download" class="action" download="albedo_3s_rendered.mp4" href="/api/result">Baixar MP4 realmente gerado</a></p>
+<p class="sub">A existência do MP4 é apenas uma prova de renderização, não de fidelidade. Verifique rosto, asas, chifres, roupa, membros, multidão e 72 quadros antes de aprovar o teste.</p>
+</section>
+<footer class="sub"><a href="./recast.html?v=0.8.1">Voltar ao editor v0.8.1</a> · Render não executado até confirmação explícita · Nenhuma assinatura exigida pelo Furuya</footer>
+</main><script src="./generate.js?v=p0-20261029" defer></script></body></html>
