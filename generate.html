@@ -21,17 +21,37 @@ video{max-height:440px;width:100%;background:black;border-radius:10px}
 <div class="row"><button id="connect">Verificar conexão</button><button id="credits" disabled>Consultar créditos</button></div>
 <div id="connection" role="status" class="sub">Verificando disponibilidade local…</div>
 </section>
-<section><h2>02 · Escolha a tarefa e o motor</h2>
-<p class="sub">Substituir alguém mantendo a multidão não é a mesma tarefa que transferir uma dança para uma nova personagem. O núcleo multimotor separa essas capacidades. Motores não validados ficam desabilitados para render real.</p>
-<label for="task">Tipo de vídeo</label>
+<section><h2>02 · Seleção inteligente de motores</h2>
+<p class="sub">Padrão: o Furuya recomenda automaticamente o motor mais adequado para substituir personagens em vídeos virais existentes. Os motores anteriores continuam disponíveis no modo avançado. Recomendação não significa que a GPU esteja conectada ou que exista geração real.</p>
+<label for="selectionMode">Como escolher o motor?</label>
+<select id="selectionMode" style="width:100%;background:#0a1528;color:white;padding:11px;border:1px solid #435779;border-radius:8px">
+<option value="auto" selected>Automático — Furuya recomenda (padrão)</option>
+<option value="manual">Avançado — eu escolho a categoria e o motor</option>
+</select>
+<div class="row">
+<div><label for="targetCount">Quantas pessoas serão substituídas?</label>
+<select id="targetCount" style="width:100%;background:#0a1528;color:white;padding:11px;border:1px solid #435779;border-radius:8px">
+<option value="1" selected>1 pessoa</option><option value="2">2 pessoas</option><option value="3">3 pessoas</option><option value="4">4 pessoas</option>
+</select></div>
+<div><label for="preserveScene">Manter a festa e as pessoas do fundo?</label>
+<select id="preserveScene" style="width:100%;background:#0a1528;color:white;padding:11px;border:1px solid #435779;border-radius:8px">
+<option value="true" selected>Sim, preservar a cena</option>
+<option value="false">Não, pode reconstruir o cenário</option>
+</select></div>
+</div>
+<p id="autoRecommendation" class="note" role="status">Carregando recomendação de motor. Nenhuma geração foi iniciada.</p>
+<div id="advancedEngineControls" hidden>
+<label for="task">Tipo de vídeo (avançado)</label>
 <select id="task" style="width:100%;background:#0a1528;color:white;padding:11px;border:1px solid #435779;border-radius:8px">
 <option value="scene_replacement" selected>Substituir dançarino e preservar cena original (Rio)</option>
 <option value="motion_transfer">Transferir movimento para personagem (vídeos virais)</option>
+<option value="multi_scene_replacement">Substituir várias pessoas no mesmo vídeo</option>
 </select>
 <label for="engine">Motor de IA disponível para a tarefa</label>
 <select id="engine" style="width:100%;background:#0a1528;color:white;padding:11px;border:1px solid #435779;border-radius:8px"></select>
+</div>
 <p id="engineInfo" class="note">Carregando catálogo de motores do servidor local. Nenhum motor está sendo executado.</p>
-<p class="small"><b>Quer substituir várias pessoas no mesmo vídeo?</b> <a href="./multicast.html">Abrir o planejador multipersonagem (até 4 alvos)</a>. Ele permite mapear quem vira quem sem simular uma geração.</p>
+<p class="small"><b>Para múltiplas pessoas:</b> <a href="./multicast.html">Abrir o planejador multipersonagem (até 4 alvos)</a>, atribuir uma personagem a cada pessoa e exportar o plano. Essa etapa não é renderização.</p>
 </section>
 <section><h2>03 · Arquivos de vídeo e personagem</h2>
 <label for="image">Albedo — imagem PNG original (2731 × 4096 quando disponível)</label>
@@ -41,7 +61,7 @@ video{max-height:440px;width:100%;background:black;border-radius:10px}
 <label for="repaint">Quadro retocado opcional — arquivado para a rota Viggle-Animate (não utilizado no Remix)</label>
 <input type="file" id="repaint" accept=".png,image/png">
 <p class="sub">Use sempre a referência original da personagem. O fluxo Video Remix usa imagem e movimento, mas não garante substituição localizada em multidão. Wan2.2 Replace exige pré-processamento oficial completo e uma GPU apta. Wan-Animate-2 recria o movimento e possivelmente o cenário.</p>
-<button id="prepare" disabled>Validar e preparar geração</button><p id="prepared" class="sub"></p>
+<button id="prepare" disabled>Validar e preparar geração (sem envio automático)</button><p id="prepared" class="sub"></p>
 </section>
 <section><h2>04 · Gerar vídeo real (apenas motor com backend validado)</h2>
 <p class="sub">Custo anunciado no Viggle: 1 crédito por segundo de Remix; o resultado pode usar créditos gratuitos existentes. O saldo não diferencia créditos gratuitos dos comprados. Não há compra automática. O envio transfere seu vídeo/imagem ao provedor.</p>
