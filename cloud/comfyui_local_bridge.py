@@ -166,11 +166,30 @@ def download(base: str, file: dict, output: Path) -> int:
             tmp.unlink(missing_ok=True)
 
 
+def extra_images(args) -> list[tuple[str, Path]]:
+    """Additional ComfyUI image-input node IDs for multi-character workflows."""
+    bindings = []
+    seen = {str(args.image_node)}
+    for spec in getattr(args, "extra_image", []) or []:
+        if "=" not in spec:
+            raise ValueError("Each --extra-image must be NODE_ID=IMAGE_FILE")
+        node_id, filename = spec.split("=", 1)
+        node_id = node_id.strip()
+        if not node_id.isdecimal() or node_id in seen or not filename.strip():
+            raise ValueError("Duplicate or invalid extra image node ID")
+        seen.add(node_id)
+        bindings.append((node_id, verify_media(Path(filename), IMAGE_SUFFIXES)))
+    if len(bindings) > 3:
+        raise ValueError("At most 4 total character reference images are supported")
+    return bindings
+
+
 def job_plan(args) -> dict:
     base = local_base(args.server)
     wf = workflow_api(args.workflow.expanduser().resolve())
     video = verify_media(args.video, VIDEO_SUFFIXES)
     image = verify_media(args.image, IMAGE_SUFFIXES)
+    additional = extra_images(args)
     input_dir = args.input_dir.expanduser().resolve()
     if not input_dir.is_dir():
         raise ValueError("Existing ComfyUI input directory required; no installation is performed.")
@@ -181,12 +200,18 @@ def job_plan(args) -> dict:
     bind(wf, video_id=args.video_node, video_field=args.video_field,
          image_id=args.image_node, image_field=args.image_field,
          video_file=video.name, image_file=image.name)
+    for node_id, extra_path in additional:
+        if node_id not in wf or "image" not in wf[node_id]["inputs"]:
+            raise ValueError("Extra image node does not expose an 'image' input: " + node_id)
+        if not isinstance(wf[node_id]["inputs"]["image"], str):
+            raise ValueError("Extra image input must be a filename string")
     return {
         "schema": "furuya-comfyui-bridge/1",
         "server": base,
         "workflow_nodes": len(wf),
         "mode": "DRY_RUN" if not args.execute else "EXPLICIT_SUBMISSION",
-        "media": {"video": video.name, "image": image.name},
+        "media": {"video": video.name, "image": image.name,
+                  "extra_character_images": [p.name for _, p in additional]},
         "output": str(args.output),
         "model_inference_verified": False,
         "free_gpu_verified": False,
@@ -224,6 +249,9 @@ def run(args) -> int:
     prompt = bind(nodes, video_id=args.video_node, video_field=args.video_field,
                   image_id=args.image_node, image_field=args.image_field,
                   video_file=video_file, image_file=image_file)
+    for node_id, file_path in extra_images(args):
+        staged_name = stage(file_path, args.input_dir.expanduser().resolve())
+        prompt[node_id]["inputs"]["image"] = staged_name
     receipt.write_text(json.dumps({"status": "SUBMISSION_UNCERTAIN",
                                    "server": base, "reason": "POST /prompt initiated, no id yet"},
                                   indent=2) + "\n", encoding="utf-8")
@@ -269,6 +297,9 @@ def main(argv=None):
     parser.add_argument("--video-field", default="video")
     parser.add_argument("--image-node", required=True, help="API workflow node ID that loads image")
     parser.add_argument("--image-field", default="image")
+    parser.add_argument("--extra-image", action="append", default=[],
+                        metavar="NODE_ID=IMAGE_PATH",
+                        help="Repeat for up to three extra characters with their own LoadImage nodes")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--receipt", type=Path, default=Path("comfy-furuya-job.json"))
     parser.add_argument("--max-wait", type=int, default=600)
