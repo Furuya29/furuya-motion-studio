@@ -39,6 +39,10 @@ function comfyShowJob(job){
  comfyCurrentJob = job;
  comfyState = job.status || 'IDLE';
  comfyPrepared = comfyState==='PREPARED';
+ if(comfyState!=='RENDERED_UNREVIEWED'){
+  cEl('comfyResultPanel').hidden=true;
+  cEl('comfyResultVideo').removeAttribute('src');
+ }
  if(comfyState==='PREPARED'){
   comfyMessage('Workflow Openjutsu preparado para '+job.characters+
    ' personagem(ns); vídeo '+job.seconds+'s. Arquivos não foram enviados ao ComfyUI. '+
