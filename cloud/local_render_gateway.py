@@ -301,6 +301,11 @@ class Handler(BaseHTTPRequestHandler):
             return self._file(self.root / "generate.html", "text/html; charset=utf-8")
         if route == "/generate.js":
             return self._file(self.root / "generate.js", "text/javascript; charset=utf-8")
+        if route == "/comfy.js":
+            return self._file(self.root / "comfy.js", "text/javascript; charset=utf-8")
+        if route == "/workflows/openjutsu_advanced.api.json":
+            return self._file(self.root / "workflows/openjutsu_advanced.api.json",
+                              "application/json; charset=utf-8")
         if route == "/routing-policy.json":
             return self._file(self.root / "routing-policy.json", "application/json; charset=utf-8")
         if route == "/multicast.html":
