@@ -3,8 +3,9 @@
 
 Runs on 127.0.0.1 only. Serves generate.html and /api endpoints.
 Viggle credentials stay in this Python process, never in GitHub Pages/JS.
-By default does no remote requests or renders. POST /api/start is the only
-route that can submit one credit-metered render, after explicit confirmation.
+By default does no remote requests or renders. Optional credit-metered Viggle
+submission uses /api/start; local Openjutsu/ComfyUI uses /api/comfy/start,
+both with independent confirmations and one-shot receipt guards.
 """
 from __future__ import annotations
 
