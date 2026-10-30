@@ -1,5 +1,13 @@
 # Furuya Motion Studio — captura v0.5 + compositor 2D v0.6
 
+## Atualização: botão Openjutsu/ComfyUI dentro do Furuya (30/10/2026)
+
+A tela `generate.html` agora contém o fluxo de preparação, envio único, acompanhamento e download de vídeos para o motor aberto **Openjutsu Advanced via ComfyUI local**. Pode aceitar de 1 a 4 imagens originais e inclui uma cópia do workflow API oficial, respeitando sua licença MIT. A configuração inicial do backend está em [docs/P0_FURUYA_COMFYUI_UI_2026-10-30.md](docs/P0_FURUYA_COMFYUI_UI_2026-10-30.md).
+
+**Ainda não é um render validado**: o ComfyUI deve estar instalado com os nós e pesos, e ter GPU adequada. O servidor local não provisiona GPU grátis nem torna o GitHub Pages um backend de IA. Os testes até agora só verificam o ciclo HTTP com servidor simulado. A compatibilidade real do modelo com a festa do Rio permanece pendente.
+
+---
+
 ## Arquitetura principal multimotor — 29/10/2026
 
 **Missão:** transformar o Furuya Motion Studio na plataforma de geração de vídeos com substituição de personagens inteiros. A plataforma controla preparação, seleção do alvo, motores, execução, download e auditoria; nenhum provedor (inclusive Viggle) deve ser obrigatório.

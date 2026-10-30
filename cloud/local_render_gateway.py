@@ -3,8 +3,9 @@
 
 Runs on 127.0.0.1 only. Serves generate.html and /api endpoints.
 Viggle credentials stay in this Python process, never in GitHub Pages/JS.
-By default does no remote requests or renders. POST /api/start is the only
-route that can submit one credit-metered render, after explicit confirmation.
+By default does no remote requests or renders. Optional credit-metered Viggle
+submission uses /api/start; local Openjutsu/ComfyUI uses /api/comfy/start,
+both with independent confirmations and one-shot receipt guards.
 """
 from __future__ import annotations
 
@@ -25,6 +26,7 @@ from uuid import uuid4
 from viggle_remix_api import BASE, api_json, download, probe_seconds
 from engine_registry import get, candidates
 from auto_router import recommend
+from comfyui_web_jobs import ComfyJobs, parse_upload as parse_comfy_upload, UPLOAD_LIMIT as COMFY_UPLOAD_LIMIT
 
 MAX_UPLOAD = 35 * 1024 * 1024
 SAFE_RENDER = re.compile(r"^render_[A-Za-z0-9_-]+$")
@@ -268,6 +270,7 @@ class RenderState:
 
 class Handler(BaseHTTPRequestHandler):
     state: RenderState
+    comfy: ComfyJobs
     root: Path
 
     def _json(self, data: dict, code: int = 200):
@@ -281,7 +284,7 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(raw)
 
     def _file(self, path: Path, mime: str, *, download_name: str | None = None):
-        raw = path.read_bytes()
+        size = path.stat().st_size
         self.send_response(200)
         self.send_header("Content-Type", mime)
         self.send_header("Cache-Control", "no-store")
@@ -289,9 +292,11 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Security-Policy", "default-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; style-src 'self' 'unsafe-inline'; script-src 'self'")
         if download_name:
             self.send_header("Content-Disposition", 'attachment; filename="' + download_name + '"')
-        self.send_header("Content-Length", str(len(raw)))
+        self.send_header("Content-Length", str(size))
         self.end_headers()
-        self.wfile.write(raw)
+        with path.open("rb") as source:
+            for chunk in iter(lambda: source.read(256 * 1024), b""):
+                self.wfile.write(chunk)
 
     def do_GET(self):
         route = urlsplit(self.path).path
@@ -299,6 +304,11 @@ class Handler(BaseHTTPRequestHandler):
             return self._file(self.root / "generate.html", "text/html; charset=utf-8")
         if route == "/generate.js":
             return self._file(self.root / "generate.js", "text/javascript; charset=utf-8")
+        if route == "/comfy.js":
+            return self._file(self.root / "comfy.js", "text/javascript; charset=utf-8")
+        if route == "/workflows/openjutsu_advanced.api.json":
+            return self._file(self.root / "workflows/openjutsu_advanced.api.json",
+                              "application/json; charset=utf-8")
         if route == "/routing-policy.json":
             return self._file(self.root / "routing-policy.json", "application/json; charset=utf-8")
         if route == "/multicast.html":
@@ -307,6 +317,16 @@ class Handler(BaseHTTPRequestHandler):
             return self._file(self.root / "multicast.js", "text/javascript; charset=utf-8")
         if route == "/api/status":
             return self._json(self.state.public())
+        if route == "/api/comfy/status":
+            return self._json(self.comfy.public())
+        if route == "/api/comfy/check":
+            return self._json(self.comfy.check())
+        if route == "/api/comfy/result":
+            output = self.comfy.result_path()
+            if output:
+                mime = "video/mp4" if output.suffix == ".mp4" else "video/webm"
+                return self._file(output, mime, download_name=output.name)
+            return self._json({"error": "No verified received video available"}, 404)
         if route == "/api/recommend":
             params = parse_qs(urlsplit(self.path).query)
             try:
@@ -350,6 +370,23 @@ class Handler(BaseHTTPRequestHandler):
         if self.headers.get("X-Furuya-Intent") != "local-explicit-user-action":
             return self._json({"error": "Explicit request header required."}, 403)
         try:
+            if route == "/api/comfy/prepare":
+                length = int(self.headers.get("Content-Length", "0"))
+                if not 0 < length <= COMFY_UPLOAD_LIMIT:
+                    raise ValueError("Upload exceeds Openjutsu 48MB limit")
+                files = parse_comfy_upload(self.headers.get("Content-Type", ""),
+                                           self.rfile.read(length))
+                return self._json(self.comfy.prepare(files))
+            if route == "/api/comfy/start":
+                if self.headers.get("X-Furuya-Confirm") != "AUTHORIZE_LOCAL_GPU":
+                    raise ValueError("Explicit local GPU authorization required")
+                if self.headers.get("Content-Length", "0") not in ("0", ""):
+                    raise ValueError("Unexpected body")
+                return self._json(self.comfy.start(), 202)
+            if route == "/api/comfy/resume":
+                if self.headers.get("Content-Length", "0") not in ("0", ""):
+                    raise ValueError("Unexpected body")
+                return self._json(self.comfy.resume(), 202)
             if route == "/api/prepare":
                 length = int(self.headers.get("Content-Length", "0"))
                 if not 0 < length <= MAX_UPLOAD:
@@ -378,6 +415,10 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--workdir", type=Path, default=Path("local-render-jobs"))
+    parser.add_argument("--comfy-server", default="http://127.0.0.1:8188",
+                        help="Only loopback ComfyUI server permitted")
+    parser.add_argument("--comfy-input-dir", type=Path, default=None,
+                        help="Existing local ComfyUI/input folder; no installation performed")
     args = parser.parse_args(argv)
     if not 1024 <= args.port <= 65535:
         parser.error("port must be between 1024 and 65535")
@@ -390,6 +431,8 @@ def main(argv=None) -> int:
     class LocalHandler(Handler):
         pass
     LocalHandler.state = RenderState(workdir)
+    LocalHandler.comfy = ComfyJobs(workdir / "comfy-jobs",
+                                   server=args.comfy_server, input_dir=args.comfy_input_dir)
     LocalHandler.root = root
     server = ThreadingHTTPServer(("127.0.0.1", args.port), LocalHandler)
     print("Furuya local gateway: http://127.0.0.1:%d/generate.html" % args.port, flush=True)
