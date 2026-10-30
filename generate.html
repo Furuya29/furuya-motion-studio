@@ -63,18 +63,52 @@ video{max-height:440px;width:100%;background:black;border-radius:10px}
 <p class="sub">Use sempre a referência original da personagem. O fluxo Video Remix usa imagem e movimento, mas não garante substituição localizada em multidão. Wan2.2 Replace exige pré-processamento oficial completo e uma GPU apta. Wan-Animate-2 recria o movimento e possivelmente o cenário.</p>
 <button id="prepare" disabled>Validar e preparar geração (sem envio automático)</button><p id="prepared" class="sub"></p>
 </section>
-<section><h2>04 · Gerar vídeo real (apenas motor com backend validado)</h2>
+<section id="comfyPanel">
+<h2>04 · Motor aberto Openjutsu / ComfyUI (experimental)</h2>
+<p class="sub">Geração diretamente no fluxo do Furuya, sem API Viggle. Selecione o vídeo e a primeira personagem acima; para duas ou mais pessoas, acrescente referências individuais abaixo. O Furuya prepara o workflow, identifica os nós oficiais e acompanha o processamento local. Requer ComfyUI, nós, pesos e GPU compatíveis já instalados; o GitHub Pages sozinho não executa esta etapa.</p>
+<label for="comfyWorkflow">Workflow oficial Openjutsu Advanced — arquivo JSON em formato API</label>
+<input type="file" id="comfyWorkflow" accept=".json,application/json">
+<div id="comfyExtra2" hidden>
+<label for="comfyImage2">Segunda personagem — imagem original</label>
+<input type="file" id="comfyImage2" accept=".png,.jpg,.jpeg,.webp,image/*">
+</div>
+<div id="comfyExtra3" hidden>
+<label for="comfyImage3">Terceira personagem — imagem original</label>
+<input type="file" id="comfyImage3" accept=".png,.jpg,.jpeg,.webp,image/*">
+</div>
+<div id="comfyExtra4" hidden>
+<label for="comfyImage4">Quarta personagem — imagem original</label>
+<input type="file" id="comfyImage4" accept=".png,.jpg,.jpeg,.webp,image/*">
+</div>
+<label for="comfyRole1">Quem é a pessoa original que será substituída?</label>
+<input id="comfyRole1" type="text" maxlength="140" value="the main person" placeholder="the central dancer" style="width:100%;padding:10px;background:#0a1528;color:white;border:1px solid #435779;border-radius:7px">
+<div id="comfyRoleWrap2" hidden><label for="comfyRole2">Pessoa 2 (posição/roupa na cena)</label><input id="comfyRole2" maxlength="140" placeholder="the dancer on the left" style="width:100%;padding:10px;background:#0a1528;color:white;border:1px solid #435779;border-radius:7px"></div>
+<div id="comfyRoleWrap3" hidden><label for="comfyRole3">Pessoa 3 (posição/roupa na cena)</label><input id="comfyRole3" maxlength="140" placeholder="the dancer on the right" style="width:100%;padding:10px;background:#0a1528;color:white;border:1px solid #435779;border-radius:7px"></div>
+<div id="comfyRoleWrap4" hidden><label for="comfyRole4">Pessoa 4 (posição/roupa na cena)</label><input id="comfyRole4" maxlength="140" placeholder="the dancer in the back" style="width:100%;padding:10px;background:#0a1528;color:white;border:1px solid #435779;border-radius:7px"></div>
+<p id="comfyConnection" class="sub">Servidor ComfyUI ainda não verificado.</p>
+<div class="row"><button id="comfyCheck">Verificar ComfyUI local</button><button id="comfyPrepare" disabled>Preparar workflow sem GPU</button></div>
+<label><input id="comfyAuthorize" type="checkbox"> Confirmo que a instância ComfyUI é minha/autorizada, já possui os modelos e GPU disponível sem cobrança; autorizo uma única geração local.</label>
+<div class="row"><button id="comfyStart" disabled>Gerar vídeo pelo Furuya + ComfyUI</button><button id="comfyResume" disabled>Retomar consulta sem novo envio</button></div>
+<div id="comfyStatus" role="status" aria-live="polite" class="note" style="margin-top:12px">Nenhuma geração ComfyUI iniciada.</div>
+<div class="row" style="margin-top:8px"><button id="comfyRefresh">Atualizar processamento</button></div>
+<div id="comfyResultPanel" hidden>
+<video id="comfyResultVideo" controls playsinline preload="metadata"></video>
+<p><a id="comfyDownload" href="/api/comfy/result" download="furuya_openjutsu_render.mp4">Baixar vídeo recebido do ComfyUI (ainda não aprovado visualmente)</a></p>
+</div>
+<p class="sub">A lista de nós presentes não prova disponibilidade de pesos nem qualidade. Se a tarefa falhar ou ocorrer timeout sem identificador, o Furuya bloqueia reenvios para evitar duplicação. Para vários alvos, confira se cada descrição identifica a pessoa correta. A interface é uma integração experimental para workflow API do Openjutsu, não uma instalação automática de IA.</p>
+</section>
+<section><h2>05 · API opcional Viggle Remix (transferência de movimento)</h2>
 <p class="sub">Custo anunciado no Viggle: 1 crédito por segundo de Remix; o resultado pode usar créditos gratuitos existentes. O saldo não diferencia créditos gratuitos dos comprados. Não há compra automática. O envio transfere seu vídeo/imagem ao provedor.</p>
 <label><input type="checkbox" id="confirm"> Quando o motor for Viggle Remix, autorizo o envio ao provedor e consumo de créditos existentes (sem compra automática).</label>
 <button id="generate" disabled>Gerar vídeo com motor selecionado</button>
 <div id="state" role="status" aria-live="polite" class="note" style="margin-top:13px">Aguardando preparação. Nenhum render foi iniciado.</div>
 <div class="row" style="margin-top:10px"><button id="refresh">Atualizar estado</button><button id="resume" disabled>Consultar job existente (sem nova cobrança)</button></div>
 </section>
-<section id="resultPanel" hidden><h2>05 · Resultado generativo</h2>
+<section id="resultPanel" hidden><h2>06 · Resultado do serviço opcional</h2>
 <video id="resultVideo" controls playsinline preload="metadata"></video>
 <p><a id="download" class="action" download="albedo_3s_rendered.mp4" href="/api/result">Baixar MP4 realmente gerado</a></p>
 <p class="sub">A existência do MP4 é apenas uma prova de renderização, não de fidelidade. Verifique identidade, anatomia, roupas, acessórios, coreografia, fundo e consistência temporal antes de aprovar o teste.</p>
 </section>
 <p class="sub">Motor GPU próprio: o Furuya agora possui uma ponte local para workflows ComfyUI já instalados, sem API proprietária. Ela requer exportação API do workflow, pesos e GPU adequados. <a href="https://github.com/Furuya29/furuya-motion-studio/blob/main/docs/P0_COMFYUI_TEMPORAL_PIPELINE.md">Ver instruções e condições da ponte ComfyUI</a>. O botão de geração nesta tela ainda não controla essa ponte diretamente.</p>
 <footer class="sub"><a href="./recast.html?v=0.8.1">Voltar ao editor v0.8.1</a> · Render não executado até confirmação explícita · Nenhuma assinatura exigida pelo Furuya</footer>
-</main><script src="./generate.js?v=p0-20261029" defer></script></body></html>
+</main><script src="./generate.js?v=p0-20261029" defer></script><script src="./comfy.js?v=20261030" defer></script></body></html>
