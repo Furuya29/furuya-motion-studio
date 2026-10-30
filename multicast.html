@@ -33,6 +33,7 @@ input[type=file]{max-width:100%;display:block;margin:6px 0}input[type=text]{back
 <p class="small">O JSON conterá nomes das imagens, tempo e caixas de seleção normalizadas. Não contém a imagem nem o vídeo: guarde os arquivos originais para o backend futuro. A exportação não significa que o rastreamento foi feito.</p>
 <div class="row"><button id="download" class="primary" disabled>↓ Exportar plano do elenco JSON</button><button id="clear" disabled>Limpar projeto</button></div>
 <p id="status" role="status" aria-live="polite">Carregue o vídeo para começar.</p>
-<p class="small">Próximo estágio técnico: SAM 3.1 para rastrear identidades, máscaras, oclusões e passagens pela multidão; depois motores de edição multipersonagem como Openjutsu ou Henge, mediante validação de GPU gratuita. Nenhum serviço é acionado por esta página.</p>
+<p class="small">Agora é possível exportar propostas PNG por frame a partir do plano de elenco com a ferramenta CPU `tools/export_temporal_boxes.py`. São retângulos-guia, não segmentação nem rastreamento. <a href="https://github.com/Furuya29/furuya-motion-studio/blob/main/docs/P0_COMFYUI_TEMPORAL_PIPELINE.md">Ver instruções técnicas</a>.</p>
+<p class="small">Próximo estágio: SAM 3.1 para segmentar, rastrear identidades e corrigir oclusões; depois render multipersonagem via Openjutsu, Henge ou outros motores em GPU gratuita validada. Nenhum serviço é acionado por esta página.</p>
 </section>
 </main><script src="./multicast.js?v=1" defer></script></body></html>
