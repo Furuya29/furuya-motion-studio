@@ -152,7 +152,8 @@ class AdapterTests(unittest.TestCase):
                 self.assertEqual(len(registry.ENGINES), 8)
                 multi = registry.candidates("multi_scene_replacement")
                 self.assertEqual(len(multi), 3)
-                self.assertTrue(all(e["state"] == "RESEARCH_ONLY" for e in multi))
+                self.assertEqual({e["state"] for e in multi}, {"RESEARCH_ONLY", "OFFLINE_ADAPTER"})
+                self.assertEqual(next(e["state"] for e in multi if e["id"] == "openjutsu_advanced"), "OFFLINE_ADAPTER")
 
 
 if __name__ == "__main__":
