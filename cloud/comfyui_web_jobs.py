@@ -253,13 +253,17 @@ class ComfyJobs:
                         output = self.session / ("furuya_openjutsu_render" + suffix)
                         size = download(self.server, videos[0], output)
                         seconds = probe_seconds(output, "ffprobe")
+                        if not 0 < seconds <= 600:
+                            raise ValueError("Output has invalid video duration")
                         with self.lock:
                             self.job.update(status="RENDERED_UNREVIEWED",
                                             stage="VIDEO_RECEIVED_NOT_VISUALLY_VALIDATED",
                                             result_filename=output.name,
                                             output_bytes=size,
                                             output_duration_seconds=round(seconds, 3),
-                                            inference_executed=True)
+                                            output_received=True,
+                                            actual_ai_inference_verified=False,
+                                            visual_review="PENDING")
                             self.save()
                         return
                     if entry.get("status", {}).get("completed"):
