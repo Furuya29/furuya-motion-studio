@@ -66,7 +66,7 @@ video{max-height:440px;width:100%;background:black;border-radius:10px}
 <section id="comfyPanel">
 <h2>04 · Motor aberto Openjutsu / ComfyUI (experimental)</h2>
 <p class="sub">Geração diretamente no fluxo do Furuya, sem API Viggle. Selecione o vídeo e a primeira personagem acima; para duas ou mais pessoas, acrescente referências individuais abaixo. O Furuya prepara o workflow, identifica os nós oficiais e acompanha o processamento local. Requer ComfyUI, nós, pesos e GPU compatíveis já instalados; o GitHub Pages sozinho não executa esta etapa.</p>
-<label for="comfyWorkflow">Workflow oficial Openjutsu Advanced — arquivo JSON em formato API</label>
+<label for="comfyWorkflow">Workflow Openjutsu Advanced personalizado (opcional — já incluímos o workflow oficial)</label>
 <input type="file" id="comfyWorkflow" accept=".json,application/json">
 <div id="comfyExtra2" hidden>
 <label for="comfyImage2">Segunda personagem — imagem original</label>
@@ -109,6 +109,6 @@ video{max-height:440px;width:100%;background:black;border-radius:10px}
 <p><a id="download" class="action" download="albedo_3s_rendered.mp4" href="/api/result">Baixar MP4 realmente gerado</a></p>
 <p class="sub">A existência do MP4 é apenas uma prova de renderização, não de fidelidade. Verifique identidade, anatomia, roupas, acessórios, coreografia, fundo e consistência temporal antes de aprovar o teste.</p>
 </section>
-<p class="sub">Motor GPU próprio: o Furuya agora possui uma ponte local para workflows ComfyUI já instalados, sem API proprietária. Ela requer exportação API do workflow, pesos e GPU adequados. <a href="https://github.com/Furuya29/furuya-motion-studio/blob/main/docs/P0_COMFYUI_TEMPORAL_PIPELINE.md">Ver instruções e condições da ponte ComfyUI</a>. O botão de geração nesta tela ainda não controla essa ponte diretamente.</p>
+<p class="sub">Motor GPU próprio: o Furuya agora possui uma ponte local para workflows ComfyUI já instalados, sem API proprietária. Ela requer exportação API do workflow, pesos e GPU adequados. <a href="https://github.com/Furuya29/furuya-motion-studio/blob/main/docs/P0_COMFYUI_TEMPORAL_PIPELINE.md">Ver instruções e condições da ponte ComfyUI</a>. O painel Openjutsu acima controla essa ponte diretamente, quando existe uma instalação local compatível.</p>
 <footer class="sub"><a href="./recast.html?v=0.8.1">Voltar ao editor v0.8.1</a> · Render não executado até confirmação explícita · Nenhuma assinatura exigida pelo Furuya</footer>
 </main><script src="./generate.js?v=p0-20261029" defer></script><script src="./comfy.js?v=20261030" defer></script></body></html>
