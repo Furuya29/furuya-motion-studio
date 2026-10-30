@@ -38,9 +38,9 @@
     {
       "id": "openjutsu_advanced",
       "name": "Openjutsu Advanced — MiniMax H3 / SAM 3.1",
-      "state": "RESEARCH_ONLY",
-      "strengths": "Projeto open-source declara associação individual de até 4 personagens e preservação dos demais.",
-      "limitations": "Exige ambiente ComfyUI, NVIDIA GPU, pesos, scripts e integração; não testado pelo Furuya."
+      "state": "OFFLINE_ADAPTER",
+      "strengths": "Adaptador Furuya disponível para preparar workflows API oficiais com 1–4 imagens, sem descaracterizar demais participantes.",
+      "limitations": "Requer workflow avançado do Openjutsu, custom nodes, pesos MiniMax H3/SAM3.1 e GPU apropriada. Geração real não validada."
     },
     {
       "id": "henge_tara_multi",
