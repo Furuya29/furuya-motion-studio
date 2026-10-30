@@ -38,6 +38,24 @@ O comando acima é **dry-run**: não envia nem gera nada, apenas valida a forma 
 
 A ponte registra o arquivo recebido do ComfyUI como `RENDERED_UNREVIEWED` (necessário executar `ffprobe` e auditoria visual antes de tratar como vídeo válido). A aprovação final deve ser feita com `tools/audit_generated_video.py` e inspeção humana da personagem, multidão, oclusões e 72 frames.
 
+## Openjutsu Advanced: até quatro personagens
+
+Além da ponte geral, o Furuya agora inclui `cloud/openjutsu_advanced_adapter.py`. Esse adaptador prepara o workflow API avançado original do projeto Openjutsu para **1, 2, 3 ou 4 personagens** e remove com segurança nós não utilizados, evitando carregar imagens de exemplo para personagens inexistentes.
+
+Arquivo original upstream: `workflows/advanced.api.json` em https://github.com/D3voz/openjutsu. Conferimos os IDs e classes da exportação oficial em 29/10/2026: vídeo `14` (`VHS_LoadVideo`); referências `2`, `5`, `8`, `11` (`LoadImage`); controle de papéis `20` (`H3AdvancedSwapPlan`).
+
+Para preparar três pessoas, quando o checkout do Openjutsu estiver disponível:
+
+```powershell
+python cloud/openjutsu_advanced_adapter.py --workflow "E:\Openjutsu\workflows\advanced.api.json" --characters 3 --roles "the central dancer" "the dancer on the left" "the dancer on the right" --output "E:\Furuya\advanced_3_furuya.api.json"
+```
+
+O resultado é um workflow de ComfyUI no qual só as primeiras três fotos ficam conectadas. As descrições de papéis precisam designar **as pessoas do vídeo**, não o nome fictício da personagem substituta. Também é possível omitir `--roles` e deixar o modelo classificar papéis, mas isso pode confundir pessoas em uma multidão. Nenhum SAM é executado nessa etapa.
+
+A ponte `cloud/comfyui_local_bridge.py` aceita uma referência principal (`--image --image-node`) e até **três adicionais**, cada uma com seu nó próprio, com `--extra-image NODE_ID=IMAGE_PATH` repetido. Por exemplo, três referências no workflow preparado acima usam `--image-node 2`, `--extra-image 5=E:\Furuya\Diana.png` e `--extra-image 8=E:\Furuya\Outra.png`. O vídeo usa `--video-node 14 --video-field video`.
+
+**IMPORTANTE:** Para executar, o ComfyUI precisa do workflow completo e de todos os custom nodes do Openjutsu, modelos MiniMax H3, SAM3.1 e checkpoints auxiliares. O upstream informa execução experimental em RTX 4060 Ti 16 GB com 64 GB RAM, **não** hardware modesto e não uma GPU gratuita garantida. O Furuya não instala esses modelos e ainda não realizou um render com eles. O patcher segue a lógica de seleção/pruning do projeto MIT Openjutsu, mas não substitui os demais ajustes oferecidos pelo aplicativo upstream.
+
 ## Máscaras temporais: exportar rascunhos, não dados definitivos
 
 O módulo `multicast.html` exporta `furuya-multicast-plan.json` depois de selecionar até 4 pessoas, carregar referências e marcar caixas em alguns momentos. Exporte as propostas:
