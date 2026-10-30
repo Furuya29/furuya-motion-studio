@@ -284,7 +284,7 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(raw)
 
     def _file(self, path: Path, mime: str, *, download_name: str | None = None):
-        raw = path.read_bytes()
+        size = path.stat().st_size
         self.send_response(200)
         self.send_header("Content-Type", mime)
         self.send_header("Cache-Control", "no-store")
@@ -292,9 +292,11 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Security-Policy", "default-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; style-src 'self' 'unsafe-inline'; script-src 'self'")
         if download_name:
             self.send_header("Content-Disposition", 'attachment; filename="' + download_name + '"')
-        self.send_header("Content-Length", str(len(raw)))
+        self.send_header("Content-Length", str(size))
         self.end_headers()
-        self.wfile.write(raw)
+        with path.open("rb") as source:
+            for chunk in iter(lambda: source.read(256 * 1024), b""):
+                self.wfile.write(chunk)
 
     def do_GET(self):
         route = urlsplit(self.path).path
