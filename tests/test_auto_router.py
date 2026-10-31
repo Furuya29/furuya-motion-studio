@@ -30,6 +30,8 @@ class AutoRouterTests(unittest.TestCase):
     def test_no_old_engines_removed(self):
         self.assertEqual(len(ENGINES), 10)
         self.assertIn("kling3_motion", {engine.id for engine in ENGINES})
+        self.assertIn("higgsfield_genjutsu_object_swap", {engine.id for engine in ENGINES})
+        self.assertIn("higgsfield_genjutsu_motion_transfer", {engine.id for engine in ENGINES})
 
     def test_no_paid_or_automatic_execution(self):
         for count in (1, 2):
@@ -39,6 +41,8 @@ class AutoRouterTests(unittest.TestCase):
                 self.assertFalse(result["auto_render"])
                 self.assertFalse(result["free_inference_verified"])
                 self.assertNotIn("kling3_motion", [row["id"] for row in result["evaluation_order"]])
+                self.assertTrue(all(not row["id"].startswith("higgsfield_genjutsu")
+                                    for row in result["evaluation_order"]))
 
     def test_bad_inputs(self):
         for value in (-1, 0, 5, True, "2", 1.0):
