@@ -75,6 +75,15 @@ class ReadinessTests(unittest.TestCase):
         self.assertEqual(report["hardware"]["ram_total_gib"], 29)
         self.assertEqual(report["hardware"]["devices"][0]["vram_gib"], 8)
 
+    def test_nominal_16gb_vram_and_64gb_ram_allow_small_reporting_differences(self):
+        graph, nodes, stats = complete_report()
+        stats["devices"][0]["vram_total"] = int(15.7 * GIB)
+        stats["system"]["ram_total"] = int(59.5 * GIB)
+        result = analyze(graph, nodes, stats)
+        self.assertTrue(result["can_attempt_render"])
+        self.assertEqual(result["hardware"]["acceptance_threshold_vram_gib"], 15)
+        self.assertEqual(result["hardware"]["acceptance_threshold_ram_gib"], 58)
+
     def test_no_stats_or_non_nvidia_gpu_fail_closed(self):
         graph, nodes, stats = complete_report()
         self.assertFalse(analyze(graph, nodes, {})["can_attempt_render"])
