@@ -64,6 +64,39 @@ class OpenjutsuAdvancedTests(unittest.TestCase):
         self.assertEqual(info["removed_optional_nodes"], 0)
         self.assertEqual(len(graph), len(orig))
 
+    def test_official_maxq_prepares_one_or_two_characters(self):
+        import json
+        reference = Path(__file__).resolve().parents[1] / "workflows/openjutsu_advanced_maxq.api.json"
+        source = json.loads(reference.read_text(encoding="utf-8"))
+        for count in (1, 2):
+            graph, report = oj.prepare(source, characters=count,
+                                       roles=["the center dancer", "the right dancer"][:count])
+            self.assertEqual(report["variant"], "one_pass_per_person_2slot")
+            self.assertEqual(report["available_pictures"], 2)
+            self.assertEqual(report["source_video_node"], "8")
+            self.assertEqual(report["character_image_nodes"], ["2", "5"][:count])
+            self.assertEqual(report["swap_plan_node"], "14")
+            self.assertEqual(graph["14"]["inputs"]["roles"],
+                             "\n".join(["the center dancer", "the right dancer"][:count]))
+            for node in graph.values():
+                for value in node["inputs"].values():
+                    if oj.is_link(value):
+                        self.assertIn(value[0], graph, "Pruning left a reference to a missing node")
+        with self.assertRaisesRegex(ValueError, "at most 2"):
+            oj.prepare(source, characters=3)
+
+    def test_official_standard_prep_three_and_four(self):
+        import json
+        source = Path(__file__).resolve().parents[1] / "workflows/openjutsu_advanced.api.json"
+        original = json.loads(source.read_text(encoding="utf-8"))
+        for count in (3, 4):
+            graph, report = oj.prepare(original, characters=count)
+            self.assertEqual(report["variant"], "standard_4slot")
+            self.assertEqual(report["available_pictures"], 4)
+            self.assertEqual(len(report["character_image_nodes"]), count)
+            self.assertTrue(all(oj.is_link(v) is False or v[0] in graph
+                                for n in graph.values() for v in n["inputs"].values()))
+
     def test_rejects_unknown_workflow_or_bad_roles(self):
         with self.assertRaisesRegex(ValueError, "Expected exactly one"):
             oj.prepare({"1": {"class_type": "LoadImage", "inputs": {}}}, characters=2)

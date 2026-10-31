@@ -1,5 +1,11 @@
 # Furuya Motion Studio — captura v0.5 + compositor 2D v0.6
 
+## Openjutsu Standard/MaxQ e Genjutsu — 31/10/2026
+
+Confirmei que o Openjutsu é uma alternativa **aberta e independente** ao Genjutsu da Higgsfield (proprietário). O Furuya agora inclui os dois workflows oficiais Openjutsu: **Advanced padrão (1–4 pessoas)** e **Advanced MaxQ (1–2 pessoas, passagem individual)**. Para vídeos com multidão, a recomendação automática coloca Openjutsu à frente de Wan2.2-Animate, preservando ambos. Os dois produtos Higgsfield Genjutsu foram registrados apenas como **pesquisa sujeita a pagamento**, desabilitados no orçamento R$0; nenhum crédito nem render foi consumido. Veja [comparação técnica e limites](docs/OPENJUTSU_GENJUTSU_INVESTIGACAO_2026-10-31.md).
+
+---
+
 ## Diagnóstico de compatibilidade Openjutsu — 31/10/2026
 
 A integração Furuya agora faz uma **pré-verificação somente de leitura**, inclusive do workflow realmente preparado. Antes de permitir geração Openjutsu, analisa todos os nós, nomes dos checkpoints listados pelo ComfyUI e GPU/RAM, confrontando-os com o ambiente testado pelo projeto upstream (16 GiB VRAM, 64 GiB RAM). **Não comprova pesos íntegros nem garante inferência.** A implementação e os limites de nuvens gratuitas estão em [docs/P0_FREE_GPU_OPENJUTSU_READINESS_2026-10-31.md](docs/P0_FREE_GPU_OPENJUTSU_READINESS_2026-10-31.md). Em caso de componentes ausentes ou recursos inferiores, o botão de geração é bloqueado para evitar execução incompatível.

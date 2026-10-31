@@ -163,6 +163,23 @@ class GatewayComfyTests(unittest.TestCase):
                          "the dancer at position 1\nthe dancer at position 2")
         self.assertFalse(report["actual_ai_inference_verified"] if "actual_ai_inference_verified" in report else report["inference_executed"])
 
+    def test_openjutsu_maxq_prepare_two_and_reject_three(self):
+        maxq = (ROOT / "workflows/openjutsu_advanced_maxq.api.json").read_bytes()
+        with mock.patch("comfyui_web_jobs.probe_seconds", return_value=3.0):
+            fields = media(2)
+            fields["workflow"] = maxq
+            prepared = self.jobs.prepare(fields)
+            self.assertEqual(prepared["characters"], 2)
+            self.assertEqual(prepared["workflow_variant"], "one_pass_per_person_2slot")
+            self.assertEqual(prepared["workflow_character_capacity"], 2)
+            self.assertEqual(prepared["source_video_node"], "8")
+            self.assertEqual(prepared["image_node_ids"], ["2", "5"])
+            with self.assertRaisesRegex(ValueError, "at most 2"):
+                extra = media(3)
+                extra["workflow"] = maxq
+                self.jobs.prepare(extra)
+        self.assertEqual(len(FakeComfy.prompts), 0)
+
     def test_http_prepare_submit_and_recover_video_with_one_post(self):
         body, mime = multipart(media(3))
         request = self.post("/api/comfy/prepare", body, {"Content-Type": mime})

@@ -13,6 +13,7 @@
   },
   "priorities": {
     "scene_replacement": [
+      "openjutsu_advanced",
       "wan22_replace",
       "viggle_animate_open"
     ],
@@ -40,5 +41,5 @@
     "motion_transfer": "Reproduzir a coreografia com uma personagem, permitindo reconstruir o cenário, favorece modelos de transferência direta de movimento.",
     "multi_scene_replacement": "Várias pessoas exigem associação de identidades, rastreamento individual, máscaras e resolução de oclusões."
   },
-  "notes": "Recomendação por regras verificáveis, não por LLM. Ranking não prova que o motor está instalado ou oferece GPU gratuita. Nunca inicia inferência nem compra créditos."
+  "notes": "Policy ranks Openjutsu for crowd-aware single-person and multi-person recasts based on its tracked-role workflow; this is an evaluation order, NOT a verified GPU or working render. Genjutsu proprietary APIs remain disabled under R$0 budget."
 }

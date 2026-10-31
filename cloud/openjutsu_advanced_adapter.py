@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare Openjutsu's OFFICIAL advanced API workflow for 1–4 characters.
+"""Prepare official Openjutsu Advanced (1–4) or MaxQ (1–2) API workflows.
 
 Furuya does not reimplement MiniMax H3, SAM3.1 or the ComfyUI custom nodes.
 Input workflow must be exported from the Openjutsu project. This patch follows
@@ -43,15 +43,22 @@ def prepare(graph: dict, *, characters: int, roles: list[str] | None = None) -> 
     plan_id = find_title(nodes, "Swap Plan (roles, seed, size)")
     if nodes[plan_id]["class_type"] != "H3AdvancedSwapPlan":
         raise ValueError("Expected Openjutsu H3AdvancedSwapPlan")
-    pictures = [find_title(nodes, f"Picture {i}") for i in range(1, 5)]
+    available = sum(1 for node in nodes.values()
+                    if node["class_type"] == "LoadImage"
+                    and re.fullmatch(r"Picture [1-4]", node.get("_meta", {}).get("title", "")))
+    if available not in (2, 4):
+        raise ValueError("Openjutsu Advanced workflows must expose 2 (MaxQ) or 4 (Standard) picture nodes")
+    if characters > available:
+        raise ValueError(f"This Openjutsu workflow supports at most {available} characters")
+    pictures = [find_title(nodes, f"Picture {i}") for i in range(1, available + 1)]
     if any(nodes[id]["class_type"] != "LoadImage" for id in pictures):
-        raise ValueError("Expected four LoadImage picture nodes from upstream Openjutsu Advanced")
+        raise ValueError("Expected official Openjutsu LoadImage picture nodes")
 
     # Remove unselected pictures, their scaling and visual descriptions, then
     # remove optional plan inputs pointing to those nodes. This mimics the
     # corresponding subset of upstream pruneAdvanced().
     removed = set()
-    for index in range(characters + 1, 5):
+    for index in range(characters + 1, available + 1):
         image_id = pictures[index-1]
         description_id = find_title(nodes, f"Describe picture {index}")
         scaler = next((
@@ -93,6 +100,8 @@ def prepare(graph: dict, *, characters: int, roles: list[str] | None = None) -> 
     return nodes, {
         "schema": "furuya-openjutsu-advanced-preflight/1",
         "characters": characters,
+        "available_pictures": available,
+        "variant": "one_pass_per_person_2slot" if available == 2 else "standard_4slot",
         "source_video_node": video_id,
         "character_image_nodes": selected_ids,
         "swap_plan_node": plan_id,

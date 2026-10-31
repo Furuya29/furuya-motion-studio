@@ -33,7 +33,7 @@ class LocalHTTPTests(unittest.TestCase):
     def test_automatic_routing_never_executes(self):
         with urlopen(self.base + "/api/recommend?targets=1&preserve_scene=true", timeout=5) as response:
             value = json.load(response)
-        self.assertEqual(value["preferred_engine"], "wan22_replace")
+        self.assertEqual(value["preferred_engine"], "openjutsu_advanced")
         self.assertFalse(value["execution_authorized"])
         self.assertFalse(value["can_generate_now"])
         with urlopen(self.base + "/api/recommend?targets=3&preserve_scene=true", timeout=5) as response:
@@ -59,6 +59,11 @@ class LocalHTTPTests(unittest.TestCase):
         scene = {item["id"] for item in payload["scene_replacement"]}
         motion = {item["id"] for item in payload["motion_transfer"]}
         self.assertIn("wan22_replace", scene)
+        self.assertIn("openjutsu_advanced", scene)
+        research = {item["id"] for item in payload["research_paid_disabled"]}
+        self.assertIn("higgsfield_genjutsu_object_swap", research)
+        self.assertIn("higgsfield_genjutsu_motion_transfer", research)
+        self.assertNotIn("higgsfield_genjutsu_object_swap", scene)
         self.assertNotIn("viggle_video_remix", scene)
         self.assertIn("wan_animate2_motion", motion)
 
