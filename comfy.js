@@ -85,14 +85,23 @@ async function comfyCheck(){
  try{
   comfyEnable('comfyCheck',false);
   const result=await comfyRequest('check');
-  comfyConnectionOk=Boolean(result.connected&&result.openjutsu_present);
-  const devices=(result.devices||[]).map(x=>x.name).filter(Boolean);
+  comfyConnectionOk=Boolean(result.connected&&result.can_attempt_render);
+  const report=result.readiness||{};
+  const hardware=report.hardware||{};
+  const devices=(hardware.devices||[]).map(x=>x.name+' · '+x.vram_gib+' GiB').filter(Boolean);
+  const missingNodes=(report.missing_node_classes||[]).slice(0,8);
+  const missingModels=(report.missing_models||[]).slice(0,8).map(x=>x.folder+'/'+x.filename);
+  const uncheckedModels=(report.unchecked_models||[]).slice(0,8).map(x=>x.filename);
   cEl('comfyConnection').textContent=result.connected
-   ? 'ComfyUI detectado. Nós essenciais Openjutsu: '+(result.openjutsu_present?'presentes':'ausentes')+
-     '. Dispositivos: '+(devices.join(', ')||'não informados')+
-     '. Atenção: pesos/VRAM e inferência ainda NÃO validados.'
+   ? 'Pré-verificação: '+(report.status||'INCONCLUSIVA')+
+     '. GPU: '+(devices.join(', ')||'não informada')+
+     '. RAM: '+(hardware.ram_total_gib??'?')+' GiB.'+
+     (missingNodes.length?' Nós ausentes: '+missingNodes.join(', ')+'.':'')+
+     (missingModels.length?' Modelos ausentes: '+missingModels.join(', ')+'.':'')+
+     (uncheckedModels.length?' Modelos não verificáveis: '+uncheckedModels.join(', ')+'.':'')+
+     ' Referência do Openjutsu: GPU 16 GiB + RAM 64 GiB testados. Pré-verificação não comprova inferência.'
    : (result.message||'ComfyUI não conectado.');
-  if(!comfyConnectionOk)comfyMessage('Instância ComfyUI indisponível/incompleta. Nenhum trabalho foi submetido.',true);
+  if(!comfyConnectionOk)comfyMessage('Ambiente NÃO APTO para tentar o render Openjutsu pelo Furuya. Confira nós, pesos e GPU/RAM no diagnóstico antes de gastar tempo ou recursos.',true);
  }catch(e){comfyConnectionOk=false;comfyMessage('Falha ao verificar ComfyUI: '+e.message,true)}
  finally{comfyRefreshButtons()}
 }

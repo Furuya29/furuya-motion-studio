@@ -16,6 +16,7 @@ from unittest import mock
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "cloud"))
 from comfyui_web_jobs import ComfyJobs, parse_upload
+from comfyui_readiness import MODEL_FIELDS, GIB
 from local_render_gateway import Handler, RenderState
 
 WORKFLOW = (ROOT / "workflows" / "openjutsu_advanced.api.json").read_bytes()
@@ -27,6 +28,9 @@ FAKE_MP4 = b"\x00\x00\x00\x18ftypisom" + b"x" * 4096
 class FakeComfy(BaseHTTPRequestHandler):
     prompts = []
     allow_nodes = True
+    model_missing = False
+    gpu_gib = 24
+    ram_gib = 96
 
     def send_json(self, data):
         raw = json.dumps(data).encode()
@@ -41,9 +45,23 @@ class FakeComfy(BaseHTTPRequestHandler):
             classes = {node["class_type"] for node in GRAPH.values()}
             if not self.allow_nodes:
                 classes.discard("H3AdvancedSwapPlan")
-            self.send_json({name: {} for name in classes})
+            info = {name: {} for name in classes}
+            for class_type, fields in MODEL_FIELDS.items():
+                if class_type not in info:
+                    continue
+                allowed = {}
+                for field in fields:
+                    values = sorted({n["inputs"].get(field) for n in GRAPH.values()
+                                     if n["class_type"] == class_type and isinstance(n["inputs"].get(field), str)})
+                    if self.model_missing and values:
+                        values = ["other_model_not_installed.safetensors"]
+                    allowed[field] = [values]
+                info[class_type] = {"input": {"required": allowed}}
+            self.send_json(info)
         elif self.path == "/system_stats":
-            self.send_json({"devices": [{"name": "SYNTHETIC_GPU_NOT_REAL", "vram_total": 0}]})
+            self.send_json({"system": {"ram_total": self.ram_gib * GIB},
+                            "devices": [{"name": "Synthetic NVIDIA RTX 4090 (NOT REAL GPU)",
+                                         "type": "cuda", "vram_total": self.gpu_gib * GIB}]})
         elif self.path == "/history/" + PROMPT_ID:
             self.send_json({PROMPT_ID: {
                 "outputs": {"44": {"gifs": [{"filename": "test.mp4",
@@ -104,6 +122,9 @@ class GatewayComfyTests(unittest.TestCase):
         self.input.mkdir(parents=True)
         FakeComfy.prompts = []
         FakeComfy.allow_nodes = True
+        FakeComfy.model_missing = False
+        FakeComfy.gpu_gib = 24
+        FakeComfy.ram_gib = 96
         self.server = ThreadingHTTPServer(("127.0.0.1", 0), FakeComfy)
         threading.Thread(target=self.server.serve_forever, daemon=True).start()
         self.addCleanup(self.server.server_close)
@@ -193,9 +214,31 @@ class GatewayComfyTests(unittest.TestCase):
         FakeComfy.allow_nodes = False
         with mock.patch("comfyui_web_jobs.probe_seconds", return_value=3.0):
             self.jobs.prepare(media(1))
-        with self.assertRaisesRegex(ValueError, "Missing Openjutsu"):
+        with self.assertRaisesRegex(ValueError, "Openjutsu preflight NO_GO"):
             self.jobs.start()
         self.assertEqual(self.jobs.public()["status"], "PREPARED")
+        self.assertEqual(len(FakeComfy.prompts), 0)
+
+    def test_missing_model_blocks_render_before_post(self):
+        FakeComfy.model_missing = True
+        with mock.patch("comfyui_web_jobs.probe_seconds", return_value=3):
+            self.jobs.prepare(media(1))
+        report = self.jobs.check()
+        self.assertFalse(report["can_attempt_render"])
+        self.assertEqual(report["readiness"]["status"], "NO_GO_MISSING_COMPONENTS")
+        with self.assertRaisesRegex(ValueError, "Openjutsu preflight NO_GO"):
+            self.jobs.start()
+        self.assertEqual(len(FakeComfy.prompts), 0)
+
+    def test_small_gpu_blocks_render_without_wasting_quota(self):
+        FakeComfy.gpu_gib = 8
+        with mock.patch("comfyui_web_jobs.probe_seconds", return_value=3):
+            self.jobs.prepare(media(1))
+        report = self.jobs.check()
+        self.assertFalse(report["can_attempt_render"])
+        self.assertEqual(report["readiness"]["status"], "BELOW_OPENJUTSU_TESTED_BASELINE")
+        with self.assertRaisesRegex(ValueError, "Openjutsu preflight NO_GO"):
+            self.jobs.start()
         self.assertEqual(len(FakeComfy.prompts), 0)
 
     def test_http_check_and_origin_protection(self):
