@@ -10,8 +10,11 @@ from __future__ import annotations
 from pathlib import PurePosixPath
 
 GIB = 1024 ** 3
-MIN_TESTED_VRAM = 16 * GIB
-MIN_TESTED_RAM = 64 * GIB
+# Installed 16GB GPU / 64GB host RAM may report less after reservations and
+# decimal-vs-binary unit differences. Treat >=15GiB / >=58GiB as comparable.
+# These are advisory thresholds, not documented minimum requirements.
+MIN_TESTED_VRAM = 15 * GIB
+MIN_TESTED_RAM = 58 * GIB
 MODEL_FIELDS = {
     "UNETLoader": {"unet_name": "diffusion_models"},
     "LoraLoaderModelOnly": {"lora_name": "loras"},
@@ -107,6 +110,7 @@ def analyze(graph: dict, node_info: dict, stats: dict | None) -> dict:
         "hardware": {
             "devices": gpu_records, "ram_total_gib": round(ram/GIB, 2),
             "tested_baseline_vram_gib": 16, "tested_baseline_ram_gib": 64,
+            "acceptance_threshold_vram_gib": 15, "acceptance_threshold_ram_gib": 58,
             "meets_tested_baseline": hw_ok,
         },
         "output_created": False, "model_integrity_verified": False,
