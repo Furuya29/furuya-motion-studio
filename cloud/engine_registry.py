@@ -106,7 +106,7 @@ ENGINES: tuple[Engine, ...] = (
     Engine(
         id="openjutsu_advanced",
         name="Openjutsu Advanced (MiniMax H3 + SAM 3.1)",
-        tasks=("multi_scene_replacement",),
+        tasks=("scene_replacement", "multi_scene_replacement"),
         state="OFFLINE_ADAPTER",
         execution="COMFYUI_GPU_CHECKOUT_UNCONFIGURED",
         scene_preservation=True,
