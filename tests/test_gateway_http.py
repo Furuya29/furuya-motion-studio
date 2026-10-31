@@ -59,6 +59,11 @@ class LocalHTTPTests(unittest.TestCase):
         scene = {item["id"] for item in payload["scene_replacement"]}
         motion = {item["id"] for item in payload["motion_transfer"]}
         self.assertIn("wan22_replace", scene)
+        self.assertIn("openjutsu_advanced", scene)
+        research = {item["id"] for item in payload["research_paid_disabled"]}
+        self.assertIn("higgsfield_genjutsu_object_swap", research)
+        self.assertIn("higgsfield_genjutsu_motion_transfer", research)
+        self.assertNotIn("higgsfield_genjutsu_object_swap", scene)
         self.assertNotIn("viggle_video_remix", scene)
         self.assertIn("wan_animate2_motion", motion)
 
