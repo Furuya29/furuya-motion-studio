@@ -33,7 +33,7 @@ class LocalHTTPTests(unittest.TestCase):
     def test_automatic_routing_never_executes(self):
         with urlopen(self.base + "/api/recommend?targets=1&preserve_scene=true", timeout=5) as response:
             value = json.load(response)
-        self.assertEqual(value["preferred_engine"], "wan22_replace")
+        self.assertEqual(value["preferred_engine"], "openjutsu_advanced")
         self.assertFalse(value["execution_authorized"])
         self.assertFalse(value["can_generate_now"])
         with urlopen(self.base + "/api/recommend?targets=3&preserve_scene=true", timeout=5) as response:
