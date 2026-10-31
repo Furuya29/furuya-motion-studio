@@ -12,7 +12,7 @@ class AutoRouterTests(unittest.TestCase):
     def test_scene_preserving_one_person(self):
         result = recommend(target_count=1, preserve_original_scene=True)
         self.assertEqual(result["task"], "scene_replacement")
-        self.assertEqual(result["preferred_engine"], "wan22_replace")
+        self.assertEqual(result["preferred_engine"], "openjutsu_advanced")
         self.assertFalse(result["can_generate_now"])
 
     def test_motion_transfer_one_person(self):
@@ -28,7 +28,7 @@ class AutoRouterTests(unittest.TestCase):
             self.assertEqual(len(result["evaluation_order"]), 3)
 
     def test_no_old_engines_removed(self):
-        self.assertEqual(len(ENGINES), 8)
+        self.assertEqual(len(ENGINES), 10)
         self.assertIn("kling3_motion", {engine.id for engine in ENGINES})
 
     def test_no_paid_or_automatic_execution(self):
