@@ -3,7 +3,7 @@
 
 This is a transparent rules-based routing recommendation, not a trained AI
 model or a completed inference. Never invokes GPUs, uploads videos or spends.
-All eight registered engines remain installed/catalogued, including inactive
+All registered engines remain installed/catalogued, including inactive
 research candidates.
 """
 from __future__ import annotations
