@@ -77,7 +77,7 @@ class OpenjutsuAdvancedTests(unittest.TestCase):
             self.assertEqual(report["character_image_nodes"], ["2", "5"][:count])
             self.assertEqual(report["swap_plan_node"], "14")
             self.assertEqual(graph["14"]["inputs"]["roles"],
-                             "\\n".join(["the center dancer", "the right dancer"][:count]))
+                             "\n".join(["the center dancer", "the right dancer"][:count]))
             for node in graph.values():
                 for value in node["inputs"].values():
                     if oj.is_link(value):
