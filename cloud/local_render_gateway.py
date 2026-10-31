@@ -24,7 +24,7 @@ from urllib.parse import urlsplit, parse_qs
 from uuid import uuid4
 
 from viggle_remix_api import BASE, api_json, download, probe_seconds
-from engine_registry import get, candidates
+from engine_registry import get, candidates, ENGINES
 from auto_router import recommend
 from comfyui_web_jobs import ComfyJobs, parse_upload as parse_comfy_upload, UPLOAD_LIMIT as COMFY_UPLOAD_LIMIT
 
@@ -351,6 +351,8 @@ class Handler(BaseHTTPRequestHandler):
                 "scene_replacement": candidates("scene_replacement"),
                 "motion_transfer": candidates("motion_transfer"),
                 "multi_scene_replacement": candidates("multi_scene_replacement"),
+                "research_paid_disabled": [engine.public() for engine in ENGINES
+                                           if engine.expected_paid_cost is True],
                 "notes": "An adapter or listed engine is not proof that GPU, free quota or real inference works.",
             })
         if route == "/api/credits":
