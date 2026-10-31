@@ -35,7 +35,11 @@ function comfyRefreshButtons(){
  comfyEnable('comfyCheck',comfyGateway);
  comfyEnable('comfyPrepare',comfyGateway&&comfyModeValid()&&comfyState!=='SUBMITTED'
   &&comfyState!=='PENDING'&&comfyState!=='SUBMISSION_UNCERTAIN');
+ const selectedMode=comfyMaxQSelected()?'one_pass_per_person_2slot':'standard_4slot';
+ const preparedSelectionMatches=comfyCurrentJob?.characters===comfyTargetCount()
+  &&comfyCurrentJob?.workflow_variant===selectedMode;
  comfyEnable('comfyStart',comfyGateway&&comfyConnectionOk&&comfyPrepared
+  &&preparedSelectionMatches&&comfyModeValid()
   &&comfyState==='PREPARED'&&cEl('comfyAuthorize').checked);
  comfyEnable('comfyResume',comfyGateway&&['SUBMITTED','PENDING'].includes(comfyState));
  comfyEnable('comfyRefresh',comfyGateway);
