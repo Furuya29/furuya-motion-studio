@@ -66,6 +66,12 @@ video{max-height:440px;width:100%;background:black;border-radius:10px}
 <section id="comfyPanel">
 <h2>04 · Motor aberto Openjutsu / ComfyUI (experimental)</h2>
 <p class="sub">Geração diretamente no fluxo do Furuya, sem API Viggle. Selecione o vídeo e a primeira personagem acima; para duas ou mais pessoas, acrescente referências individuais abaixo. O Furuya prepara o workflow, identifica os nós oficiais e acompanha o processamento local. Requer ComfyUI, nós, pesos e GPU compatíveis já instalados; o GitHub Pages sozinho não executa esta etapa.</p>
+<label for="comfyWorkflowMode">Estratégia Openjutsu</label>
+<select id="comfyWorkflowMode" style="width:100%;background:#0a1528;color:white;padding:11px;border:1px solid #435779;border-radius:8px">
+<option value="standard" selected>Advanced padrão — até 4 personagens, uma passagem</option>
+<option value="maxq">Advanced MaxQ — até 2 personagens, passagem por pessoa</option>
+</select>
+<p class="sub" id="comfyWorkflowHint">Advanced padrão é adequado para começar com a festa. MaxQ pode preservar melhor cada personagem, mas exige mais processamento e seu workflow oficial comporta somente duas referências.</p>
 <label for="comfyWorkflow">Workflow Openjutsu Advanced personalizado (opcional — já incluímos o workflow oficial)</label>
 <input type="file" id="comfyWorkflow" accept=".json,application/json">
 <div id="comfyExtra2" hidden>
