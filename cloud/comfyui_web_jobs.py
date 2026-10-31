@@ -21,6 +21,7 @@ from comfyui_local_bridge import (
     api_json, local_base, stage, video_outputs, download, bind, workflow_api,
 )
 from openjutsu_advanced_adapter import prepare as prepare_openjutsu
+from comfyui_readiness import analyze as analyze_readiness
 from viggle_remix_api import probe_seconds
 
 UPLOAD_LIMIT = 48 * 1024 * 1024
@@ -108,31 +109,35 @@ class ComfyJobs:
             (self.session / "receipt.json").write_text(
                 json.dumps(self.job, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
+    def _preflight(self) -> dict:
+        # Prefer the exact trimmed/assigned workflow if one was prepared.
+        if self.session and (self.session / "prepared_api.json").is_file():
+            graph = json.loads((self.session / "prepared_api.json").read_text(encoding="utf-8"))
+        else:
+            graph = workflow_api(Path(__file__).resolve().parents[1] /
+                                 "workflows/openjutsu_advanced.api.json")
+        nodes = api_json(self.server, "/object_info")
+        try:
+            stats = api_json(self.server, "/system_stats")
+        except Exception:
+            # Missing hardware stats cannot be interpreted as an available GPU.
+            stats = {}
+        return analyze_readiness(graph, nodes, stats)
+
     def check(self) -> dict:
         if not self.input_dir or not self.input_dir.is_dir():
             return {"status": "NOT_CONFIGURED", "connected": False,
                     "message": "Start gateway with --comfy-input-dir pointing to ComfyUI/input."}
         try:
-            nodes = api_json(self.server, "/object_info")
-            result = {"status": "CONNECTED", "connected": True,
-                      "class_count": len(nodes),
-                      "openjutsu_present": all(k in nodes for k in
-                          ("VHS_LoadVideo", "LoadImage", "H3AdvancedSwapPlan")),
-                      "weights_verified": False, "gpu_capacity_verified": False}
-            try:
-                stats = api_json(self.server, "/system_stats")
-                devices = stats.get("devices", [])
-                result["devices"] = [
-                    {"name": str(d.get("name", ""))[:120],
-                     "vram_total": d.get("vram_total")}
-                    for d in devices[:8] if isinstance(d, dict)
-                ]
-            except Exception:
-                result["devices"] = []
-            return result
+            report = self._preflight()
+            return {"status": "CONNECTED", "connected": True,
+                    "openjutsu_present": not report["missing_node_classes"],
+                    "can_attempt_render": report["can_attempt_render"],
+                    "readiness": report,
+                    "notice": "No inference performed. Read-only compatibility check."}
         except Exception as error:
             return {"status": "OFFLINE", "connected": False,
-                    "message": "Local ComfyUI not reachable: " + str(error)[:150]}
+                    "message": "Could not inspect local ComfyUI: " + str(error)[:180]}
 
     def prepare(self, fields: dict) -> dict:
         with self.lock:
@@ -199,11 +204,16 @@ class ComfyJobs:
             if not self.input_dir or not self.input_dir.is_dir():
                 raise ValueError("No local ComfyUI input directory configured")
             graph = json.loads((self.session / "prepared_api.json").read_text(encoding="utf-8"))
-            available = api_json(self.server, "/object_info")
-            missing = sorted({node["class_type"] for node in graph.values()} - set(available))
-            if missing:
-                raise ValueError("Missing Openjutsu/ComfyUI nodes: " + ", ".join(missing)[:350])
-            self.job.update(status="SUBMISSION_UNCERTAIN", stage="STAGING_LOCAL_FILES")
+            result = self._preflight()
+            if not result["can_attempt_render"]:
+                missing = ", ".join(result["missing_node_classes"][:8])
+                files = ", ".join(item["filename"] for item in result["missing_models"][:8])
+                reason = missing or files or result["status"]
+                raise ValueError("Openjutsu preflight NO_GO: " + reason[:300] +
+                                 ". Verify model list and tested GPU/RAM baseline first.")
+            self.job.update(status="SUBMISSION_UNCERTAIN", stage="STAGING_LOCAL_FILES",
+                            hardware_checked_against_tested_baseline=True,
+                            model_names_checked=True)
             self.save()
             threading.Thread(target=self._worker, daemon=True).start()
             return self.public()
