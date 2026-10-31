@@ -18,8 +18,13 @@ async function comfyRequest(route, options={}) {
  return data;
 }
 function comfyTargetCount(){return Number(cEl('targetCount').value||1)}
+function comfyMaxQSelected(){return cEl('comfyWorkflowMode').value==='maxq'}
+function comfyModeValid(){return !comfyMaxQSelected()||comfyTargetCount()<=2}
 function comfyUpdateInputs(){
  const count = comfyTargetCount();
+ cEl('comfyWorkflowHint').textContent=comfyMaxQSelected()
+   ? 'MaxQ: o workflow oficial processa até 2 personagens em passagens separadas. Mais tempo de GPU; ainda não validado no Furuya.'
+   : 'Advanced padrão: até 4 personagens. Recomendado inicialmente para a dança no Rio.';
  for(let i=2;i<=4;i++){
   cEl('comfyExtra'+i).hidden = i>count;
   cEl('comfyRoleWrap'+i).hidden = i>count;
@@ -28,7 +33,7 @@ function comfyUpdateInputs(){
 }
 function comfyRefreshButtons(){
  comfyEnable('comfyCheck',comfyGateway);
- comfyEnable('comfyPrepare',comfyGateway&&comfyState!=='SUBMITTED'
+ comfyEnable('comfyPrepare',comfyGateway&&comfyModeValid()&&comfyState!=='SUBMITTED'
   &&comfyState!=='PENDING'&&comfyState!=='SUBMISSION_UNCERTAIN');
  comfyEnable('comfyStart',comfyGateway&&comfyConnectionOk&&comfyPrepared
   &&comfyState==='PREPARED'&&cEl('comfyAuthorize').checked);
@@ -108,16 +113,23 @@ async function comfyCheck(){
 async function comfyWorkflowBlob(){
  const selected=cEl('comfyWorkflow').files[0];
  if(selected) return selected;
- const result=await fetch('./workflows/openjutsu_advanced.api.json',{cache:'no-store'});
+ const workflowPath=comfyMaxQSelected()
+  ? './workflows/openjutsu_advanced_maxq.api.json'
+  : './workflows/openjutsu_advanced.api.json';
+ const result=await fetch(workflowPath,{cache:'no-store'});
  if(!result.ok) throw new Error('Workflow padrão não disponível. Importe um workflow Openjutsu Advanced em formato API.');
  const blob=await result.blob();
  if(blob.size>2*1024*1024)throw new Error('Workflow padrão excede o limite de tamanho.');
- return new File([blob],'openjutsu_advanced.api.json',{type:'application/json'});
+ return new File([blob],comfyMaxQSelected()?'openjutsu_advanced_maxq.api.json':'openjutsu_advanced.api.json',{type:'application/json'});
 }
 async function comfyPrepare(){
  const video=cEl('motion').files[0], first=cEl('image').files[0];
  if(!video||!first){comfyMessage('Selecione o vídeo e a primeira personagem no formulário principal.',true);return}
  const count=comfyTargetCount();
+ if(!comfyModeValid()){
+  comfyMessage('Openjutsu MaxQ suporta no máximo duas pessoas. Mude para Advanced padrão ou reduza o elenco.',true);
+  return;
+ }
  const data=new FormData();
  data.append('motion_video',video);
  data.append('image_1',first);
@@ -171,6 +183,7 @@ async function comfyResume(){
  finally{comfyRefreshButtons()}
 }
 cEl('targetCount').addEventListener('change',comfyUpdateInputs);
+cEl('comfyWorkflowMode').addEventListener('change',comfyUpdateInputs);
 cEl('comfyAuthorize').addEventListener('change',comfyRefreshButtons);
 cEl('comfyCheck').addEventListener('click',comfyCheck);
 cEl('comfyPrepare').addEventListener('click',comfyPrepare);
