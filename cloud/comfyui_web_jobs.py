@@ -188,6 +188,8 @@ class ComfyJobs:
                 "engine_id": "openjutsu_advanced",
                 "task": "multi_scene_replacement" if count > 1 else "scene_replacement",
                 "characters": count, "roles": roles,
+                "workflow_variant": report["variant"],
+                "workflow_character_capacity": report["available_pictures"],
                 "seconds": round(seconds, 3), "source_video_node": report["source_video_node"],
                 "image_node_ids": report["character_image_nodes"],
                 "tracking_verified": False, "model_weights_verified": False,
