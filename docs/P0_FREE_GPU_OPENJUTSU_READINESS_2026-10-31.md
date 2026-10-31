@@ -18,7 +18,7 @@ O módulo `cloud/comfyui_readiness.py` trabalha só por consultas locais de leit
 - Compara todas as classes de nós do **workflow realmente selecionado** com `GET /object_info` do ComfyUI.
 - Verifica os nomes dos checkpoints referenciados em nós ComfyUI padrão (UNET, LoRA, CLIP, VAE, checkpoint, SAMLoader) contra as listas de escolha dos respectivos nós.
 - Consulta `GET /system_stats` para GPU, VRAM e RAM, sem expor `argv` nem outros argumentos do processo na interface.
-- Compara o ambiente com a configuração de **16 GiB de VRAM NVIDIA e 64 GiB de RAM do ambiente publicamente testado**, registrando se o perfil é inferior.
+- Compara o ambiente com a configuração publicada de **16 GB de VRAM NVIDIA e 64 GB de RAM**. Para tolerar diferenças entre GB/GiB e memória reservada, a ferramenta considera **15 GiB de VRAM e 58 GiB de RAM reportados** como aproximadamente equivalentes ao perfil testado, sem tratá-los como requisitos mínimos universais.
 
 Resultados possíveis:
 - `NO_GO_MISSING_COMPONENTS`: nós ou modelos listados necessários ausentes;
