@@ -3,6 +3,13 @@
   "source": "offline-static-display-only; actual server catalog via /api/engines",
   "scene_replacement": [
     {
+      "id": "openjutsu_advanced",
+      "name": "Openjutsu Advanced — MiniMax H3 / SAM 3.1",
+      "state": "OFFLINE_ADAPTER",
+      "strengths": "Recasting de uma pessoa em multidão com SAM 3.1, referências e descrições de papéis; variante MaxQ opcional.",
+      "limitations": "Exige MiniMax H3 + SAM3.1/ComfyUI com GPU e RAM compatíveis. Ainda sem render real validado."
+    },
+    {
       "id": "wan22_replace",
       "name": "Wan2.2-Animate 14B — replacement",
       "state": "OFFLINE_ADAPTER",
@@ -33,7 +40,7 @@
       "limitations": "Precisa credenciais e créditos; não garante troca localizada em multidão."
     }
   ],
-  "notes": "Catálogo demonstrativo. Multi-scene requer rastreamento multi-ID e inferência comprovada; planner não gera vídeos. Nenhuma GPU gratuita verificada.",
+  "notes": "Openjutsu Standard (1–4) and MaxQ (1–2) workflows available in local Furuya. These are workflow adapters, not installed models or free GPU. Genjutsu proprietary engines are research-only and paid; never automatically submitted.",
   "multi_scene_replacement": [
     {
       "id": "openjutsu_advanced",
@@ -55,6 +62,24 @@
       "state": "RESEARCH_ONLY",
       "strengths": "Edição regional com máscaras, possível fluxo sequencial de vários alvos.",
       "limitations": "Fluxo multipersonagem não é nativo validado; montagem e inferência ainda não implementadas."
+    }
+  ],
+  "research_paid": [
+    {
+      "id": "higgsfield_genjutsu_object_swap",
+      "name": "Genjutsu — Object Swap",
+      "state": "RESEARCH_ONLY",
+      "paid": true,
+      "source": "https://higgsfield.ai/genjutsu",
+      "reason": "Ferramenta proprietária para trocar uma pessoa/objeto preservando a cena. API com custo por segundo; fora do orçamento R$0."
+    },
+    {
+      "id": "higgsfield_genjutsu_motion_transfer",
+      "name": "Genjutsu — Motion Transfer",
+      "state": "RESEARCH_ONLY",
+      "paid": true,
+      "source": "https://open.higgsfield.ai/models/higgsfield/genjutsu/motion-transfer/v1.0/playground",
+      "reason": "Ferramenta proprietária para transferir dança, podendo reconstruir a cena. API com custo por segundo; fora do orçamento R$0."
     }
   ]
 }
