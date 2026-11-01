@@ -308,6 +308,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._file(self.root / "generate.js", "text/javascript; charset=utf-8")
         if route == "/comfy.js":
             return self._file(self.root / "comfy.js", "text/javascript; charset=utf-8")
+        if route == "/people.js":
+            return self._file(self.root / "people.js", "text/javascript; charset=utf-8")
         if route == "/workflows/openjutsu_advanced.api.json":
             return self._file(self.root / "workflows/openjutsu_advanced.api.json",
                               "application/json; charset=utf-8")
