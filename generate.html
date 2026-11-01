@@ -103,18 +103,27 @@ video{max-height:440px;width:100%;background:black;border-radius:10px}
 </div>
 <p class="sub">A lista de nós presentes não prova disponibilidade de pesos nem qualidade. Se a tarefa falhar ou ocorrer timeout sem identificador, o Furuya bloqueia reenvios para evitar duplicação. Para vários alvos, confira se cada descrição identifica a pessoa correta. A interface é uma integração experimental para workflow API do Openjutsu, não uma instalação automática de IA.</p>
 </section>
-<section><h2>05 · API opcional Viggle Remix (transferência de movimento)</h2>
+<section id="peoplePanel">
+<h2>05 · Localizar pessoas na multidão — Openjutsu Find People</h2>
+<p class="sub">Após preparar o vídeo e as personagens no Openjutsu acima, você pode executar separadamente o rastreamento de pessoas pelo SAM 3.1 e a associação de papéis pelo Qwen. O objetivo é <b>conferir quem será substituído antes de gerar</b>. A busca consome processamento local e requer modelos/GPU compatíveis. A revisão ainda não é aplicada automaticamente aos modos Standard ou MaxQ.</p>
+<p class="sub">O fluxo de rastreamento não gera MP4. Os dados de rastreamento são temporários no ComfyUI e podem desaparecer após uma reinicialização.</p>
+<div class="row"><button id="peopleStart" disabled>Encontrar pessoas (GPU local)</button><button id="peopleResume" disabled>Retomar busca sem reenviar</button><button id="peopleRefresh">Atualizar pessoas encontradas</button></div>
+<p id="peopleStatus" role="status" class="note">Nenhum rastreamento iniciado.</p>
+<div id="peopleResults" hidden><p class="sub" id="peopleSummary"></p><div id="peopleGallery" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px"></div></div>
+<p class="sub">Se a IA confundir pessoas cruzando o quadro, não considere as identidades aprovadas. Mantenha a geração suspensa até verificar as correspondências. Este painel preserva os arquivos originais e não contrata nuvem.</p>
+</section>
+<section><h2>06 · API opcional Viggle Remix (transferência de movimento)</h2>
 <p class="sub">Custo anunciado no Viggle: 1 crédito por segundo de Remix; o resultado pode usar créditos gratuitos existentes. O saldo não diferencia créditos gratuitos dos comprados. Não há compra automática. O envio transfere seu vídeo/imagem ao provedor.</p>
 <label><input type="checkbox" id="confirm"> Quando o motor for Viggle Remix, autorizo o envio ao provedor e consumo de créditos existentes (sem compra automática).</label>
 <button id="generate" disabled>Gerar vídeo com motor selecionado</button>
 <div id="state" role="status" aria-live="polite" class="note" style="margin-top:13px">Aguardando preparação. Nenhum render foi iniciado.</div>
 <div class="row" style="margin-top:10px"><button id="refresh">Atualizar estado</button><button id="resume" disabled>Consultar job existente (sem nova cobrança)</button></div>
 </section>
-<section id="resultPanel" hidden><h2>06 · Resultado do serviço opcional</h2>
+<section id="resultPanel" hidden><h2>07 · Resultado do serviço opcional</h2>
 <video id="resultVideo" controls playsinline preload="metadata"></video>
 <p><a id="download" class="action" download="albedo_3s_rendered.mp4" href="/api/result">Baixar MP4 realmente gerado</a></p>
 <p class="sub">A existência do MP4 é apenas uma prova de renderização, não de fidelidade. Verifique identidade, anatomia, roupas, acessórios, coreografia, fundo e consistência temporal antes de aprovar o teste.</p>
 </section>
 <p class="sub">Motor GPU próprio: o Furuya agora possui uma ponte local para workflows ComfyUI já instalados, sem API proprietária. Ela requer exportação API do workflow, pesos e GPU adequados. <a href="https://github.com/Furuya29/furuya-motion-studio/blob/main/docs/P0_COMFYUI_TEMPORAL_PIPELINE.md">Ver instruções e condições da ponte ComfyUI</a>. O painel Openjutsu acima controla essa ponte diretamente, quando existe uma instalação local compatível.</p>
 <footer class="sub"><a href="./recast.html?v=0.8.1">Voltar ao editor v0.8.1</a> · Render não executado até confirmação explícita · Nenhuma assinatura exigida pelo Furuya</footer>
-</main><script src="./generate.js?v=p0-20261029" defer></script><script src="./comfy.js?v=20261030" defer></script></body></html>
+</main><script src="./generate.js?v=p0-20261029" defer></script><script src="./comfy.js?v=20261030" defer></script><script src="./people.js?v=20261101" defer></script></body></html>

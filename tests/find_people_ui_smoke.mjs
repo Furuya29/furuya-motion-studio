@@ -1,0 +1,21 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const page=readFileSync(new URL('../generate.html', import.meta.url),'utf8');
+const js=readFileSync(new URL('../people.js', import.meta.url),'utf8');
+const graph=JSON.parse(readFileSync(new URL('../workflows/openjutsu_find_people.api.json',import.meta.url),'utf8'));
+for(const id of ['peoplePanel','peopleStart','peopleResume','peopleRefresh','peopleStatus','peopleResults','peopleGallery'])
+ assert.match(page,new RegExp('id="'+id+'"'));
+assert.match(page,/src="\.\/people\.js/);
+assert.match(js,/\/api\/comfy\/people\//);
+assert.match(js,/AUTHORIZE_LOCAL_GPU/);
+assert.match(js,/TRACKS_READY_UNREVIEWED/);
+assert.match(js,/Papéis são sugestões/);
+assert.doesNotMatch(js,/setItem|eval\(|VIGGLE_API_KEY/);
+new Function(js);
+assert.equal(graph["1"].class_type,"VHS_LoadVideo");
+assert.equal(graph["5"].class_type,"SAM3_VideoTrack");
+assert.equal(graph["6"].class_type,"H3TrackCrops");
+assert.equal(graph["9"].class_type,"H3TrackRoles");
+assert.equal(graph["10"].class_type,"H3MontagePeople");
+assert.ok(!Object.values(graph).some(n=>["SaveVideo","VHS_VideoCombine"].includes(n.class_type)));
+console.log('PASS: Furuya Find People UI and official tracking-only ComfyUI graph.');
