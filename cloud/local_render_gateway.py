@@ -27,6 +27,7 @@ from viggle_remix_api import BASE, api_json, download, probe_seconds
 from engine_registry import get, candidates, ENGINES
 from auto_router import recommend
 from comfyui_web_jobs import ComfyJobs, parse_upload as parse_comfy_upload, UPLOAD_LIMIT as COMFY_UPLOAD_LIMIT
+from openjutsu_find_people_jobs import PeopleJobs
 
 MAX_UPLOAD = 35 * 1024 * 1024
 SAFE_RENDER = re.compile(r"^render_[A-Za-z0-9_-]+$")
@@ -271,6 +272,7 @@ class RenderState:
 class Handler(BaseHTTPRequestHandler):
     state: RenderState
     comfy: ComfyJobs
+    people: PeopleJobs
     root: Path
 
     def _json(self, data: dict, code: int = 200):
@@ -312,6 +314,9 @@ class Handler(BaseHTTPRequestHandler):
         if route == "/workflows/openjutsu_advanced_maxq.api.json":
             return self._file(self.root / "workflows/openjutsu_advanced_maxq.api.json",
                               "application/json; charset=utf-8")
+        if route == "/workflows/openjutsu_find_people.api.json":
+            return self._file(self.root / "workflows/openjutsu_find_people.api.json",
+                              "application/json; charset=utf-8")
         if route == "/routing-policy.json":
             return self._file(self.root / "routing-policy.json", "application/json; charset=utf-8")
         if route == "/multicast.html":
@@ -322,6 +327,13 @@ class Handler(BaseHTTPRequestHandler):
             return self._json(self.state.public())
         if route == "/api/comfy/status":
             return self._json(self.comfy.public())
+        if route == "/api/comfy/people/status":
+            return self._json(self.people.public())
+        if route == "/api/comfy/people/review":
+            try:
+                return self._json(self.people.review())
+            except (ValueError, OSError) as exc:
+                return self._json({"error": str(exc)[:200]}, 404)
         if route == "/api/comfy/check":
             return self._json(self.comfy.check())
         if route == "/api/comfy/result":
@@ -375,6 +387,16 @@ class Handler(BaseHTTPRequestHandler):
         if self.headers.get("X-Furuya-Intent") != "local-explicit-user-action":
             return self._json({"error": "Explicit request header required."}, 403)
         try:
+            if route == "/api/comfy/people/start":
+                if self.headers.get("X-Furuya-Confirm") != "AUTHORIZE_LOCAL_GPU":
+                    raise ValueError("Explicit local GPU authorization required for Find People")
+                if self.headers.get("Content-Length", "0") not in ("0", ""):
+                    raise ValueError("Unexpected request body")
+                return self._json(self.people.start(), 202)
+            if route == "/api/comfy/people/resume":
+                if self.headers.get("Content-Length", "0") not in ("0", ""):
+                    raise ValueError("Unexpected request body")
+                return self._json(self.people.resume(), 202)
             if route == "/api/comfy/prepare":
                 length = int(self.headers.get("Content-Length", "0"))
                 if not 0 < length <= COMFY_UPLOAD_LIMIT:
@@ -438,6 +460,7 @@ def main(argv=None) -> int:
     LocalHandler.state = RenderState(workdir)
     LocalHandler.comfy = ComfyJobs(workdir / "comfy-jobs",
                                    server=args.comfy_server, input_dir=args.comfy_input_dir)
+    LocalHandler.people = PeopleJobs(workdir / "people-jobs", LocalHandler.comfy)
     LocalHandler.root = root
     server = ThreadingHTTPServer(("127.0.0.1", args.port), LocalHandler)
     print("Furuya local gateway: http://127.0.0.1:%d/generate.html" % args.port, flush=True)
