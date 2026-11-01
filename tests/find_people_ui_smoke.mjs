@@ -9,7 +9,7 @@ assert.match(page,/src="\.\/people\.js/);
 assert.match(js,/\/api\/comfy\/people\//);
 assert.match(js,/AUTHORIZE_LOCAL_GPU/);
 assert.match(js,/TRACKS_READY_UNREVIEWED/);
-assert.match(js,/identity/);
+assert.match(js,/Papéis são sugestões/);
 assert.doesNotMatch(js,/setItem|eval\(|VIGGLE_API_KEY/);
 new Function(js);
 assert.equal(graph["1"].class_type,"VHS_LoadVideo");
