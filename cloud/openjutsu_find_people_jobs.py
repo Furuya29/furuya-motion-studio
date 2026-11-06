@@ -19,6 +19,7 @@ from uuid import uuid4
 
 from comfyui_local_bridge import api_json, stage, workflow_api
 from comfyui_readiness import analyze
+from openjutsu_montage_review import build_reviewed_montage
 
 SAFE_JSON = re.compile(r"^h3_montage_people_[0-9]+_\.json$")
 SAFE_NPZ = re.compile(r"^h3_montage_people_[0-9]+_\.npz$")
@@ -115,7 +116,7 @@ class PeopleJobs:
     def public(self) -> dict:
         with self.lock:
             return {**self.job, "review_ready": self.review_file.is_file()
-                    and self.job["status"] == "TRACKS_READY_UNREVIEWED"}
+                    and self.job["status"] in ("TRACKS_READY_UNREVIEWED", "TRACKS_REVIEWED_MONTAGE_PREPARED")}
 
     def graph(self) -> dict:
         graph = workflow_api(Path(__file__).resolve().parents[1] /
@@ -238,8 +239,60 @@ class PeopleJobs:
             threading.Thread(target=self._poll, args=(pid,), daemon=True).start()
             return self.public()
 
+
+    def approve_montage(self, selections: list[dict]) -> dict:
+        """Prepare reviewed Montage, never submits /prompt or executes GPU."""
+        with self.lock, self.comfy.lock:
+            if self.job.get("status") != "TRACKS_READY_UNREVIEWED":
+                raise ValueError("Find People report has not completed or was already reviewed")
+            if not self.comfy.session or self.comfy.job.get("status") != "PREPARED":
+                raise ValueError("Original Furuya video job must remain prepared, not submitted")
+            if self.job.get("source_job") != self.comfy.session.name:
+                raise ValueError("Find People data belongs to a different source video job")
+            review = self.review()
+            roles = self.comfy.job.get("roles", [])
+            count = self.comfy.job.get("characters")
+            source = workflow_api(Path(__file__).resolve().parents[1] /
+                                  "workflows/openjutsu_montage.api.json")
+            graph, info = build_reviewed_montage(source, review, count, roles, selections)
+            directory = self.comfy.session
+            active = directory / "prepared_api.json"
+            backup = directory / "prepared_before_montage.api.json"
+            staging = directory / "prepared_montage_pending.api.json"
+            if backup.exists() or staging.exists() or not active.is_file():
+                raise ValueError("Existing or incomplete Montage transition. Inspect workdir; no rerender.")
+            # Fail closed if the process is interrupted between the two receipts:
+            # a job that is 'MONTAGE_RECONFIGURING' is never eligible for start().
+            self.comfy.job.update(status="MONTAGE_RECONFIGURING",
+                                  stage="SAVE_REVIEWED_MONTAGE_GRAPH",
+                                  montage_replacements=info["selected_replacements"])
+            self.comfy.save()
+            backup.write_bytes(active.read_bytes())
+            staging.write_text(json.dumps(graph, ensure_ascii=False) + "\n", encoding="utf-8")
+            staging.replace(active)
+            self.comfy.job.update(status="PREPARED",
+                                  stage="AWAITING_EXPLICIT_GPU_CONFIRMATION_FOR_REVIEWED_MONTAGE",
+                                  workflow_variant="reviewed_montage_4slot",
+                                  source_video_node=info["source_video_node"],
+                                  image_node_ids=info["character_image_nodes"],
+                                  montage_trackfile=info["track_file"],
+                                  montage_selected_replacements=info["selected_replacements"],
+                                  identity_review_confirmed=True,
+                                  tracking_output_temporary=True)
+            self.comfy.save()
+            self.job.update(status="TRACKS_REVIEWED_MONTAGE_PREPARED",
+                            stage="MONTAGE_PREPARED_NO_INFERENCE",
+                            selected_replacements=info["selected_replacements"],
+                            approved_source_job=self.comfy.session.name)
+            self._save()
+            return {"status": "MONTAGE_PREPARED_NO_INFERENCE",
+                    "selected_replacements": info["selected_replacements"],
+                    "characters": count,
+                    "comfy": self.comfy.public(),
+                    "note": "Montage graph prepared only; /prompt has not been submitted. The ComfyUI temp .npz may expire after a restart."}
+
     def review(self) -> dict:
         with self.lock:
-            if self.job.get("status") != "TRACKS_READY_UNREVIEWED":
+            if self.job.get("status") not in ("TRACKS_READY_UNREVIEWED", "TRACKS_REVIEWED_MONTAGE_PREPARED"):
                 raise ValueError("No tracking result ready for review")
             return json.loads(self.review_file.read_text(encoding="utf-8"))
