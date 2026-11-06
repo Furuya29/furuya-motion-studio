@@ -11,7 +11,7 @@ assert.match(js,/AUTHORIZE_LOCAL_GPU/);
 assert.match(js,/TRACKS_READY_UNREVIEWED/);
 assert.match(js,/TRACKS_REVIEWED_MONTAGE_PREPARED/);
 assert.match(js,/api.*approve|pAPI\('approve'/);
-assert.match(js,/Papéis são sugestões/);
+assert.match(js,/As sugestões do modelo não são aprovação de identidade/);
 assert.doesNotMatch(js,/setItem|eval\(|VIGGLE_API_KEY/);
 new Function(js);
 assert.equal(graph["1"].class_type,"VHS_LoadVideo");
