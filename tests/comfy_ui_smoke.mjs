@@ -27,6 +27,7 @@ assert.match(js,/missing_node_classes/);
 assert.match(js,/missing_models/);
 assert.match(js,/ram_total_gib/);
 assert.match(js,/RENDERED_UNREVIEWED/);
+assert.match(js,/reviewed_montage_4slot/);
 assert.match(js,/PREPARED/);
 assert.doesNotMatch(js,/localStorage\.(setItem|removeItem)/);
 assert.doesNotMatch(js,/VIGGLE_API_KEY/);
