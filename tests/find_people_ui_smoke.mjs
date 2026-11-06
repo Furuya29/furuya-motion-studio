@@ -3,13 +3,15 @@ import {readFileSync} from 'node:fs';
 const page=readFileSync(new URL('../generate.html', import.meta.url),'utf8');
 const js=readFileSync(new URL('../people.js', import.meta.url),'utf8');
 const graph=JSON.parse(readFileSync(new URL('../workflows/openjutsu_find_people.api.json',import.meta.url),'utf8'));
-for(const id of ['peoplePanel','peopleStart','peopleResume','peopleRefresh','peopleStatus','peopleResults','peopleGallery'])
+for(const id of ['peoplePanel','peopleStart','peopleResume','peopleRefresh','peopleStatus','peopleResults','peopleGallery','peopleApprove'])
  assert.match(page,new RegExp('id="'+id+'"'));
 assert.match(page,/src="\.\/people\.js/);
 assert.match(js,/\/api\/comfy\/people\//);
 assert.match(js,/AUTHORIZE_LOCAL_GPU/);
 assert.match(js,/TRACKS_READY_UNREVIEWED/);
-assert.match(js,/Papéis são sugestões/);
+assert.match(js,/TRACKS_REVIEWED_MONTAGE_PREPARED/);
+assert.match(js,/api.*approve|pAPI\('approve'/);
+assert.match(js,/As sugestões do modelo não são aprovação de identidade/);
 assert.doesNotMatch(js,/setItem|eval\(|VIGGLE_API_KEY/);
 new Function(js);
 assert.equal(graph["1"].class_type,"VHS_LoadVideo");

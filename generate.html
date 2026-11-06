@@ -105,11 +105,14 @@ video{max-height:440px;width:100%;background:black;border-radius:10px}
 </section>
 <section id="peoplePanel">
 <h2>05 · Localizar pessoas na multidão — Openjutsu Find People</h2>
-<p class="sub">Após preparar o vídeo e as personagens no Openjutsu acima, você pode executar separadamente o rastreamento de pessoas pelo SAM 3.1 e a associação de papéis pelo Qwen. O objetivo é <b>conferir quem será substituído antes de gerar</b>. A busca consome processamento local e requer modelos/GPU compatíveis. A revisão ainda não é aplicada automaticamente aos modos Standard ou MaxQ.</p>
+<p class="sub">Após preparar o vídeo e as personagens no Openjutsu acima, você pode executar separadamente o rastreamento de pessoas pelo SAM 3.1 e a associação de papéis pelo Qwen. O objetivo é <b>conferir quem será substituído antes de gerar</b>. A busca consome processamento local e requer modelos/GPU compatíveis. Após aprovar as correspondências, o Furuya prepara um workflow Montage com as máscaras do rastreamento. A geração só começa após confirmação no painel Openjutsu acima.</p>
 <p class="sub">O fluxo de rastreamento não gera MP4. Os dados de rastreamento são temporários no ComfyUI e podem desaparecer após uma reinicialização.</p>
 <div class="row"><button id="peopleStart" disabled>Encontrar pessoas (GPU local)</button><button id="peopleResume" disabled>Retomar busca sem reenviar</button><button id="peopleRefresh">Atualizar pessoas encontradas</button></div>
 <p id="peopleStatus" role="status" class="note">Nenhum rastreamento iniciado.</p>
-<div id="peopleResults" hidden><p class="sub" id="peopleSummary"></p><div id="peopleGallery" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px"></div></div>
+<div id="peopleResults" hidden><p class="sub" id="peopleSummary"></p><div id="peopleGallery" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px"></div>
+<p class="sub">Selecione explicitamente quais aparições devem ser transformadas. O padrão é <b>manter a pessoa original</b>, inclusive para quem não estiver exibido aqui.</p>
+<button id="peopleApprove" disabled>Aprovar pessoas selecionadas e preparar Montage (sem GPU)</button>
+</div>
 <p class="sub">Se a IA confundir pessoas cruzando o quadro, não considere as identidades aprovadas. Mantenha a geração suspensa até verificar as correspondências. Este painel preserva os arquivos originais e não contrata nuvem.</p>
 </section>
 <section><h2>06 · API opcional Viggle Remix (transferência de movimento)</h2>
