@@ -37,7 +37,9 @@ function comfyRefreshButtons(){
   &&comfyState!=='PENDING'&&comfyState!=='SUBMISSION_UNCERTAIN');
  const selectedMode=comfyMaxQSelected()?'one_pass_per_person_2slot':'standard_4slot';
  const preparedSelectionMatches=comfyCurrentJob?.characters===comfyTargetCount()
-  &&comfyCurrentJob?.workflow_variant===selectedMode;
+  &&(comfyCurrentJob?.workflow_variant===selectedMode
+    ||(comfyCurrentJob?.workflow_variant==='reviewed_montage_4slot'
+       &&!comfyMaxQSelected()));
  comfyEnable('comfyStart',comfyGateway&&comfyConnectionOk&&comfyPrepared
   &&preparedSelectionMatches&&comfyModeValid()
   &&comfyState==='PREPARED'&&cEl('comfyAuthorize').checked);
@@ -53,8 +55,11 @@ function comfyShowJob(job){
   cEl('comfyResultVideo').removeAttribute('src');
  }
  if(comfyState==='PREPARED'){
-  comfyMessage('Workflow Openjutsu preparado para '+job.characters+
-   ' personagem(ns); vídeo '+job.seconds+'s. Arquivos não foram enviados ao ComfyUI. '+
+  const isMontage=job.workflow_variant==='reviewed_montage_4slot';
+  comfyMessage((isMontage?'Montage revisado e preparado':'Workflow Openjutsu preparado')+' para '+job.characters+
+   ' personagem(ns); vídeo '+job.seconds+'s. '+(isMontage?'Pessoas marcadas: '+job.montage_selected_replacements+
+   '. As máscaras temporárias do ComfyUI precisam continuar disponíveis. ':'')+
+   'Arquivos não foram enviados ao ComfyUI. '+
    'Verifique a instância e confirme somente se os modelos e a GPU estiverem realmente disponíveis.');
  }else if(comfyState==='SUBMISSION_UNCERTAIN'){
   comfyMessage('SUBMISSÃO INCERTA: não clique em gerar novamente. Confira a fila/console do ComfyUI.'+
