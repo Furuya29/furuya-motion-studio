@@ -41,8 +41,8 @@ def prepare(graph: dict, *, characters: int, roles: list[str] | None = None) -> 
     if nodes[video_id]["class_type"] != "VHS_LoadVideo":
         raise ValueError("Expected official Openjutsu VHS_LoadVideo source node")
     plan_id = find_title(nodes, "Swap Plan (roles, seed, size)")
-    if nodes[plan_id]["class_type"] != "H3AdvancedSwapPlan":
-        raise ValueError("Expected Openjutsu H3AdvancedSwapPlan")
+    if nodes[plan_id]["class_type"] not in ("H3AdvancedSwapPlan", "H3MontagePlan"):
+        raise ValueError("Expected Openjutsu H3AdvancedSwapPlan or H3MontagePlan")
     available = sum(1 for node in nodes.values()
                     if node["class_type"] == "LoadImage"
                     and re.fullmatch(r"Picture [1-4]", node.get("_meta", {}).get("title", "")))
