@@ -81,6 +81,9 @@ def build_reviewed_montage(source: dict, review: dict,
         raise ValueError("Expected H3MontageTracks")
     sam_id = find_title(graph, REMOVE_TITLES[0])
     removed = {find_title(graph, title) for title in REMOVE_TITLES}
+    # The original labels input links to the deleted H3MontagePicks node;
+    # replace it before the generic orphan-link check (as upstream does).
+    graph[plan_id]["inputs"]["labels"] = json.dumps(labels, separators=(",", ":"))
     for id in removed:
         del graph[id]
     for node_id, node in graph.items():
