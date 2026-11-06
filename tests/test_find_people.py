@@ -22,6 +22,7 @@ sys.path.insert(0, str(ROOT / "cloud"))
 from comfyui_web_jobs import ComfyJobs
 from comfyui_readiness import GIB, MODEL_FIELDS
 from openjutsu_find_people_jobs import PeopleJobs, validate_result, people_output
+from openjutsu_montage_review import build_reviewed_montage
 from local_render_gateway import Handler, RenderState
 from comfyui_local_bridge import workflow_api
 
@@ -170,6 +171,55 @@ class FindPeopleTests(unittest.TestCase):
         restored=PeopleJobs(self.people.root,self.comfy)
         self.assertEqual(restored.public()["status"],"TRACKS_READY_UNREVIEWED")
         self.assertEqual(restored.review()["people"][0]["role"],1)
+
+    def test_reviewed_selection_prepares_true_montage_without_any_gpu_post(self):
+        self.prepared()
+        original = (ROOT / "workflows/openjutsu_advanced.api.json").read_text()
+        (self.comfy.session / "prepared_api.json").write_text(original)
+        self.people.job = {
+            "status": "TRACKS_READY_UNREVIEWED", "source_job": self.comfy.session.name,
+            "tracking_done": True
+        }
+        self.people.review_file.write_text(json.dumps(validate_result(REVIEW)))
+        selection = [{"track": 1, "start": 0, "end": 72, "pick": 1}]
+        body = json.dumps({"selections": selection}).encode()
+        request = Request(self.address + "/api/comfy/people/approve",
+                          data=body, method="POST",
+                          headers={"Content-Type": "application/json",
+                                   "X-Furuya-Intent": "local-explicit-user-action"})
+        with urlopen(request, timeout=7) as resp:
+            value = json.load(resp)
+        self.assertEqual(value["status"], "MONTAGE_PREPARED_NO_INFERENCE")
+        self.assertEqual(value["selected_replacements"], 1)
+        self.assertEqual(self.comfy.job["workflow_variant"], "reviewed_montage_4slot")
+        self.assertEqual(self.people.public()["status"], "TRACKS_REVIEWED_MONTAGE_PREPARED")
+        graph = json.loads((self.comfy.session / "prepared_api.json").read_text())
+        self.assertEqual(graph["14"]["class_type"], "H3MontagePlan")
+        self.assertEqual(graph["109"]["inputs"]["file"], "h3_montage_people_00001_.npz")
+        self.assertEqual(json.loads(graph["14"]["inputs"]["labels"])[0]["role"], 1)
+        self.assertEqual((self.comfy.session / "prepared_before_montage.api.json").read_text(),
+                         original)
+        self.assertEqual(len(FakePeopleServer.posts), 0)
+        self.assertTrue(self.people.public()["review_ready"])
+        with self.assertRaises(HTTPError) as e:
+            urlopen(request, timeout=7)
+        self.assertEqual(e.exception.code, 400)
+
+    def test_invalid_review_does_not_modify_original_comfy_workflow(self):
+        self.prepared()
+        original = (ROOT / "workflows/openjutsu_advanced.api.json").read_text()
+        file = self.comfy.session / "prepared_api.json"
+        file.write_text(original)
+        self.people.job = {"status": "TRACKS_READY_UNREVIEWED",
+                           "source_job": self.comfy.session.name}
+        self.people.review_file.write_text(json.dumps(validate_result(REVIEW)))
+        with self.assertRaisesRegex(ValueError, "Unknown"):
+            self.people.approve_montage([
+                {"track": 909, "start": 0, "end": 72, "pick": 1}
+            ])
+        self.assertEqual(self.comfy.job["status"], "PREPARED")
+        self.assertEqual(file.read_text(), original)
+        self.assertEqual(len(FakePeopleServer.posts), 0)
 
     def test_no_models_or_nodes_blocks_before_prompt(self):
         self.prepared()
