@@ -13,7 +13,7 @@ import re
 from comfyui_local_bridge import workflow_api
 from openjutsu_advanced_adapter import prepare as prune_character_images, find_title, is_link
 # Independent validation avoids a cycle with the Find People job manager.
-SAFE_NPZ = re.compile(r"^h3_montage_people_[0-9]+_\\.npz$")
+SAFE_NPZ = re.compile(r"^h3_montage_people_[0-9]+_\.npz$")
 
 REQUIRED_KEYS = frozenset({"track", "start", "end", "pick"})
 REMOVE_TITLES = (
