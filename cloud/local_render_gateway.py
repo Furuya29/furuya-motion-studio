@@ -319,6 +319,9 @@ class Handler(BaseHTTPRequestHandler):
         if route == "/workflows/openjutsu_find_people.api.json":
             return self._file(self.root / "workflows/openjutsu_find_people.api.json",
                               "application/json; charset=utf-8")
+        if route == "/workflows/openjutsu_montage.api.json":
+            return self._file(self.root / "workflows/openjutsu_montage.api.json",
+                              "application/json; charset=utf-8")
         if route == "/routing-policy.json":
             return self._file(self.root / "routing-policy.json", "application/json; charset=utf-8")
         if route == "/multicast.html":
@@ -399,6 +402,16 @@ class Handler(BaseHTTPRequestHandler):
                 if self.headers.get("Content-Length", "0") not in ("0", ""):
                     raise ValueError("Unexpected request body")
                 return self._json(self.people.resume(), 202)
+            if route == "/api/comfy/people/approve":
+                length = int(self.headers.get("Content-Length", "0"))
+                if not 0 < length <= 32 * 1024:
+                    raise ValueError("Review selections exceed 32KB limit")
+                if self.headers.get("Content-Type", "").split(";")[0] != "application/json":
+                    raise ValueError("Expected JSON appearance selections")
+                body = json.loads(self.rfile.read(length))
+                if not isinstance(body, dict) or set(body) != {"selections"}:
+                    raise ValueError("Expected a selections array")
+                return self._json(self.people.approve_montage(body["selections"]))
             if route == "/api/comfy/prepare":
                 length = int(self.headers.get("Content-Length", "0"))
                 if not 0 < length <= COMFY_UPLOAD_LIMIT:
