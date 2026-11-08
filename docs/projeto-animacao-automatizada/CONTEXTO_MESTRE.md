@@ -39,7 +39,7 @@
 - Fontes públicas: https://www.videogameschronicle.com/news/are-we-deadass-fans-react-to-official-ai-generated-stellar-blade-music-video/ ; https://m.ajupress.com/amp/20260803150638274 ; https://www.pushsquare.com/news/2026/08/evie-was-created-by-our-talented-artists-stellar-blade-dev-responds-to-ai-slop-accusations .
 - O CEO descreveu Evie como personagem desenvolvida por artistas e modeladores por mais de um ano, com apoio de IA na apresentação audiovisual; custo, hardware e pipelines exatos do videoclipe **não confirmados**.
 - O “making of” ao final é encenado/gerado; não interpretar como evidência documental de filmagem física.
-- Análise aprofundada e medidas para integrar ao pipeline registradas no documento de referência 2 (a ser acrescentado nesta pasta).
+- Análise detalhada concluída em `REFERENCIA_02_SHIFTUP_BLOODRAIN_2026-11-08.md`, com diagnóstico temporal por timestamp, limites de evidência, recomendações e gates de QA. Implementação do piloto está aberta em https://github.com/Furuya29/furuya-motion-studio/issues/12.
 - **Não armazenar MP4 de terceiros nem materiais protegidos neste repositório** sem licença. Guardar metadados, fontes, anotações técnicas e decisões.
 
 ## Próximas provas
