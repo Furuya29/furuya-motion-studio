@@ -98,3 +98,23 @@ Fontes:
 - **TS Malfoy**: 09:04, 30 fps, fotogramas atraentes, longos segmentos dramáticos sustentados por poses e rosto.
 - **Shift Up**: 03:37, 24 fps, design urbano e linguagem de videoclipe com cenografia expressiva, rosto com deriva e plano BTS sintético.
 - **Transferir para o projeto** a fotografia do primeiro e a profundidade/variedade de cenas do segundo, combinando com gestual e controles geométricos que ambos deixam como oportunidades de melhoria.
+
+
+## Adendo crítico — revisão do usuário em 2026-11-08: microfone, perspectiva e proporções
+
+A inspeção anterior não esgotou os defeitos. O usuário identificou adicionalmente:
+
+- **Microfone fora de perspectiva**, mais perceptível quando há rotação da câmera: a orientação, escala aparente, eixo, posição relativa em relação à boca e/ou oclusão visual podem não acompanhar corretamente a projeção da cena. Tratar como **anomalia candidata reportada pelo usuário**, exigindo reprodução e medição, não como prova de pipeline interno.
+- **Variações das proporções corporais de Evie** entre tomadas: possíveis diferenças na razão cabeça/altura, largura de ombros, cintura/quadril, comprimento aparente de braços/pernas e silhueta. Distinguir pose, perspectiva, focal, iluminação e figurino de alteração estrutural real.
+- **Outras falhas sutis ainda não catalogadas**: a inspeção precisa continuar por plano e por quadros consecutivos, com checklist de detalhes, sem considerar concluído o QA apenas por não ter defeitos grosseiros.
+
+### Correções e testes que passam a ser obrigatórios
+
+1. **Registro de câmera no espaço 3D** (posição, rotação, distância focal/FOV, distorção de lente): reproduzir perspectiva do fundo, personagem e objetos ao mesmo tempo; testar parallax ao rotacionar/orbitar a câmera.
+2. **Microfone como geometria persistente**, não como objeto reimaginado em cada frame: objeto identificado, geometria, pivô/eixo, material, altura relativa à boca, relação de contato com o suporte, profundidade, sombras e oclusões estáveis. Renderizar passe/máscara separado quando útil. Se for handheld, rig de mão com IK e restrição de contato; se for pedestal, ancorar no mundo.
+3. **Bíblia de proporções corporais**: medidas relativas de cabeça, torso, ombros, cintura, quadril, membros, mãos e pés. Usar rig 3D ou malha mestra 2D com referências ortográficas frente/perfil e perspectiva 3/4. Variar silhueta por pose/câmera somente segundo geometria definida.
+4. **Validação multiângulo e cross-shot**: sobrepor landmarks de pose e limites projetados, comparar razões antropométricas normalizadas em vistas correspondentes, rastrear câmera e objeto, testar ocultação e sombra de contato. Não usar comparação bruta de pixels como prova de defeito.
+5. **Teste P0 dirigido**: em uma tomada-piloto, girar a câmera em torno de personagem e microfone, com o microfone estático ou manuseado por rig; verificar coerência de perspectiva, foco, escala, distância relativa, luz e silhueta corporal em 100% dos frames. Incluir pelo menos uma mudança de plano.
+6. **QA humano + automatizado** com timestamp de falhas (objeto, deformação, deriva de escala corporal, física, câmera), severidade, provável causa e plano de retake. Falha estrutural em mic/corpo não passa no gate de aprovação.
+
+**Status:** observações do usuário incorporadas à documentação; propostas **não comprovadas ou implementadas**. Estas medidas são **aditivas** às decisões existentes do projeto de animação e do Furuya Motion Studio, sem apagamento/reescrita do planejamento aprovado no chat principal.
