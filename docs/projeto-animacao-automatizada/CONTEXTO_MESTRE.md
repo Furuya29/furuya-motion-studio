@@ -57,3 +57,9 @@ Distinguir: (A) fatos dos metadados do arquivo; (B) inspeção de frames; (C) fa
 ## Controle de continuidade
 
 Este documento é a referência mestre, que deve ser atualizada em novas análises, sem excluir as decisões existentes. Não transferir credenciais, dados pessoais ou arquivos protegidos de terceiros ao GitHub.
+
+## Handoff integrador para o chat principal (08/11/2026)
+
+- [Handoff completo e aditivo](HANDOFF_INTEGRACAO_CHAT_PRINCIPAL_2026-11-08.md) — consolida TS Malfoy e Shift Up, novos defeitos de perspectiva do microfone e variações das proporções corporais, estratégias de correção, requisitos de QA e plano de integração.
+- **Regra superior de continuidade:** este handoff **NÃO substitui** as decisões, planos, arquiteturas ou checkpoints existentes no chat principal. Integrar como complemento, reconciliando com o histórico principal.
+- A pasta atual documenta **esta frente de pesquisa**, não é prova de que toda documentação histórica do chat principal tenha sido migrada.
