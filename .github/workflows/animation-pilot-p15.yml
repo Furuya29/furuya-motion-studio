@@ -5,6 +5,7 @@ on:
       - 'tools/animation_pilot/**'
       - 'docs/projeto-animacao-automatizada/piloto_15s_shot_spec_v0_1.json'
       - 'tests/test_animatic_preview.py'
+      - 'tests/test_sprite_rig.py'
       - 'tests/test_animation_pilot_spec.py'
       - '.github/workflows/animation-pilot-p15.yml'
   workflow_dispatch:
@@ -32,6 +33,13 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_animation_pilot_spec.py' -v
       - name: Camera and deterministic preview tests
         run: python -m unittest discover -s tests -p 'test_animatic_preview.py' -v
+      - name: Verify layered sprite-rig engine
+        run: python -m unittest discover -s tests -p 'test_sprite_rig.py' -v
+      - name: Render original cutout demonstration
+        run: |
+          python tools/animation_pilot/make_sprite_demo.py --out "$RUNNER_TEMP/sprite_demo"
+          python tools/animation_pilot/sprite_rig.py --rig "$RUNNER_TEMP/sprite_demo/rig.json" --out "$RUNNER_TEMP/sprite_demo/output.mp4"
+          ffprobe -v error -select_streams v:0 -show_entries stream=nb_frames -show_entries format=duration -of json "$RUNNER_TEMP/sprite_demo/output.mp4"
       - name: Render technical blocking
         run: python tools/animation_pilot/preview_animatic.py --width 640 --height 360 --out "$RUNNER_TEMP/preview_p15.mp4"
       - name: Check video geometry and temporal length
