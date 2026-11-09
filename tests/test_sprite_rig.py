@@ -7,8 +7,13 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
-from tools.animation_pilot import sprite_rig, make_sprite_demo
+try:
+    from tools.animation_pilot import sprite_rig, make_sprite_demo
+except ImportError:
+    sprite_rig = None
+    make_sprite_demo = None
 
+@unittest.skipIf(sprite_rig is None, 'Pillow is not installed in core recast CI')
 class TestSpriteRig(unittest.TestCase):
     def test_affine_inversion(self):
         a=sprite_rig.matmul(sprite_rig.translate(30,19),sprite_rig.rotate(45))
