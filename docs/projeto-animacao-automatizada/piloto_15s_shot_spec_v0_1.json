@@ -1,0 +1,271 @@
+{
+  "schema_version": "pilot-shot-spec/0.1",
+  "project_id": "projeto-animacao-automatizada",
+  "scene_id": "PILOT15_001",
+  "status": "SPEC_DRAFT_NOT_RENDERED",
+  "purpose": "Prova de conceito proposta, nao altera as prioridades do projeto principal",
+  "timeline": {
+    "fps": 24,
+    "width": 1920,
+    "height": 1080,
+    "total_frames": 360,
+    "interval_convention": "start_inclusive_end_exclusive"
+  },
+  "coordinate_system": {
+    "axes": "+X right, +Y forward, +Z up",
+    "units": "meters",
+    "note": "poses ilustrativas, nao calibradas; converter para coordenadas do motor escolhido"
+  },
+  "assets": [
+    {
+      "id": "char.original.001",
+      "kind": "character",
+      "status": "TO_CREATE",
+      "requirements": [
+        "front",
+        "three_quarters",
+        "profile",
+        "back",
+        "expression_sheet",
+        "proportion_sheet",
+        "rig_or_keyframes"
+      ]
+    },
+    {
+      "id": "env.stage.001",
+      "kind": "environment",
+      "status": "TO_CREATE",
+      "requirements": [
+        "persistent_layout",
+        "lighting_reference",
+        "ground_plane"
+      ]
+    },
+    {
+      "id": "prop.microphone.001",
+      "kind": "prop",
+      "status": "TO_CREATE",
+      "requirements": [
+        "stable_geometry",
+        "pivot",
+        "contact_points",
+        "occlusion_pass"
+      ]
+    }
+  ],
+  "shots": [
+    {
+      "id": "P15_A",
+      "start_frame": 0,
+      "end_frame": 120,
+      "asset_refs": [
+        "char.original.001",
+        "env.stage.001"
+      ],
+      "technique_candidates": [
+        "2d_rig",
+        "limited_frame_by_frame",
+        "3d_stylized"
+      ],
+      "action": "Expressao, fala/canto com visemas, olhos, mandibula, pescoco, ombros e respiracao coerentes",
+      "camera": {
+        "projection": "perspective",
+        "focal_length_mm": 50,
+        "keyframes": [
+          {
+            "frame": 0,
+            "position_m": [
+              0,
+              -4,
+              1.65
+            ],
+            "look_at_m": [
+              0,
+              0,
+              1.55
+            ]
+          },
+          {
+            "frame": 119,
+            "position_m": [
+              0,
+              -3.8,
+              1.65
+            ],
+            "look_at_m": [
+              0,
+              0,
+              1.55
+            ]
+          }
+        ]
+      },
+      "constraints": [],
+      "qa_required": [
+        "character_identity",
+        "facial_acting",
+        "viseme_audio_sync",
+        "body_breathing",
+        "continuity"
+      ],
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "P15_B",
+      "start_frame": 120,
+      "end_frame": 240,
+      "asset_refs": [
+        "char.original.001",
+        "env.stage.001"
+      ],
+      "technique_candidates": [
+        "2d_multiview_rig",
+        "3d_stylized",
+        "keyframe_interpolation"
+      ],
+      "action": "Deslocamento e mudança de plano, sapatos em contato com o piso, anatomia consistente sob perspectiva",
+      "camera": {
+        "projection": "perspective",
+        "focal_length_mm": 35,
+        "keyframes": [
+          {
+            "frame": 120,
+            "position_m": [
+              -2,
+              -5,
+              1.65
+            ],
+            "look_at_m": [
+              0,
+              0,
+              1.1
+            ]
+          },
+          {
+            "frame": 239,
+            "position_m": [
+              1,
+              -4.5,
+              1.65
+            ],
+            "look_at_m": [
+              0,
+              0,
+              1.1
+            ]
+          }
+        ]
+      },
+      "constraints": [],
+      "qa_required": [
+        "character_identity",
+        "body_proportions",
+        "foot_contact",
+        "camera_geometry",
+        "continuity"
+      ],
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "P15_C",
+      "start_frame": 240,
+      "end_frame": 360,
+      "asset_refs": [
+        "char.original.001",
+        "env.stage.001",
+        "prop.microphone.001"
+      ],
+      "technique_candidates": [
+        "3d_stylized",
+        "2d_hybrid_multipass"
+      ],
+      "action": "Interacao controlada com microfone fixo no mundo e camera em orbita; checar eixo, escala, mao, oclusao, sombra e parallax",
+      "camera": {
+        "projection": "perspective",
+        "focal_length_mm": 50,
+        "keyframes": [
+          {
+            "frame": 240,
+            "position_m": [
+              -1.5,
+              -3.8,
+              1.7
+            ],
+            "look_at_m": [
+              0,
+              0,
+              1.45
+            ]
+          },
+          {
+            "frame": 359,
+            "position_m": [
+              1.5,
+              -3.8,
+              1.7
+            ],
+            "look_at_m": [
+              0,
+              0,
+              1.45
+            ]
+          }
+        ]
+      },
+      "constraints": [
+        {
+          "prop_id": "prop.microphone.001",
+          "attachment_mode": "world",
+          "anchor_asset_id": "env.stage.001",
+          "contact_actor_id": "char.original.001",
+          "contact_bone": "hand.R",
+          "note": "Mao pode tocar prop; prop permanece ancorado ao mundo. Validar colisao/oclusao em render."
+        }
+      ],
+      "qa_required": [
+        "character_identity",
+        "prop_perspective",
+        "prop_geometry",
+        "contact_and_occlusion",
+        "camera_geometry",
+        "continuity"
+      ],
+      "status": "NOT_TESTED"
+    }
+  ],
+  "qa_policy": {
+    "minimum_checks": [
+      "cross_shot_identity",
+      "cross_shot_costume",
+      "cross_shot_proportions",
+      "camera_and_prop_coherence",
+      "temporal_flicker",
+      "audio_timing"
+    ],
+    "defect_record_fields": [
+      "shot_id",
+      "frame",
+      "timestamp_seconds",
+      "category",
+      "severity",
+      "evidence",
+      "hypothesis_or_confirmed",
+      "correction",
+      "reviewer_status"
+    ],
+    "note": "Metrica automatica sinaliza suspeitas. Revisao visual obrigatoria; nenhuma tolerancia inventada."
+  },
+  "evidence": {
+    "mp4_rendered": false,
+    "source_assets_ready": false,
+    "ffprobe_verified": false,
+    "visual_review_passed": false,
+    "pilot_homologated": false,
+    "cost_brl": 0,
+    "actual_runtime_measurements": null
+  },
+  "copyright": {
+    "source_media": "original_or_authorized_only",
+    "third_party_video_stored": false
+  }
+}
