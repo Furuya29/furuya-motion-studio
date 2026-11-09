@@ -1,0 +1,49 @@
+name: Animation pilot P15 - structural and render smoke
+on:
+  pull_request:
+    paths:
+      - 'tools/animation_pilot/**'
+      - 'docs/projeto-animacao-automatizada/piloto_15s_shot_spec_v0_1.json'
+      - 'tests/test_animatic_preview.py'
+      - 'tests/test_animation_pilot_spec.py'
+      - '.github/workflows/animation-pilot-p15.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  animation-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install test dependency
+        run: python -m pip install 'Pillow>=10,<13'
+      - name: Verify FFmpeg
+        run: ffmpeg -version | head -n 1
+      - name: Structural contract tests
+        run: python -m unittest discover -s tests -p 'test_animation_pilot_spec.py' -v
+      - name: Camera and deterministic preview tests
+        run: python -m unittest discover -s tests -p 'test_animatic_preview.py' -v
+      - name: Render technical blocking
+        run: python tools/animation_pilot/preview_animatic.py --width 640 --height 360 --out "$RUNNER_TEMP/preview_p15.mp4"
+      - name: Check video geometry and temporal length
+        env:
+          PREVIEW: ${{ runner.temp }}/preview_p15.mp4
+        run: |
+          python - <<'PY'
+          import json, os, subprocess
+          payload=json.loads(subprocess.check_output([
+            'ffprobe','-v','error','-select_streams','v:0',
+            '-show_entries','stream=width,height,nb_frames,r_frame_rate',
+            '-show_entries','format=duration','-of','json',os.environ['PREVIEW']
+          ]))
+          s=payload['streams'][0]
+          assert (s['width'],s['height'],s['r_frame_rate'],int(s['nb_frames']))==(640,360,'24/1',360), s
+          assert abs(float(payload['format']['duration'])-15)<0.01, payload
+          print('P15 smoke OK: 640x360 24fps 360 frames 15s')
+          PY
