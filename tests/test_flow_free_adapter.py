@@ -44,7 +44,7 @@ class FlowVideoPreparationTests(unittest.TestCase):
         self.source=self.root/"source.mp4"
         subprocess.run(["ffmpeg","-hide_banner","-loglevel","error","-y",
                         "-f","lavfi","-i","color=c=black:s=180x320:r=12",
-                        "-t","2.1","-c:v","libx264","-pix_fmt","yuv420p",
+                        "-t","3.1","-c:v","libx264","-pix_fmt","yuv420p",
                         str(self.source)],check=True,timeout=40)
         self.images=[]
         for i in range(5):
