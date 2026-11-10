@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Furuya Motion Studio · Flow 3D — até 5 personagens</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,Arial,sans-serif;background:#0a1220;color:#edf3fd}
+*{box-sizing:border-box}body{margin:0}main{width:min(970px,100%);margin:0 auto;padding:18px 14px 45px}
+section{background:#18263b;border:1px solid #3b526e;border-radius:13px;margin:14px 0;padding:16px}
+h1{font-size:23px;margin-bottom:4px}h2{font-size:18px;margin-top:0}
+label{display:block;margin:11px 0 4px}input,select,textarea{background:#101d30;border:1px solid #59708d;border-radius:8px;padding:10px;color:#f5f7fe;width:100%;font:inherit}
+textarea{min-height:265px;line-height:1.4}button,.link{display:inline-block;border-radius:8px;border:1px solid #617998;padding:11px 13px;color:#f4f8ff;background:#234b70;text-decoration:none;font:inherit;cursor:pointer}
+button:disabled{opacity:.5;cursor:not-allowed}.row{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}
+.small{font-size:13px;color:#afc5df}.refgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.refgrid>div{padding:9px;background:#101e32;border-radius:8px}
+#status{white-space:pre-wrap;background:#081b32;padding:13px;border-radius:8px}
+</style></head><body><main>
+<h1>Furuya Motion Studio — Flow Character Recast</h1>
+<p class="small">Preparador local para Google Flow Omni Flash: substituição corporal completa em vídeo existente, estilo 3D semi-realista e até cinco personagens. Não é um serviço de geração nem cobra créditos.</p>
+<p><a href="./generate.html">Voltar ao gerador multimotor</a></p>
+<section>
+<h2>1. Vídeo e referências de identidade</h2>
+<label for="source">Vídeo da festa original (MP4)</label><input type="file" id="source" accept="video/mp4,video/quicktime">
+<p class="small">Vídeo original: até 60 segundos, editado em trechos de no máximo 10 segundos no Flow gratuito. Para 24 segundos, usar o conjunto de clipes já preparado.</p>
+<div class="refgrid">
+<div><label for="ref1">1. Albedo — dançarino central</label><input type="file" id="ref1" accept="image/*"></div>
+<div><label for="ref2">2. Shalltear — à esquerda</label><input type="file" id="ref2" accept="image/*"></div>
+<div><label for="ref3">3. Solution — atrás, à esquerda</label><input type="file" id="ref3" accept="image/*"></div>
+<div><label for="ref4">4. Lupusregina — boné, direita</label><input type="file" id="ref4" accept="image/*"></div>
+<div><label for="ref5">5. Narberal — óculos escuros</label><input type="file" id="ref5" accept="image/*"></div>
+</div>
+<label for="targets">Quantas substituições nesta tomada?</label>
+<select id="targets"><option value="1">1 — Albedo</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5 — Overlord completo</option></select>
+<p class="small">É importante confirmar a identidade visual de cada pessoa no vídeo antes de gastar créditos. Quem estiver fora do quadro não deve ser inventado pelo modelo.</p>
+</section>
+<section>
+<h2>2. Cota gratuita e qualidade</h2>
+<div class="refgrid">
+<div><label for="seconds">Duração do trecho a editar, em segundos</label><input id="seconds" type="number" min=".5" max="10" step=".1" value="3"></div>
+<div><label for="resolution">Resolução</label><select id="resolution"><option value="360">360p — 1 crédito/segundo</option><option value="720">720p — 3 créditos/segundo</option></select></div>
+<div><label for="balance">Créditos gratuitos disponíveis (informados pelo usuário, não consultados automaticamente)</label><input id="balance" type="number" min="0" max="10000" value="50"></div>
+</div>
+<p id="cost" aria-live="polite">Estimativa: 3 créditos para 3 segundos a 360p.</p>
+</section>
+<section>
+<h2>3. Preparar prompt e trabalho</h2>
+<div class="row"><button id="prepare">Preparar prompt</button><button id="copy" disabled>Copiar prompt</button><button id="export" disabled>Baixar flow_job.json</button><a class="link" href="https://flow.google" target="_blank" rel="noopener noreferrer">Abrir Google Flow</a></div>
+<textarea id="prompt" spellcheck="false" placeholder="O prompt será gerado aqui" aria-label="Prompt do Flow"></textarea>
+<p id="status" role="status">Nenhuma geração iniciada. O Furuya prepara os arquivos localmente; o Flow deve receber manualmente o vídeo e as imagens na sessão Google autorizada.</p>
+</section>
+<section><h2>4. Envio ao Flow</h2>
+<p class="small">No Google Flow, selecione edição de vídeo com Omni Flash 1.2. Carregue o trecho real, anexe as cinco imagens como referências ou ingredientes disponíveis no modo selecionado, cole o prompt e confirme que os créditos são gratuitos. Produza uma variação de cada vez. O Furuya não envia nada nem compra créditos automaticamente.</p>
+<p class="small">Fontes: <a href="https://support.google.com/flow/answer/16935718">edição de vídeos</a> e <a href="https://support.google.com/flow/answer/16526234">custos oficiais</a>. A possibilidade de editar cinco identidades corretamente no mesmo vídeo ainda precisa ser comprovada por geração real.</p>
+</section>
+<script src="./flow.js" defer></script>
+</main></body></html>
