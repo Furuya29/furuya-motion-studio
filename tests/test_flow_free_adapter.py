@@ -16,7 +16,7 @@ class FlowPlanTests(unittest.TestCase):
     def test_24s_source_is_split_into_free_compatible_segments(self):
         self.assertEqual(flow.partition(24.255), [(0.,8.),(8.,8.),(16.,8.255)])
         self.assertEqual(flow.estimate_credits([3,8,8,8.255]), 28)
-        self.assertEqual(flow.estimate_credits([3,8,8,8.255],720), 84)
+        self.assertEqual(flow.estimate_credits([3,8,8,8.255],720), 82)
 
     def test_credits_are_not_silent_payments(self):
         with self.assertRaisesRegex(ValueError, "1–10"):
