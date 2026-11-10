@@ -149,9 +149,9 @@ class AdapterTests(unittest.TestCase):
     def test_no_external_install_or_execution_in_tests(self):
         with mock.patch.object(wan22.subprocess, "run", side_effect=AssertionError("GPU run attempted")):
             with mock.patch.object(wan2.subprocess, "run", side_effect=AssertionError("GPU run attempted")):
-                self.assertEqual(len(registry.ENGINES), 10)
+                self.assertEqual(len(registry.ENGINES), 11)
                 multi = registry.candidates("multi_scene_replacement")
-                self.assertEqual(len(multi), 3)
+                self.assertEqual(len(multi), 4)
                 self.assertEqual({e["state"] for e in multi}, {"RESEARCH_ONLY", "OFFLINE_ADAPTER"})
                 self.assertEqual(next(e["state"] for e in multi if e["id"] == "openjutsu_advanced"), "OFFLINE_ADAPTER")
 
