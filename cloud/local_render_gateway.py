@@ -306,6 +306,10 @@ class Handler(BaseHTTPRequestHandler):
             return self._file(self.root / "generate.html", "text/html; charset=utf-8")
         if route == "/generate.js":
             return self._file(self.root / "generate.js", "text/javascript; charset=utf-8")
+        if route == "/flow.html":
+            return self._file(self.root / "flow.html", "text/html; charset=utf-8")
+        if route == "/flow.js":
+            return self._file(self.root / "flow.js", "text/javascript; charset=utf-8")
         if route == "/comfy.js":
             return self._file(self.root / "comfy.js", "text/javascript; charset=utf-8")
         if route == "/people.js":
