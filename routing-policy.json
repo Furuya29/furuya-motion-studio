@@ -13,6 +13,7 @@
   },
   "priorities": {
     "scene_replacement": [
+      "flow_omni_edit",
       "openjutsu_advanced",
       "wan22_replace",
       "viggle_animate_open"
@@ -22,6 +23,7 @@
       "viggle_video_remix"
     ],
     "multi_scene_replacement": [
+      "flow_omni_edit",
       "openjutsu_advanced",
       "wan_vace_masked",
       "henge_tara_multi"
@@ -31,7 +33,7 @@
     "kling3_motion"
   ],
   "constraints": {
-    "max_targets": 4,
+    "max_targets": 5,
     "require_verified_free_resources": true,
     "never_auto_submit": true,
     "block_paid_fallback": true
@@ -41,5 +43,5 @@
     "motion_transfer": "Reproduzir a coreografia com uma personagem, permitindo reconstruir o cenário, favorece modelos de transferência direta de movimento.",
     "multi_scene_replacement": "Várias pessoas exigem associação de identidades, rastreamento individual, máscaras e resolução de oclusões."
   },
-  "notes": "Policy ranks Openjutsu for crowd-aware single-person and multi-person recasts based on its tracked-role workflow; this is an evaluation order, NOT a verified GPU or working render. Genjutsu proprietary APIs remain disabled under R$0 budget."
+  "notes": "Free-tier Google Flow browser editing now leads for 1–5 character edits without local GPU. This is an evaluation/preparation route ONLY until the user account and free credits plus an actual Flow render are verified. Other 10 engines remain; never pay automatically."
 }

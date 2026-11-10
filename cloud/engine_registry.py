@@ -40,6 +40,22 @@ class Engine:
 
 ENGINES: tuple[Engine, ...] = (
     Engine(
+        id="flow_omni_edit",
+        name="Google Flow Omni Flash 1.2 — hosted video editing (free-tier gated)",
+        tasks=("scene_replacement", "multi_scene_replacement"),
+        state="OFFLINE_ADAPTER",
+        execution="GOOGLE_FLOW_BROWSER_WITH_USER_FREE_QUOTA",
+        scene_preservation=True,
+        target_selection="MANUALLY_REVIEWED_UP_TO_FIVE; actual retention unverified",
+        requires_gpu=False,
+        account_or_local_weights=True,
+        expected_paid_cost=None,
+        local_entrypoint="cloud/flow_free_adapter.py",
+        strengths="Hosted video-to-video edits with character image ingredients; Furuya now prepares 1–5 references, source slices, prompts and a strict no-spend job.",
+        limitations="Flow website/account must be available. No official Furuya generation API, no automated submission or MP4 retrieval. Actual multi-person fidelity unverified. Free credits vary; never pay.",
+        official_source="https://support.google.com/flow/answer/16935718",
+    ),
+    Engine(
         id="wan22_replace",
         name="Wan2.2-Animate 14B — replacement",
         tasks=("scene_replacement",),

@@ -12,7 +12,7 @@ class AutoRouterTests(unittest.TestCase):
     def test_scene_preserving_one_person(self):
         result = recommend(target_count=1, preserve_original_scene=True)
         self.assertEqual(result["task"], "scene_replacement")
-        self.assertEqual(result["preferred_engine"], "openjutsu_advanced")
+        self.assertEqual(result["preferred_engine"], "flow_omni_edit")
         self.assertFalse(result["can_generate_now"])
 
     def test_motion_transfer_one_person(self):
@@ -24,11 +24,19 @@ class AutoRouterTests(unittest.TestCase):
         for n in (2, 3, 4):
             result = recommend(target_count=n)
             self.assertEqual(result["task"], "multi_scene_replacement")
-            self.assertEqual(result["preferred_engine"], "openjutsu_advanced")
-            self.assertEqual(len(result["evaluation_order"]), 3)
+            self.assertEqual(result["preferred_engine"], "flow_omni_edit")
+            self.assertEqual(len(result["evaluation_order"]), 4)
+
+    def test_five_targets_route_to_flow_only(self):
+        result = recommend(target_count=5)
+        self.assertEqual(result["task"], "multi_scene_replacement")
+        self.assertEqual(result["preferred_engine"], "flow_omni_edit")
+        self.assertEqual([e["id"] for e in result["evaluation_order"]], ["flow_omni_edit"])
+        self.assertFalse(result["can_generate_now"])
+        self.assertFalse(result["execution_authorized"])
 
     def test_no_old_engines_removed(self):
-        self.assertEqual(len(ENGINES), 10)
+        self.assertEqual(len(ENGINES), 11)
         self.assertIn("kling3_motion", {engine.id for engine in ENGINES})
         self.assertIn("higgsfield_genjutsu_object_swap", {engine.id for engine in ENGINES})
         self.assertIn("higgsfield_genjutsu_motion_transfer", {engine.id for engine in ENGINES})
@@ -45,7 +53,7 @@ class AutoRouterTests(unittest.TestCase):
                                     for row in result["evaluation_order"]))
 
     def test_bad_inputs(self):
-        for value in (-1, 0, 5, True, "2", 1.0):
+        for value in (-1, 0, 6, True, "2", 1.0):
             with self.assertRaises(ValueError):
                 recommend(target_count=value)
         with self.assertRaises(ValueError):

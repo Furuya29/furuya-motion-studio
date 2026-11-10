@@ -37,8 +37,8 @@ def routing_policy() -> dict:
 
 def recommend(*, target_count: int = 1,
               preserve_original_scene: bool = True) -> dict:
-    if isinstance(target_count, bool) or not isinstance(target_count, int) or not 1 <= target_count <= 4:
-        raise ValueError("Choose 1–4 people to replace")
+    if isinstance(target_count, bool) or not isinstance(target_count, int) or not 1 <= target_count <= 5:
+        raise ValueError("Choose 1–5 people to replace")
     if not isinstance(preserve_original_scene, bool):
         raise ValueError("preserve_original_scene must be a boolean")
 
@@ -58,6 +58,9 @@ def recommend(*, target_count: int = 1,
         if engine is None:
             continue
         if engine_id in policy.get("exclusions", []):
+            continue
+        if target_count == 5 and engine_id != "flow_omni_edit":
+            # The local Openjutsu Standard workflow only supports four.
             continue
         # Only explicitly available compatible engines can be recommended for execution.
         # All engines are currently candidates, none have verified operational resources.
@@ -90,7 +93,7 @@ def recommend(*, target_count: int = 1,
         "auto_render": False,
         "free_inference_verified": False,
         "can_generate_now": False,
-        "next_action": "Validate target tracking, model weights and actually available free GPU/API quota before any rendering.",
+        "next_action": "Prepare video and five 3D character refs, then verify Flow free credits in the signed-in website. No automatic submission.",
         "notice": "Automatic routing suggests an engine; it does not install it, track people, run inference, or use credits.",
     }
 

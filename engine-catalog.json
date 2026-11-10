@@ -3,6 +3,13 @@
   "source": "offline-static-display-only; actual server catalog via /api/engines",
   "scene_replacement": [
     {
+      "id": "flow_omni_edit",
+      "name": "Google Flow Omni Flash 1.2 — edição de vídeo com referências",
+      "state": "OFFLINE_ADAPTER",
+      "strengths": "Geração hospedada sem GPU local; Furuya prepara clipes e 1–5 referências 3D para o Flow.",
+      "limitations": "Requer sessão Google Flow com saldo gratuito confirmado. Upload e geração no site, sem API Furuya. Fidelidade multipersonagem ainda não comprovada."
+    },
+    {
       "id": "openjutsu_advanced",
       "name": "Openjutsu Advanced — MiniMax H3 / SAM 3.1",
       "state": "OFFLINE_ADAPTER",
@@ -40,8 +47,15 @@
       "limitations": "Precisa credenciais e créditos; não garante troca localizada em multidão."
     }
   ],
-  "notes": "Openjutsu Standard (1–4) and MaxQ (1–2) workflows available in local Furuya. These are workflow adapters, not installed models or free GPU. Genjutsu proprietary engines are research-only and paid; never automatically submitted.",
+  "notes": "A rota Flow 1–5 foi incluída para preparar cenas e prompts com orçamento gratuito sem GPU local. Flow usa upload manual no site; não há render automático nem saldo verificado. Dez motores anteriores preservados.",
   "multi_scene_replacement": [
+    {
+      "id": "flow_omni_edit",
+      "name": "Google Flow Omni Flash 1.2 — edição de vídeo com referências",
+      "state": "OFFLINE_ADAPTER",
+      "strengths": "Geração hospedada sem GPU local; Furuya prepara clipes e 1–5 referências 3D para o Flow.",
+      "limitations": "Requer sessão Google Flow com saldo gratuito confirmado. Upload e geração no site, sem API Furuya. Fidelidade multipersonagem ainda não comprovada."
+    },
     {
       "id": "openjutsu_advanced",
       "name": "Openjutsu Advanced — MiniMax H3 / SAM 3.1",

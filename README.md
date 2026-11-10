@@ -1,5 +1,12 @@
 # Furuya Motion Studio — captura v0.5 + compositor 2D v0.6
 
+## Google Flow — Overlord 3D com cinco personagens (10/11/2026)
+
+O Furuya inclui a rota `flow_omni_edit` para **edição do vídeo viral existente** com até cinco referências: Albedo, Shalltear, Solution, Lupusregina e Narberal. Estilo padrão: 3D semi-realista. A ferramenta `cloud/flow_free_adapter.py` divide o vídeo original por FFmpeg em trechos compatíveis, gera prompt e plano de créditos sem precisar de GPU local. A interface `flow.html` reúne referências e exporta `flow_job.json`. A produção do MP4 generativo depende de uma sessão autenticada do Google Flow com créditos gratuitos verificados; **não há upload ou render automático conectado** e nenhum valor será cobrado automaticamente. [Detalhes da integração](docs/FLOW_OVERLORD_FIVE_ZERO_COST_2026-11-10.md).
+
+---
+
+
 ## Openjutsu Standard/MaxQ e Genjutsu — 31/10/2026
 
 Confirmei que o Openjutsu é uma alternativa **aberta e independente** ao Genjutsu da Higgsfield (proprietário). O Furuya agora inclui os dois workflows oficiais Openjutsu: **Advanced padrão (1–4 pessoas)** e **Advanced MaxQ (1–2 pessoas, passagem individual)**. Para vídeos com multidão, a recomendação automática coloca Openjutsu à frente de Wan2.2-Animate, preservando ambos. Os dois produtos Higgsfield Genjutsu foram registrados apenas como **pesquisa sujeita a pagamento**, desabilitados no orçamento R$0; nenhum crédito nem render foi consumido. Veja [comparação técnica e limites](docs/OPENJUTSU_GENJUTSU_INVESTIGACAO_2026-10-31.md).
