@@ -1,5 +1,12 @@
 # Furuya Motion Studio — captura v0.5 + compositor 2D v0.6
 
+## Correção após teste real do Flow (14/11/2026)
+
+O teste real de cinco personagens **não preservou a coreografia nem as posições dos dançarinos**: a saída Omni Flash recriou 15 s de dança coletiva, em vez de substituir as pessoas do trecho original de 3 s. O Flow permanece no catálogo como **recriação visual criativa**, mas não é mais escolhido automaticamente para substituição corporal fiel. Openjutsu lidera a avaliação para 1–4 pessoas, sem GPU gratuita comprovada; para cinco, o roteador informa que falta motor validado de passagem única. [Relatório do vídeo e novos critérios de aceitação](docs/FLOW_VIDEO_REAL_REVIEW_2026-11-14.md).
+
+---
+
+
 ## Google Flow — Overlord 3D com cinco personagens (10/11/2026)
 
 O Furuya inclui a rota `flow_omni_edit` para **edição do vídeo viral existente** com até cinco referências: Albedo, Shalltear, Solution, Lupusregina e Narberal. Estilo padrão: 3D semi-realista. A ferramenta `cloud/flow_free_adapter.py` divide o vídeo original por FFmpeg em trechos compatíveis, gera prompt e plano de créditos sem precisar de GPU local. A interface `flow.html` reúne referências e exporta `flow_job.json`. A produção do MP4 generativo depende de uma sessão autenticada do Google Flow com créditos gratuitos verificados; **não há upload ou render automático conectado** e nenhum valor será cobrado automaticamente. [Detalhes da integração](docs/FLOW_OVERLORD_FIVE_ZERO_COST_2026-11-10.md).

@@ -16,6 +16,7 @@ assert.doesNotMatch(code,/fetch\(|XMLHttpRequest|\.send\(|VIGGLE_API_KEY/);
 for(const name of ['Albedo','Shalltear','Solution','Lupusregina','Narberal']) {
  assert.match(code,new RegExp(name));
 }
-assert.ok(catalog.scene_replacement[0].id==='flow_omni_edit');
+assert.ok(catalog.scene_replacement.some(e=>e.id==='flow_omni_edit'));
+assert.equal(catalog.scene_replacement[0].id,'openjutsu_advanced');
 new Function(code);
 console.log('PASS: five-character Flow UI is local-only, transparent and no payment.');

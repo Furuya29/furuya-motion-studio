@@ -18,9 +18,12 @@ function automaticTask(){
 }
 function recommendFromPolicy(){
  const task=automaticTask();
+ const count=Number($('targetCount').value||1);
+ if(count===5&&task==='multi_scene_replacement')return null;
  const ids=routePolicy?.priorities?.[task]||[];
  const engines=engineCatalog?.[task]||[];
- const found=ids.map(id=>engines.find(e=>e.id===id)).find(Boolean)||engines[0];
+ // Never invent a fallback outside the policy: Flow failed source fidelity.
+ const found=ids.map(id=>engines.find(e=>e.id===id)).find(Boolean);
  return found?{task,engine:found}:null;
 }
 function applyMode(){
@@ -38,7 +41,13 @@ function applyMode(){
     ' · Situação: '+suggestion.engine.state+
     '. Isto é uma recomendação por regras; GPU, créditos e geração NÃO foram validados.';
   }else{
-   $('autoRecommendation').textContent='O catálogo ainda não está disponível. Nenhuma geração será iniciada.';
+   $('task').value=automaticTask();
+   renderEngines();
+   $('engine').selectedIndex=-1;
+   prepared=false;available=null;requiredCredits=null;
+   $('autoRecommendation').textContent=Number($('targetCount').value)===5
+    ? 'Nenhum motor validado troca cinco pessoas preservando fielmente a coreografia e toda a multidão numa só geração. A saída real do Flow recriou a dança. Use 1–4 alvos com rastreamento e máscaras, seguida de composição, quando houver GPU gratuita comprovada.'
+    : 'Nenhuma recomendação segura disponível na política. Nenhuma geração será iniciada.';
   }
  }else{
   $('autoRecommendation').textContent='Modo avançado: escolha manualmente a categoria e o motor. As mesmas verificações de recursos e custos continuam obrigatórias.';

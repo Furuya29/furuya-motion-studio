@@ -59,8 +59,9 @@ def recommend(*, target_count: int = 1,
             continue
         if engine_id in policy.get("exclusions", []):
             continue
-        if target_count == 5 and engine_id != "flow_omni_edit":
-            # The local Openjutsu Standard workflow only supports four.
+        if target_count == 5:
+            # No current strict-scene-preserving engine supports five roles
+            # in one proven, source-accurate pass. Never silently choose Flow.
             continue
         # Only explicitly available compatible engines can be recommended for execution.
         # All engines are currently candidates, none have verified operational resources.
@@ -75,7 +76,24 @@ def recommend(*, target_count: int = 1,
         })
 
     if not ranked:
-        raise ValueError("No zero-budget compatible engine remains")
+        return {
+            "schema": "furuya-automatic-routing/1",
+            "source": "POLICY_RULES_NOT_GENERATIVE_AI",
+            "target_count": target_count,
+            "preserve_original_scene": preserve_original_scene,
+            "task": task,
+            "preferred_engine": None,
+            "preferred_engine_name": None,
+            "evaluation_order": [],
+            "explanation": policy["explanation"][task],
+            "reason_code": "NO_SOURCE_FAITHFUL_FIVE_PERSON_ENGINE",
+            "execution_authorized": False,
+            "auto_render": False,
+            "free_inference_verified": False,
+            "can_generate_now": False,
+            "next_action": "Five characters require validated tracking, 1–4-target stages and masking/compositing; do not use Flow as if it preserved source choreography. No free GPU validated.",
+            "notice": "No compatible one-pass engine for five source-faithful substitutions. Use a smaller pilot and preserve the other people.",
+        }
 
     # This is a PRIORITY for evaluation, not a live/inference-ready choice.
     first = ranked[0]
@@ -93,7 +111,7 @@ def recommend(*, target_count: int = 1,
         "auto_render": False,
         "free_inference_verified": False,
         "can_generate_now": False,
-        "next_action": "Prepare video and five 3D character refs, then verify Flow free credits in the signed-in website. No automatic submission.",
+        "next_action": "Verify a genuinely free GPU/weights for source-tracked Openjutsu or masked Wan; test one person on 3s and audit pose and background before expanding.",
         "notice": "Automatic routing suggests an engine; it does not install it, track people, run inference, or use credits.",
     }
 
