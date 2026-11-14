@@ -12,7 +12,7 @@ class AutoRouterTests(unittest.TestCase):
     def test_scene_preserving_one_person(self):
         result = recommend(target_count=1, preserve_original_scene=True)
         self.assertEqual(result["task"], "scene_replacement")
-        self.assertEqual(result["preferred_engine"], "flow_omni_edit")
+        self.assertEqual(result["preferred_engine"], "openjutsu_advanced")
         self.assertFalse(result["can_generate_now"])
 
     def test_motion_transfer_one_person(self):
@@ -24,14 +24,15 @@ class AutoRouterTests(unittest.TestCase):
         for n in (2, 3, 4):
             result = recommend(target_count=n)
             self.assertEqual(result["task"], "multi_scene_replacement")
-            self.assertEqual(result["preferred_engine"], "flow_omni_edit")
-            self.assertEqual(len(result["evaluation_order"]), 4)
+            self.assertEqual(result["preferred_engine"], "openjutsu_advanced")
+            self.assertEqual(len(result["evaluation_order"]), 3)
 
-    def test_five_targets_route_to_flow_only(self):
+    def test_five_targets_requires_staged_non_flow_approach(self):
         result = recommend(target_count=5)
         self.assertEqual(result["task"], "multi_scene_replacement")
-        self.assertEqual(result["preferred_engine"], "flow_omni_edit")
-        self.assertEqual([e["id"] for e in result["evaluation_order"]], ["flow_omni_edit"])
+        self.assertIsNone(result["preferred_engine"])
+        self.assertEqual(result["evaluation_order"], [])
+        self.assertEqual(result["reason_code"], "NO_SOURCE_FAITHFUL_FIVE_PERSON_ENGINE")
         self.assertFalse(result["can_generate_now"])
         self.assertFalse(result["execution_authorized"])
 
