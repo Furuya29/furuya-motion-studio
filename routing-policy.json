@@ -13,7 +13,6 @@
   },
   "priorities": {
     "scene_replacement": [
-      "flow_omni_edit",
       "openjutsu_advanced",
       "wan22_replace",
       "viggle_animate_open"
@@ -23,7 +22,6 @@
       "viggle_video_remix"
     ],
     "multi_scene_replacement": [
-      "flow_omni_edit",
       "openjutsu_advanced",
       "wan_vace_masked",
       "henge_tara_multi"
@@ -43,5 +41,5 @@
     "motion_transfer": "Reproduzir a coreografia com uma personagem, permitindo reconstruir o cenário, favorece modelos de transferência direta de movimento.",
     "multi_scene_replacement": "Várias pessoas exigem associação de identidades, rastreamento individual, máscaras e resolução de oclusões."
   },
-  "notes": "Free-tier Google Flow browser editing now leads for 1–5 character edits without local GPU. This is an evaluation/preparation route ONLY until the user account and free credits plus an actual Flow render are verified. Other 10 engines remain; never pay automatically."
+  "notes": "Empirical video check (2026-11-14): Flow Omni Flash 1.2 produced 15s 360p 24fps with five characters in a newly choreographed arrangement, not the source dancers' exact movements/locations. Flow remains available as a creative reinterpretation tool and manual preparator, but is excluded from strict scene-preserving auto-routing. 1-4: evaluate Openjutsu/Wan with masks and pose; no verified free GPU. 5: no compatible validated one-pass option; staged character passes and compositing required. Zero payment/no auto submission preserved."
 }
