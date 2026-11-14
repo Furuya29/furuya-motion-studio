@@ -3,13 +3,6 @@
   "source": "offline-static-display-only; actual server catalog via /api/engines",
   "scene_replacement": [
     {
-      "id": "flow_omni_edit",
-      "name": "Google Flow Omni Flash 1.2 — edição de vídeo com referências",
-      "state": "OFFLINE_ADAPTER",
-      "strengths": "Geração hospedada sem GPU local; Furuya prepara clipes e 1–5 referências 3D para o Flow.",
-      "limitations": "Requer sessão Google Flow com saldo gratuito confirmado. Upload e geração no site, sem API Furuya. Fidelidade multipersonagem ainda não comprovada."
-    },
-    {
       "id": "openjutsu_advanced",
       "name": "Openjutsu Advanced — MiniMax H3 / SAM 3.1",
       "state": "OFFLINE_ADAPTER",
@@ -29,6 +22,13 @@
       "state": "OFFLINE_ADAPTER",
       "strengths": "Propaga frame retocado da própria tomada mantendo coreografia.",
       "limitations": "~96 GB VRAM recomendado; sem inferência gratuita comprovada."
+    },
+    {
+      "id": "flow_omni_edit",
+      "name": "Google Flow Omni Flash 1.2 — edição de vídeo com referências",
+      "state": "OFFLINE_ADAPTER",
+      "strengths": "Reinterpreta visualmente vídeos com referências de personagens em nuvem gratuita; pode criar coreografia nova.",
+      "limitations": "Teste real em 14/11/2026: entregou 15s com cinco personagens, mas NÃO preservou posições e coreografia do vídeo fonte de 3s. NÃO utilizar para troca fiel de dançarinos."
     }
   ],
   "motion_transfer": [
@@ -47,15 +47,8 @@
       "limitations": "Precisa credenciais e créditos; não garante troca localizada em multidão."
     }
   ],
-  "notes": "A rota Flow 1–5 foi incluída para preparar cenas e prompts com orçamento gratuito sem GPU local. Flow usa upload manual no site; não há render automático nem saldo verificado. Dez motores anteriores preservados.",
+  "notes": "Validação com vídeo real: Google Flow é opção criativa/manual, NÃO edição fiel por pose/máscara. Rota automática estrita: Openjutsu até 4 alvos (sem GPU gratuita validada). Cinco alvos: nenhum motor apto em passagem única. Sem cobranças ou fallbacks pagos.",
   "multi_scene_replacement": [
-    {
-      "id": "flow_omni_edit",
-      "name": "Google Flow Omni Flash 1.2 — edição de vídeo com referências",
-      "state": "OFFLINE_ADAPTER",
-      "strengths": "Geração hospedada sem GPU local; Furuya prepara clipes e 1–5 referências 3D para o Flow.",
-      "limitations": "Requer sessão Google Flow com saldo gratuito confirmado. Upload e geração no site, sem API Furuya. Fidelidade multipersonagem ainda não comprovada."
-    },
     {
       "id": "openjutsu_advanced",
       "name": "Openjutsu Advanced — MiniMax H3 / SAM 3.1",
@@ -76,6 +69,13 @@
       "state": "RESEARCH_ONLY",
       "strengths": "Edição regional com máscaras, possível fluxo sequencial de vários alvos.",
       "limitations": "Fluxo multipersonagem não é nativo validado; montagem e inferência ainda não implementadas."
+    },
+    {
+      "id": "flow_omni_edit",
+      "name": "Google Flow Omni Flash 1.2 — edição de vídeo com referências",
+      "state": "OFFLINE_ADAPTER",
+      "strengths": "Reinterpreta visualmente vídeos com referências de personagens em nuvem gratuita; pode criar coreografia nova.",
+      "limitations": "Teste real em 14/11/2026: entregou 15s com cinco personagens, mas NÃO preservou posições e coreografia do vídeo fonte de 3s. NÃO utilizar para troca fiel de dançarinos."
     }
   ],
   "research_paid": [
