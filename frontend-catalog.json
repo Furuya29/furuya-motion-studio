@@ -1,0 +1,47 @@
+{
+  "schema": "furuya-comfyui-frontends/1",
+  "reviewed_at": "2026-11-15",
+  "default_execution_authorized": false,
+  "inference_or_spend_triggered": false,
+  "purpose": "Research registry for optional UIs; these are NOT engines and MUST NOT enter automatic video-recast routing.",
+  "frontends": [
+    {
+      "id": "comfyart",
+      "name": "ComfyArt",
+      "upstream": "https://github.com/jtydhr88/ComfyArt",
+      "license": "MIT",
+      "category": "COMFYUI_CANVAS_AND_ASSET_FRONTEND",
+      "status": "RESEARCH_ONLY",
+      "integration": "NOT_INSTALLED_OR_TESTED_ON_OWNER_PC",
+      "possible_furuya_role": "Reference boards, 3D/image assets, storyboard and canvas",
+      "fidelity": "NO_VERIFIED_1_TO_1_FIVE_PERSON_RECAST",
+      "local_inference": "REQUIRES_MODEL_AND_COMPATIBLE_COMFYUI_BACKEND",
+      "cloud": "COMFY_CLOUD_REQUIRES_PAID_PLAN_PER_UPSTREAM_README",
+      "free_gpu_verified": false,
+      "owner_pc_validated": false,
+      "can_generate_now": false,
+      "eligible_for_auto_router": false,
+      "paid_fallback_allowed": false,
+      "source_review": "README: optional ComfyUI custom node, Cloud plan required for cloud key"
+    },
+    {
+      "id": "creativefield",
+      "name": "CreativeField",
+      "upstream": "https://github.com/rhymeas/Creativefield",
+      "license": "GPL-3.0",
+      "category": "COMFYUI_CREATIVE_STUDIO_FRONTEND",
+      "status": "RESEARCH_ONLY",
+      "integration": "NOT_INSTALLED_OR_TESTED_ON_OWNER_PC",
+      "possible_furuya_role": "Video/image workflow panels, masking, candidate source-faithful swap experiment",
+      "fidelity": "CHARACTER_REPLACEMENT_EXPERIMENTAL; FIVE_ROLE_SOURCE_FIDELITY_NOT_PROVEN",
+      "local_inference": "UPSTREAM_TESTED_ON_RTX_4090_WITH_64_GB_RAM",
+      "cloud": "COMFY_ROUTER_CREDITS; NO_VERIFIED_ZERO_COST_ROUTE",
+      "free_gpu_verified": false,
+      "owner_pc_validated": false,
+      "can_generate_now": false,
+      "eligible_for_auto_router": false,
+      "paid_fallback_allowed": false,
+      "source_review": "README: experimental character replacement and local or credited online models"
+    }
+  ]
+}
