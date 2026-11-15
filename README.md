@@ -1,5 +1,12 @@
 # Furuya Motion Studio — captura v0.5 + compositor 2D v0.6
 
+## Interfaces abertas do vídeo de 15/11 — ComfyArt e CreativeField
+
+O vídeo sobre a “nova ComfyUI” aponta **interfaces opcionais**, não motores de recast nem GPU gratuita. A avaliação oficial inclui licenças, compatibilidade com a RX 580, restrição de cobrança e os gates de fidelidade da Albedo em 3 segundos. Nenhuma instalação/render foi executado: [relatório](docs/COMFYART_CREATIVEFIELD_REVIEW_2026-11-15.md) e [catálogo de frontends](frontend-catalog.json). O roteador continua priorizando OpenJutsu apenas para avaliação; cinco pessoas seguem sem motor validado em passagem única.
+
+---
+
+
 ## Correção após teste real do Flow (14/11/2026)
 
 O teste real de cinco personagens **não preservou a coreografia nem as posições dos dançarinos**: a saída Omni Flash recriou 15 s de dança coletiva, em vez de substituir as pessoas do trecho original de 3 s. O Flow permanece no catálogo como **recriação visual criativa**, mas não é mais escolhido automaticamente para substituição corporal fiel. Openjutsu lidera a avaliação para 1–4 pessoas, sem GPU gratuita comprovada; para cinco, o roteador informa que falta motor validado de passagem única. [Relatório do vídeo e novos critérios de aceitação](docs/FLOW_VIDEO_REAL_REVIEW_2026-11-14.md).
