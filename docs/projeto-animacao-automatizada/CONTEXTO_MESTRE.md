@@ -89,3 +89,8 @@ Este documento é a referência mestre, que deve ser atualizada em novas anális
 - [Referência 07 — Seravienne / fantasia com elfos](REFERENCIA_07_SERAVIENNE_FANTASIA_ELFOS_2026-11-16.md): obra de inspiração RPG/MMO (EP01–03) e edição relacionada, registrada como referência temática/de direção artística. Sem inspeção quadro a quadro, motor de IA verificado ou homologação; não alterar prioridades nem cenas aprovadas de Aenvarath.
 
 - [Referência 08 — vídeo enviado: Wildland Hunters, direção cinematográfica e edição](REFERENCIA_08_WILDLAND_HUNTERS_DIRECAO_CINEMATOGRAFICA_2026-11-16.md): análise visual real do MP4 de 04:40, 1920×1080/30 fps, 47 stills e oito tiras temporais; estudo de luz, enquadramentos, atuação, VFX e raccord, com limites explícitos de QA. Não substitui estética 2D, arquitetura, decisões ou gates do P15.
+
+## Handoff integral da conversa de referências — 16/11/2026
+
+- [Handoff integral 16/11 (50 mil caracteres)](HANDOFF_INTEGRAL_CHAT_REFERENCIAS_2026-11-16.md): história cronológica completa deste chat, decisão superior de preservação, handoff original de 08/11, oito referências, MP4s analisados, artefatos e hashes, resultados do P15/rig, restrições do PCRA, continuidade Nólyrien, decisões, pendências, riscos e roteiro de retomada.
+- **Uso em novo chat:** ler o handoff integral em conjunto com as fontes canônicas anteriores e com os checkpoints artísticos do chat principal. Trata-se de documentação **aditiva na branch draft**, não reordenação de prioridades ou autorização de merge/homologação.
