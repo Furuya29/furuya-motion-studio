@@ -94,3 +94,9 @@ Este documento é a referência mestre, que deve ser atualizada em novas anális
 
 - [Handoff integral 16/11 (50 mil caracteres)](HANDOFF_INTEGRAL_CHAT_REFERENCIAS_2026-11-16.md): história cronológica completa deste chat, decisão superior de preservação, handoff original de 08/11, oito referências, MP4s analisados, artefatos e hashes, resultados do P15/rig, restrições do PCRA, continuidade Nólyrien, decisões, pendências, riscos e roteiro de retomada.
 - **Uso em novo chat:** ler o handoff integral em conjunto com as fontes canônicas anteriores e com os checkpoints artísticos do chat principal. Trata-se de documentação **aditiva na branch draft**, não reordenação de prioridades ou autorização de merge/homologação.
+
+## Continuidade do chat narrativo e arquitetura do palácio — 16/11/2026
+
+- [CHECKPOINT_NARRATIVO_ATUALIZADO_AENVARATH_2026-11-16.md](CHECKPOINT_NARRATIVO_ATUALIZADO_AENVARATH_2026-11-16.md) — registra a progressão do chat principal para além da fase das asas, até a imagem da rainha voando acima da torre circular, sem confundir quadro estático e MP4 homologado; preserva as regras de canon e os estados de prova.
+- [PLANO_ARQUITETONICO_PALACIO_REAL_2026-11-16.md](PLANO_ARQUITETONICO_PALACIO_REAL_2026-11-16.md) — pré-especificação do palácio colossal e geometria circular da torre, eixo longitudinal do salão do trono, tapete, brasão, janelas, projeto de planta e gates de match-camera/Unreal; **proposto, não uma planta final aprovada**.
+- Esta atualização é **aditiva e somente na branch draft**; não altera os estudos anteriores, não significa merge para a main, não muda prioridade do P15/Issue #12, não é renderização nem homologação do PCRA.
