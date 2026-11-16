@@ -63,3 +63,29 @@ Este documento é a referência mestre, que deve ser atualizada em novas anális
 - [Handoff completo e aditivo](HANDOFF_INTEGRACAO_CHAT_PRINCIPAL_2026-11-08.md) — consolida TS Malfoy e Shift Up, novos defeitos de perspectiva do microfone e variações das proporções corporais, estratégias de correção, requisitos de QA e plano de integração.
 - **Regra superior de continuidade:** este handoff **NÃO substitui** as decisões, planos, arquiteturas ou checkpoints existentes no chat principal. Integrar como complemento, reconciliando com o histórico principal.
 - A pasta atual documenta **esta frente de pesquisa**, não é prova de que toda documentação histórica do chat principal tenha sido migrada.
+
+## Registro de reconciliação aditiva — 09/11/2026 (em revisão)
+
+- [Reconciliação cumulativa](RECONCILIACAO_ADITIVA_2026-11-09.md): classifica fatos anteriormente decididos, testes reforçados, restrições e pendências após o handoff; **não substitui o planejamento principal**.
+- [Shot spec do piloto 15 s](piloto_15s_shot_spec_v0_1.json): três planos de 120 quadros a 24 fps, com IDs de personagem/cenário/prop, câmera/contato e gates de QA. **Especificação, não vídeo renderizado**.
+- [Validador estrutural](../../tools/animation_pilot/validate_shot_spec.py) e [testes de contrato](../../tests/test_animation_pilot_spec.py): checam integridade dos dados, não qualidade artística. A execução no PC, materiais originais, aprovação do usuário e homologação seguem pendentes.
+- Nenhuma ferramenta, serviço, projeto de recasting, prioridade ou arquitetura anterior foi removido; a adoção definitiva depende de revisão e conciliação com o chat principal.
+
+## Avanço experimental do motor — 09/11/2026
+
+- [Protótipo P15 executável](PROTOTIPO_P15_EXECUTAVEL_2026-11-09.md): *blocking* técnico determinístico de 15 s/360 frames, motor de câmera e microfone persistente; demonstração **não é arte final nem QA da Issue #12**.
+- [Rig 2D por sprites](MODULO_RIG_2D_SPRITES_2026-11-09.md): motor experimental de PNGs por camadas, pivôs FK, interpolação e troca discreta de desenhos; amostra criada programaticamente, sem IA generativa.
+- Implementações propostas em `tools/animation_pilot/`, com testes em `tests/` e CI isolada. A validação no Windows do usuário e a aprovação estética permanecem pendentes.
+- PR [#13](https://github.com/Furuya29/furuya-motion-studio/pull/13) em revisão; nenhuma dessas adições substitui as ferramentas, prioridades ou decisões do planejamento anterior.
+
+## Atualização aditiva em revisão — 16/11/2026
+
+- [Checkpoint cumulativo 16/11](CHECKPOINT_CUMULATIVO_2026-11-16.md): reconcilia o handoff de 08/11 com o P15 e rig 2D experimentais da [PR #13](https://github.com/Furuya29/furuya-motion-studio/pull/13), a continuidade visual ainda pendente de Nólyrien (asas lombares, vista dorsal, coroa posterior e simetria do torso) e as três referências audiovisuais recentes (dois AI manhua e tutorial Claude Code).
+- Esta anotação está **na branch de revisão**, não na `main`, até aprovação do PR. Não representa renderização de novos frames, homologação do piloto cinematográfico nem acesso produtivo ao PCRA.
+- Preservar prioridades do chat narrativo e manter a [Issue #12](https://github.com/Furuya29/furuya-motion-studio/issues/12) aberta até evidências de arte, vídeo, QA, desempenho e aprovação humana.
+
+- [Referência 06 — novas ferramentas chinesas anunciadas como gratuitas](REFERENCIA_06_FERRAMENTAS_CHINESAS_VIDEO_2026-11-16.md): triagem inicial do vídeo de 16/11/2026, baseada exclusivamente em metadados públicos; três plataformas, gratuidade, resultados e integração ainda **não verificados**. Nenhuma mudança de motor, custo ou prioridade foi autorizada.
+
+- [Referência 07 — Seravienne / fantasia com elfos](REFERENCIA_07_SERAVIENNE_FANTASIA_ELFOS_2026-11-16.md): obra de inspiração RPG/MMO (EP01–03) e edição relacionada, registrada como referência temática/de direção artística. Sem inspeção quadro a quadro, motor de IA verificado ou homologação; não alterar prioridades nem cenas aprovadas de Aenvarath.
+
+- [Referência 08 — vídeo enviado: Wildland Hunters, direção cinematográfica e edição](REFERENCIA_08_WILDLAND_HUNTERS_DIRECAO_CINEMATOGRAFICA_2026-11-16.md): análise visual real do MP4 de 04:40, 1920×1080/30 fps, 47 stills e oito tiras temporais; estudo de luz, enquadramentos, atuação, VFX e raccord, com limites explícitos de QA. Não substitui estética 2D, arquitetura, decisões ou gates do P15.
