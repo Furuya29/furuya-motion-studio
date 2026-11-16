@@ -2,6 +2,16 @@
 **Data:** 16/11/2026  
 **Estado:** **decisões de método reconciliadas e registradas; implementação artística completa pendente**. Este documento é aditivo e está em *branch* de revisão do [PR #13](https://github.com/Furuya29/furuya-motion-studio/pull/13). Não equivale à homologação do estúdio, à aprovação de nova ferramenta nem à alteração de prioridades.
 
+## Decisão mais recente — produção de animação completa, não motion comic (16/11/2026)
+
+**Diretriz expressa do proprietário:** o histórico de um Motion Comic anterior revelou complexidade e resultados insatisfatórios. **Aenvarath NÃO adotará Motion Comic como pipeline principal, como estilo de entrega nem como fase obrigatória.** O objetivo artístico é animação completa e detalhada com atuação, locomoção, asa/voo, câmera, combate, contato, continuidade espacial e som. Movimentar uma imagem inteira com zoom, partículas e cortes **não** constitui prova de animação completa.
+
+O módulo Motion Comic permanece somente como **opção desativada (opt-in) para projetos editoriais independentes** ou animação de pré-visualização sem pretensão de ser resultado final; sua eventual utilização só ocorrerá com aprovação explícita e prova de que pode atingir a meta pretendida. Não eliminar código ou interromper operações existentes de recap/AVPE.
+
+**Núcleos no caminho crítico de Aenvarath:** Asset & Character Consistency, 3D & Hybrid, Traditional 2D Animation, Cinematic Composition. O processo seleciona os recursos que de fato consigamos operar e testar, sem implantar softwares novos antes de provar capacidade. A escolha técnica por plano deve demonstrar **movimento genuíno dos elementos dramáticos**, não somente câmera sobre still, antes de ser considerada método de personagem.
+
+**Gate de realismo operacional:** cada etapa precisa produzir arquivo reproduzível, comando/código, checksum, relatório, limitações explícitas e aceite visual. Promessas de um estúdio autônomo completo não substituem testes. Caso faltem modelos, camadas, pivôs, 3D, permissões, compute ou fontes, marcar **BLOQUEADO/PENDENTE** e executar apenas uma prova reduzida, nunca improvisar homologação.
+
 ## 0. Fonte, escopo e precedência
 **Fonte primária do plano inicial:** handoff integral fornecido pelo proprietário, `HANDOFF_INTEGRAL_MEGA_ESTUDIO_ANIMACAO_2026-11-16.md` (16/11/2026; 644 linhas; SHA-256 do upload `e897606c8b75d918e2915ca680f84270994d4a2075f022153474bae60177e3fe`). O original foi arquivado **integralmente no repositório privado do projeto narrativo**, não copiado para este repositório público.
 
@@ -34,7 +44,7 @@ O pipeline combina, conforme necessidade:
 | Núcleo | Responsabilidade | Estado neste checkpoint |
 |---|---|---|
 | **Traditional 2D Animation Engine** | Storyboard/animatic, genga/douga, Xsheet, exposição 1s/2s/3s, traço/pintura, rigs, malhas, inbetweens e export | Planejado; existe **rig sprite/FK experimental**, não o motor tradicional completo |
-| **Motion Comic Engine** | Páginas, painéis, recortes em camadas, câmera/parallax, atuação, narração, VFX e transições | Planejado; integrar com fluxos de recap sem fundir estado |
+| **Motion Comic Engine (fora do caminho crítico)** | Recurso editorial opcional/legado para outros projetos e eventual pré-visualização; **não é formato-alvo de Aenvarath** | Suspenso para Aenvarath, só com opt-in explícito, sem remover projetos existentes |
 | **3D & Hybrid Engine** | Cenários/modelos persistentes, rigs 3D, câmeras, perspectiva, IK/contato, estilização e cinemáticas do MMORPG | Planejado; nenhum palácio definitivo/modelo canônico homologado |
 | **Cinematic Composition Engine** | Iluminação, VFX, câmera, narrativa, pacing, sound design, edição, cor, legenda, encode e QA | Planejado; FFmpeg já usado no **animatic geométrico**, não em filme final |
 | **Asset & Character Consistency Engine** | Bible de personagens, turnarounds, ID/hash/estado, poses, roupas, expressões, animações e cenários, preservação cross-shot | Planejado; schemas/validadores estruturais experimentais não validam identidade artística |
