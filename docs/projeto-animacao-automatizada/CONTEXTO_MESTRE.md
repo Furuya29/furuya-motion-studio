@@ -77,3 +77,9 @@ Este documento é a referência mestre, que deve ser atualizada em novas anális
 - [Rig 2D por sprites](MODULO_RIG_2D_SPRITES_2026-11-09.md): motor experimental de PNGs por camadas, pivôs FK, interpolação e troca discreta de desenhos; amostra criada programaticamente, sem IA generativa.
 - Implementações propostas em `tools/animation_pilot/`, com testes em `tests/` e CI isolada. A validação no Windows do usuário e a aprovação estética permanecem pendentes.
 - PR [#13](https://github.com/Furuya29/furuya-motion-studio/pull/13) em revisão; nenhuma dessas adições substitui as ferramentas, prioridades ou decisões do planejamento anterior.
+
+## Atualização aditiva em revisão — 16/11/2026
+
+- [Checkpoint cumulativo 16/11](CHECKPOINT_CUMULATIVO_2026-11-16.md): reconcilia o handoff de 08/11 com o P15 e rig 2D experimentais da [PR #13](https://github.com/Furuya29/furuya-motion-studio/pull/13), a continuidade visual ainda pendente de Nólyrien (asas lombares, vista dorsal, coroa posterior e simetria do torso) e as três referências audiovisuais recentes (dois AI manhua e tutorial Claude Code).
+- Esta anotação está **na branch de revisão**, não na `main`, até aprovação do PR. Não representa renderização de novos frames, homologação do piloto cinematográfico nem acesso produtivo ao PCRA.
+- Preservar prioridades do chat narrativo e manter a [Issue #12](https://github.com/Furuya29/furuya-motion-studio/issues/12) aberta até evidências de arte, vídeo, QA, desempenho e aprovação humana.
