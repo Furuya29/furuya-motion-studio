@@ -85,3 +85,5 @@ Este documento é a referência mestre, que deve ser atualizada em novas anális
 - Preservar prioridades do chat narrativo e manter a [Issue #12](https://github.com/Furuya29/furuya-motion-studio/issues/12) aberta até evidências de arte, vídeo, QA, desempenho e aprovação humana.
 
 - [Referência 06 — novas ferramentas chinesas anunciadas como gratuitas](REFERENCIA_06_FERRAMENTAS_CHINESAS_VIDEO_2026-11-16.md): triagem inicial do vídeo de 16/11/2026, baseada exclusivamente em metadados públicos; três plataformas, gratuidade, resultados e integração ainda **não verificados**. Nenhuma mudança de motor, custo ou prioridade foi autorizada.
+
+- [Referência 07 — Seravienne / fantasia com elfos](REFERENCIA_07_SERAVIENNE_FANTASIA_ELFOS_2026-11-16.md): obra de inspiração RPG/MMO (EP01–03) e edição relacionada, registrada como referência temática/de direção artística. Sem inspeção quadro a quadro, motor de IA verificado ou homologação; não alterar prioridades nem cenas aprovadas de Aenvarath.
