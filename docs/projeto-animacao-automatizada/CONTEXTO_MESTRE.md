@@ -63,3 +63,10 @@ Este documento é a referência mestre, que deve ser atualizada em novas anális
 - [Handoff completo e aditivo](HANDOFF_INTEGRACAO_CHAT_PRINCIPAL_2026-11-08.md) — consolida TS Malfoy e Shift Up, novos defeitos de perspectiva do microfone e variações das proporções corporais, estratégias de correção, requisitos de QA e plano de integração.
 - **Regra superior de continuidade:** este handoff **NÃO substitui** as decisões, planos, arquiteturas ou checkpoints existentes no chat principal. Integrar como complemento, reconciliando com o histórico principal.
 - A pasta atual documenta **esta frente de pesquisa**, não é prova de que toda documentação histórica do chat principal tenha sido migrada.
+
+## Registro integral deste chat — 16/11/2026
+
+- **Arquivo de leitura prioritária para preservar TODO o contexto desta conversa de referências:** [REGISTRO_INTEGRAL_CHAT_REFERENCIAS_2026-11-07_A_2026-11-16.md](REGISTRO_INTEGRAL_CHAT_REFERENCIAS_2026-11-07_A_2026-11-16.md).
+- Contém índice rápido, cronologia desde a primeira mensagem, estudo de TS Malfoy e Shift Up, correção do usuário sobre microfone/perspectiva e proporções corporais, inventário com SHA-256 de MP4/PDF/ZIP, decisões, metodologia, limites de evidência, ferramentas candidatas, pendências, links/commits e instruções para continuidade **aditiva**.
+- Este registro complementa o contexto mestre e o handoff de 08/11; não invalida nenhum deles nem substitui o planejamento existente do chat principal.
+- Arquivo Markdown está no GitHub. Os vídeos e arquivos binários analisados **não foram enviados ao repositório**.
