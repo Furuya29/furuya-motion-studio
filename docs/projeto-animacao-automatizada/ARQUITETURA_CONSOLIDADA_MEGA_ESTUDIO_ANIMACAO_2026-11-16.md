@@ -140,3 +140,15 @@ Em cada gate, o resultado pode ser PASSOU/REPROVOU/PENDENTE, com evidência espe
 6. Somente depois expandir para visemas/corpo/rig avançado, multiplano, combate e animação narrativa longa, na prioridade decidida no projeto principal.
 
 **Resultado deste documento:** plano de animação inicial + pesquisas posteriores + provas técnicas têm **uma arquitetura única, cumulativa e verificável**, mas **não** representam implantação artística completa nem alteração do último checkpoint da animação.
+
+## Correção operacional — prioridade a quadros-chave, rig e intervalação (16/11/2026)
+
+**Interpretação oficial do plano inicial:** não se trata de gerar neve, fumaça e luz como overlay em um único still; o centro é **animar conteúdo da cena a partir de key drawings/quadros-chave**, produzindo frames intermediários on-model por rigs 2D, malhas, substituição de desenho, Xsheet, motion 3D e retouches tradicionais. OpenToonz, Krita, Blender, FFmpeg e editores permanecem por função, não como lista de ferramentas a instalar sem prova. A solução é *shot adaptive*, e não Motion Comic ou IA de vídeo como default.
+
+**Os testes ambientais da vila (V1/V2) foram acessórios exploratórios e não validam o plano de animação.** V2 foi rejeitada artisticamente (neve com aparência de camada artificial e fumaça/fogo quase estáticos). Preservar apenas o aprendizado negativo, sem produzir V3 por simples ajuste de partículas. O próximo objetivo artístico obrigatório é movimento corporal verdadeiro, reconhecível e com contato/continuidade em uma tomada existente de Aenvarath, a partir de múltiplos keyframes aprovados ou corrigidos. **No mínimo** key pose inicial, antecipação, ação/contato, reação e estrutura interpolável; mudanças grandes de perspectiva exigem novas vistas ou modelo 3D, não deformação de PNG frontal.
+
+**Ordem fixa de trabalho:** (0) inventário autorizado de assets e aplicativos/PCRA reais; (1) shot spec + mapa de keyframes/canon; (2) preparação de layers/malhas/rig ou geometria 3D; (3) inbetweens e desenhos corretivos; (4) rasterização de todos os frames e composição; (5) QA temporal, identidade, mão-objeto, iluminação; (6) aprovação humana e somente então ampliação da sequência. Sem prova de arquivo/render não avançar afirmando que a etapa existe. **Não criar testes genéricos de cinemática que não serão reaproveitados**.
+
+**Limitação operacional factual:** o motor `sprite_rig.py` no PR #13 possui FK e troca de sprites, mas ainda não possui malha deformável, IK/foot-lock, desenho automático de inbetweens ou exportação artística multivista; `preview_animatic.py` continua geométrico. Eles são pontos de partida testáveis, não motores finalizados. A automação efetiva do OpenToonz/Krita/Blender e do PCRA no Windows não foi comprovada nesta frente e deverá ser inventariada antes de promessas de render.
+
+**Dados narrativos/arte privados:** plano detalhado de aplicação à sequência de Aenvarath e suas personagens registrado no repositório privado do MMORPG, sem divulgação de lore no repositório público.
