@@ -4,7 +4,10 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
-from PIL import Image
+try:
+    from PIL import Image
+except ImportError:
+    Image = None
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from tools.animation_pilot.shot_asset_preflight import check, SCHEMA
@@ -22,6 +25,7 @@ def manifest(sha=None, approval='production_approved', path='body.png', needs_al
                  'sha256': sha, 'dimensions': [8, 12], 'needs_alpha': needs_alpha}]}
 
 
+@unittest.skipIf(Image is None, 'Pillow is not installed in the legacy CI')
 class TestPreflight(unittest.TestCase):
     def test_verified_layer_passes_without_promotion(self):
         with tempfile.TemporaryDirectory() as folder:
