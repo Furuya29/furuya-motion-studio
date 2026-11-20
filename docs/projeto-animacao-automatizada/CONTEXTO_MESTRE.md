@@ -118,3 +118,7 @@ Este documento é a referência mestre, que deve ser atualizada em novas anális
 ## Nova referência — Seedance 2.5 e APOB AI (18/11/2026)
 
 - [Referência 09 — tutorial cinematográfico com Seedance 2.5 e APOB AI](REFERENCIA_09_APOB_SEEDANCE_25_CINEMA_2026-11-18.md): descreve personagem consistente, roteiro via ChatGPT, geração por texto/imagem, edição e extensão de tomadas e limites promocionais. Documentação oficial da ByteDance confirma até 30 s e multirreferência; **APOB informa plano Nano 80 créditos/dia, mas exemplo Seedance 2.5 custa 1.000 créditos por 5 s**, logo R$0 sustentável **não foi comprovado**. Manter apenas como referência/pesquisa sem alterar o multimétodo, o caminho crítico de animação corporal ou as prioridades do PCRA/Aenvarath. Nenhuma renderização executada.
+
+## Referência 10 — alegações de IA gratuita diária (20/11/2026)
+
+- [Verificação de Google Vids, Everypixel, VidoGrid e Freebeat AI](REFERENCIA_10_VIDEOS_IA_GRATUITOS_GOOGLE_EVERYPIXEL_VIDOGRID_FREEBEAT_2026-11-20.md): análise independente das cotas reais relacionadas ao vídeo de Mari C. Google Vids: 3 vídeos de até 15s por mês; Everypixel: 300 créditos/mês e teto diário de 40; VidoGrid: anúncios de gerações diárias sem cota quantitativa comprovada; Freebeat: 500 créditos iniciais e ilimitado associado a planos pagos específicos. **Nenhuma alternativa foi homologada como geradora gratuita ilimitada**. Pesquisa aditiva, sem alterar prioridades, PR #13 ou a exigência de animação corporal real em Aenvarath.
