@@ -122,3 +122,7 @@ Este documento é a referência mestre, que deve ser atualizada em novas anális
 ## Referência 10 — alegações de IA gratuita diária (20/11/2026)
 
 - [Verificação de Google Vids, Everypixel, VidoGrid e Freebeat AI](REFERENCIA_10_VIDEOS_IA_GRATUITOS_GOOGLE_EVERYPIXEL_VIDOGRID_FREEBEAT_2026-11-20.md): análise independente das cotas reais relacionadas ao vídeo de Mari C. Google Vids: 3 vídeos de até 15s por mês; Everypixel: 300 créditos/mês e teto diário de 40; VidoGrid: anúncios de gerações diárias sem cota quantitativa comprovada; Freebeat: 500 créditos iniciais e ilimitado associado a planos pagos específicos. **Nenhuma alternativa foi homologada como geradora gratuita ilimitada**. Pesquisa aditiva, sem alterar prioridades, PR #13 ou a exigência de animação corporal real em Aenvarath.
+
+## Referência 11 — Skill cinematográfica por agentes (21/11/2026)
+
+- [Vídeo “Essa Skill Faz Vídeos de CINEMA Sozinha” — Web Dark](REFERENCIA_11_AGENT_SKILL_CINEMA_AUTOMATIZADO_2026-11-21.md): triagem de uma proposta de skill portátil para Claude Code/Codex/Antigravity. Identificação do vídeo confirmada, mas arquivo `SKILL.md`, repositório oficial, licença, custo efetivo e resultados audiovisuais completos **não localizados nem testados**. Potencial de **orquestração de direção/edição por agente** como camada adicional sobre a arquitetura já aprovada, sem substituir animação por quadros-chave/rigs/3D, sem mudar o ChatGPT/PCRA e sem instalação ou homologação de software.
