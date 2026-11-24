@@ -126,3 +126,7 @@ Este documento é a referência mestre, que deve ser atualizada em novas anális
 ## Referência 11 — Skill cinematográfica por agentes (21/11/2026)
 
 - [Vídeo “Essa Skill Faz Vídeos de CINEMA Sozinha” — Web Dark](REFERENCIA_11_AGENT_SKILL_CINEMA_AUTOMATIZADO_2026-11-21.md): triagem de uma proposta de skill portátil para Claude Code/Codex/Antigravity. Identificação do vídeo confirmada, mas arquivo `SKILL.md`, repositório oficial, licença, custo efetivo e resultados audiovisuais completos **não localizados nem testados**. Potencial de **orquestração de direção/edição por agente** como camada adicional sobre a arquitetura já aprovada, sem substituir animação por quadros-chave/rigs/3D, sem mudar o ChatGPT/PCRA e sem instalação ou homologação de software.
+
+## Referência 12 — filme local com IA: MiniMax H3 e ComfyUI (24/11/2026)
+
+- [Estudo do vídeo de Willian IA e do MiniMax H3](REFERENCIA_12_WILLIAN_IA_FILME_LOCAL_MINIMAX_H3_2026-11-24.md): a página do tutorial anuncia criação de filme “100% grátis no PC”; palavras-chave abrangem ComfyUI/MiniMax H3, Blender, Qwen Image Edit e LoRAs, mas **não há inspeção integral do vídeo nem do workflow do criador**. Fontes oficiais confirmam H3 com pesos distribuídos e controle por referências/poses/áudio. **Riscos importantes:** execução local não comprovada no FX-4300/16GB/RX580 8GB e, segundo ComfyUI, outputs comerciais exigem licença apropriada. Catalogar como RESEARCH_ONLY, sem instalação, auto-route, despesa, alteração do método multimétodo ou homologação cinematográfica.
