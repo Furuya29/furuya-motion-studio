@@ -94,3 +94,12 @@ Para PC do proprietário **Windows 10 Pro, FX-4300, 16 GB RAM, Radeon RX 580 8 G
 - Direitos: a obra analisada usa visual do universo Harry Potter e pode ser derivativa/fanmade; **não significa liberdade para copiar propriedade intelectual comercialmente**. O projeto original Aenvarath deve usar personagens/cenários próprios.
 
 **Status final deste estudo:** arquivo analisado visualmente, método de produção inferido, autoria/IA local e modelos NÃO identificados, nenhum render de Aenvarath ou integração software executados. Documento meramente **aditivo**.
+
+## ADENDO — autoria e custos descobertos em 27/11/2026
+
+**Esta seção corrige a ausência de fonte específica que vigorava durante a inspeção inicial do MP4 sem alterar os dados visuais observados.** O proprietário indicou o vídeo original [https://youtu.be/VuP6gPZ0wAI](https://youtu.be/VuP6gPZ0wAI), de [MatteStudio / 마떼스튜디오](https://www.youtube.com/channel/UC38k57KyycUM7mlJ3AJPXAQ), EP4 com 12min23s, título que declara **69 horas** de trabalho; duração compatível com o MP4 12min22s e a montagem de bloopers. **Não foi feita comparação hash entre MP4 e stream YouTube**, portanto a identidade binária não está comprovada, mas a atribuição do canal pelo usuário é explícita.
+
+- O criador declara gasto aproximado de **₩280.000–₩300.000** em créditos para o EP4, **excluindo ferramentas já usadas**, em [comentário próprio](https://www.youtube.com/watch?v=VuP6gPZ0wAI&lc=UgwwbUU2tz7yArQgIkV4AaABAg) (interpretação contextual de 28–30 unidades de 10.000 won).
+- [Comentário do criador](https://www.youtube.com/watch?v=VuP6gPZ0wAI&lc=UgzbDJUFwXXCjOTbPkp4AaABAg) relata **5 horas de tentativas rejeitadas** por semelhança do personagem Harry com os filmes, e mudança de design; [post fixado](https://www.youtube.com/watch?v=VuP6gPZ0wAI&lc=UgxuSqNBIlz4ryIATqR4AaABAg) reconhece mudanças de aparência de personagens por falhas da IA.
+- O modelo exato, provedor, GPU e proporção de etapas locais vs. nuvem **permanecem não identificados**. É fortemente provável que a etapa de geração de vídeo envolva plataforma por créditos, mas ainda não há prova de hospedagem exata.
+- Referência documental completa: [REFERENCIA_16_MATTESTUDIO_AUTORIA_CUSTOS_CLOUD_E_ROTA_LOCAL_RTX5090_2026-11-27.md](REFERENCIA_16_MATTESTUDIO_AUTORIA_CUSTOS_CLOUD_E_ROTA_LOCAL_RTX5090_2026-11-27.md).
